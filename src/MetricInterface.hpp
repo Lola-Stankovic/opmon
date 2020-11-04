@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <string>
 #include <map>
@@ -11,41 +9,40 @@
 #include <thread>
 #include <set>
 
-
 class MetricRefInterface
 {
+
 public:
-    virtual ~MetricRefInterface() = 0;
-    virtual  const std::string getTypeName()=0;
-
+  virtual ~MetricRefInterface() = 0;
+  virtual  const std::string getTypeName()=0;
 };
+
 inline MetricRefInterface::~MetricRefInterface() {}
-
-
-typedef std::shared_ptr<MetricRefInterface> MetricPtr;
-
 
 template <typename T>
 class MetricRef: public MetricRefInterface
 {
 public:
+  MetricRef( T& ref) :	metric_ref_{ std::reference_wrapper<T>(ref)} 
+  {
+  }
 
-    MetricRef( T& ref) :	metric_ref_{ std::reference_wrapper<T>(ref)} {
+  virtual ~MetricRef() 
+  {
+  }
 
-     }
-    virtual ~MetricRef() {
-    }
-    std::reference_wrapper<T> getValue(){
-        return metric_ref_;
-    }
-    const std::string getTypeName(){
-        return std::string(typeid(T).name());
-    }
-
-
+  std::reference_wrapper<T> getValue()
+  {
+    return metric_ref_;
+  }
+  const std::string getTypeName()
+  {
+    return std::string(typeid(T).name());
+  }
 
 private:
-	std::reference_wrapper<T> metric_ref_;
+  std::reference_wrapper<T> metric_ref_;
+
 };
 
 
