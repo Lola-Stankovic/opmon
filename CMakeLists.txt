@@ -18,12 +18,11 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMLIB_DEPENDENCIES})
 ##############################################################################
 # Plugins
 
-daq_add_plugin(stdinCommandFacility duneCommandFacility LINK_LIBRARIES opmlib)
+#daq_add_plugin(stdinCommandFacility duneCommandFacility LINK_LIBRARIES opmlib)
 
 ##############################################################################
 # Integration tests
 
-daq_add_plugin(dummyCommandFacility duneCommandFacility TEST LINK_LIBRARIES opmlib)
 
 daq_add_application(opmlib_test opm_test.cpp TEST LINK_LIBRARIES opmlib)
 daq_add_application(opmlib_retrieval opm_retrieval.cpp TEST LINK_LIBRARIES opmlib)
