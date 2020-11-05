@@ -31,6 +31,7 @@ private:
   int port;
   std::string database_name;
   std::string influxdb_uri;
+
 };
 
 #endif /* METRIC_PUBLISH_H_ */

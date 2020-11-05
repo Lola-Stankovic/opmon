@@ -12,7 +12,6 @@
 #include <stdio.h>
 
 #include "MetricPublish.hpp"
-#include "HTTPRequest.hpp"
 #include "influxdb.hpp"
 
 using namespace std::chrono_literals;
@@ -26,7 +25,6 @@ timeSinceEpochMillisec()
   return duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-
 void
 MetricPublish::setPublisher(int portNumber, const std::string& databaseName,
                             const std::string& influxdbUri)
@@ -35,7 +33,6 @@ MetricPublish::setPublisher(int portNumber, const std::string& databaseName,
   database_name=databaseName;
   influxdb_uri=influxdbUri;
 }	 
-
 
 void
 MetricPublish::publishMetric(const std::string& metricName, const std::string& application_name,
@@ -51,15 +48,12 @@ MetricPublish::publishMetric(const std::string& metricName, const std::string& a
   .post_http(si);
 } 
 
-
 void
 MetricPublish::publishMetricByHTTPRequest(const std::string& metricName, const std::string& application_name,
                                           const std::string& host_name,double metric_value)
 {
-/*
-//curl -i -XPOST 'http://localhost:8086/write?db=prometheus_lola' --data-binary 'cpu_load_short,host=server01,region=us-west value=0.64 143405556200000'
- CURL *curl;
- CURLcode res;
+/* CURL *curl;
+  CURLcode res;
  
   curl_global_init(CURL_GLOBAL_ALL);
   std::string uri="http://"+ getInfluxDbUrl()+ ":" + std::to_string(getPort()) + 
@@ -77,8 +71,7 @@ MetricPublish::publishMetricByHTTPRequest(const std::string& metricName, const s
     res = curl_easy_perform(curl);
     if(res != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
-              curl_easy_strerror(res));
- 
+        curl_easy_strerror(res));
     curl_easy_cleanup(curl);
   }
   curl_global_cleanup();
@@ -86,7 +79,6 @@ MetricPublish::publishMetricByHTTPRequest(const std::string& metricName, const s
 */
 } 
    
-
 void
 MetricPublish::ccmPublishMetric(const std::string& metricName, const std::string& application_name,
                                 const std::string& host_name,double metric_value)
@@ -122,6 +114,7 @@ MetricPublish::ccmPublishMetric(const std::string& metricName, const std::string
   node.teardown();
 */
 }
+
 const int
 MetricPublish::getPort()
 {

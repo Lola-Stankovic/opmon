@@ -16,7 +16,8 @@
 #include "MetricRegistry.hpp"
 #include "MetricPublish.hpp"
 
-class MetricMonitor {
+class MetricMonitor 
+{
 public:
   MetricMonitor(const std::string& influxdbUri,const std::string& databaseName,
                 int portNumber, const std::string& appName, const std::string& hostName,
@@ -24,7 +25,6 @@ public:
   ~MetricMonitor();
   void start();    
   void stop();
-    
   double publishThread();
   void monitor();
   void publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics);
@@ -35,15 +35,12 @@ public:
   template <typename T>
   void registerMetric(const std::string& metricName, std::reference_wrapper<T> myMetric);
   void unregisterMetric(const std::string& metricName);
-    
   template <typename T>
   void getValueOfMetric(const std::string& metricName);
    
-    
 private:
   std::atomic<bool> should_run; // or active_
   MetricPublish metric_publish;
-
   int rate;
   long unsigned int number_of_threads;
   std::string host_name;
@@ -52,9 +49,6 @@ private:
   //mutable std::shared_mutex metrics_mutex_; 
   
 };
-
-
-
 
 #endif /* METRIC_MONITOR_H_ */
 

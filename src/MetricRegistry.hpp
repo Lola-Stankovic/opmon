@@ -13,11 +13,15 @@
 #include <set>
 
 #include "MetricInterface.hpp"
+//#include "OpmTypes.hpp"
 
-class MetricRegistry  {
+typedef std::shared_ptr<MetricRefInterface> MetricPtr;
 
+class MetricRegistry  
+{
 private:
   MetricRegistry(){}
+
 public:
   static MetricRegistry& getInstance(){
     static MetricRegistry theInstance;
@@ -25,27 +29,19 @@ public:
   }
 
   size_t count() const;
-  
-  //mutable std::shared_mutex metrics_mutex_; /**< mutex that protects both MetricSets and metric_names. */
   typedef std::map<std::string, MetricPtr> MetricSet;
-  MetricSet metric_set;
   typedef std::set<std::string> StringSet;
+  MetricSet metric_set;
   StringSet metric_names_;
 
   template <typename T>
-  void registerMetric(const std::string& metricName, 	std::reference_wrapper<T> myMetric);
-    
-  void unregisterMetric(const std::string& metricName);
-    
+  void registerMetric(const std::string& metricName, std::reference_wrapper<T> myMetric);
+  void unregisterMetric(const std::string& metricName);    
   template <typename T>
   void getValueOfMetric(const std::string& metricName);
-
-  std::map<std::string, MetricPtr> getMetrics();  
+  std::map<std::string, MetricPtr> getMetrics();
+  
 };
-
-
-
-
 
 #endif /* METRIC_REGISTRY_H_ */
 

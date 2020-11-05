@@ -35,8 +35,6 @@ DataRetrieval::retrieveValue(const std::string& metricName)
   std::cout<< resp<< "\n";; 
 }
     
-//curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=prometheus_lola" --data-urlencode "q=SELECT value FROM cpu_load_short"
-
 const int
 DataRetrieval::getPort()
 {

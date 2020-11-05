@@ -11,13 +11,15 @@
 
 class MetricRefInterface
 {
-
 public:
   virtual ~MetricRefInterface() = 0;
-  virtual  const std::string getTypeName()=0;
+  virtual  const std::string getTypeName()= 0;
+
 };
 
-inline MetricRefInterface::~MetricRefInterface() {}
+inline MetricRefInterface::~MetricRefInterface() 
+{
+}
 
 template <typename T>
 class MetricRef: public MetricRefInterface
@@ -35,6 +37,7 @@ public:
   {
     return metric_ref_;
   }
+
   const std::string getTypeName()
   {
     return std::string(typeid(T).name());

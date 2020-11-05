@@ -107,21 +107,15 @@ MetricMonitor::publishThread()
   try {  
     auto start = std::chrono::high_resolution_clock::now();        
     //publish the metric
-  std::cout << "The thread published the metrics " << "\n";
- // publish_metrics(registry.getMetrics()); //get all metrics and publish them
-   publishMetrics(MetricRegistry::getInstance().getMetrics());
- 
-
-  auto end = std::chrono::high_resolution_clock::now();
-  double thread_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();   
-  return thread_execution_time ;
+    std::cout << "The thread published the metrics " << "\n";
+    //get all metrics and publish them
+    publishMetrics(MetricRegistry::getInstance().getMetrics());
+    auto end = std::chrono::high_resolution_clock::now();
+    double thread_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();   
+    return thread_execution_time ;
+  } catch (std::exception e) {
+      std::cout << "Couldn't publish metrics: " << e.what() << '\n';
   }
-  catch (std::exception e) {
-    std::cout << "Couldn't publish metrics: " << e.what() << '\n';
-  }
-
-
-
 }
 
 void
@@ -129,8 +123,6 @@ MetricMonitor::stop()
 {
   should_run=false;
 }
-
-
 
 void
 MetricMonitor::monitor() 
@@ -148,8 +140,8 @@ MetricMonitor::monitor()
   std::cout << "Number of threads: " << number_of_threads << "\n" ; 
   for (auto &f: threads)
   {
-      //auto s = f.get();
-     // std::cout << "Execution time [ms]: " << s << "\n";
+    //auto s = f.get();
+    // std::cout << "Execution time [ms]: " << s << "\n";
      
   }
 
