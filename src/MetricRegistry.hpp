@@ -12,10 +12,9 @@
 #include <thread>
 #include <set>
 
-#include "MetricInterface.hpp"
-//#include "OpmTypes.hpp"
+#include "OpmTypes.hpp"
 
-typedef std::shared_ptr<MetricRefInterface> MetricPtr;
+using namespace dunedaq::opmlib;
 
 class MetricRegistry  
 {

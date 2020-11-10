@@ -8,9 +8,9 @@ namespace dunedaq {
 namespace opmlib {
 
 typedef std::shared_ptr<MetricRefInterface> MetricPtr;
-typedef std::map<std::string, MetricPtr> MetricSet;
+//typedef std::map<std::string, MetricPtr> MetricSet;
 
-typedef std::set<std::string> StringSet;
+//typedef std::set<std::string> StringSet;
 
 }
 }
