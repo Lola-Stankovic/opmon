@@ -21,9 +21,9 @@ void
 DataRetrieval::setDataRetrieval(int portNumber, const std::string& databaseName,
                                 const std::string& influxdbUri)
 {
-  port=portNumber;
-  database_name=databaseName;
-  influxdb_uri=influxdbUri;   
+  port_=portNumber;
+  database_name_=databaseName;
+  influxdb_uri_=influxdbUri;   
 }
 
 void
@@ -38,19 +38,19 @@ DataRetrieval::retrieveValue(const std::string& metricName)
 const int
 DataRetrieval::getPort()
 {
-  return port;
+  return port_;
 }
 
 const std::string&
 DataRetrieval::getDatabaseName()
 {
-  return database_name;
+  return database_name_;
 }
 
 const std::string&
 DataRetrieval::getDatabaseHostAddress()
 {
-return influxdb_uri;
+return influxdb_uri_;
 }
 
 void

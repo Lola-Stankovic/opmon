@@ -24,9 +24,9 @@ public:
   const std::string& getDatabaseHostAddress();
 
 private:
-   int port;
-   std::string database_name;
-   std::string influxdb_uri;
+   int port_;
+   std::string database_name_;
+   std::string influxdb_uri_;
   
 };
 

@@ -39,13 +39,13 @@ public:
   void getValueOfMetric(const std::string& metricName);
    
 private:
-  std::atomic<bool> should_run; // or active_
-  MetricPublish metric_publish;
-  int rate;
-  long unsigned int number_of_threads;
-  std::string host_name;
-  std::string application_name;
-  std::vector<std::thread> threads;
+  std::atomic<bool> should_run_; // or active_
+  MetricPublish metric_publish_;
+  int rate_;
+  long unsigned int number_of_threads_;
+  std::string host_name_;
+  std::string application_name_;
+  std::vector<std::thread> threads_;
   //mutable std::shared_mutex metrics_mutex_; 
   
 };

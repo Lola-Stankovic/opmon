@@ -20,13 +20,13 @@ MetricMonitor::MetricMonitor(const std::string& influxdbUri, const std::string& 
                              int portNumber, const std::string& appName, const std::string& hostName,
                              const long unsigned int numThreads, int rateLimiter)
 {
-  should_run=true;
-  rate=rateLimiter;
-  number_of_threads=numThreads;
-  host_name=hostName ;
-  application_name=appName;
-  metric_publish = MetricPublish();
-  metric_publish.setPublisher(portNumber, databaseName, influxdbUri);
+  should_run_ = true;
+  rate_ = rateLimiter;
+  number_of_threads_ = numThreads;
+  host_name_ = hostName ;
+  application_name_ = appName;
+  metric_publish_ = MetricPublish();
+  metric_publish_.setPublisher(portNumber, databaseName, influxdbUri);
 }
 
 MetricMonitor::~MetricMonitor()
@@ -54,19 +54,19 @@ MetricMonitor::getValueOfMetric(const std::string& metricName)
 double
 MetricMonitor::getValue(std::shared_ptr<MetricRefInterface> ref)
 {
-  if((*ref).getTypeName()==typeid(std::atomic<float>).name()) {
+  if ((*ref).getTypeName() == typeid(std::atomic<float>).name()) {
     std::reference_wrapper<std::atomic<float>> value = 
       dynamic_cast<MetricRef<std::atomic<float>>&>(*ref).getValue(); 
     return (double) value.get();
-  } else if((*ref).getTypeName()==typeid(std::atomic<int>).name()) { 
+  } else if ((*ref).getTypeName() == typeid(std::atomic<int>).name()) { 
     std::reference_wrapper<std::atomic<int>> value =
       dynamic_cast<MetricRef<std::atomic<int>>&>(*ref).getValue(); 
     return (double) value.get();
-  } else if((*ref).getTypeName()==typeid(std::atomic<double>).name()) { 
+  } else if ((*ref).getTypeName() == typeid(std::atomic<double>).name()) { 
     std::reference_wrapper<std::atomic<double>> value =
       dynamic_cast<MetricRef<std::atomic<double>>&>(*ref).getValue(); 
     return (double) value.get();
-  } else if((*ref).getTypeName()==typeid(std::atomic<size_t>).name()) {
+  } else if ((*ref).getTypeName() == typeid(std::atomic<size_t>).name()) {
     std::reference_wrapper<std::atomic<size_t>> value =
       dynamic_cast<MetricRef<std::atomic<size_t>>&>(*ref).getValue(); 
     return (double) value.get();
@@ -79,23 +79,17 @@ MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInt
   map<string, shared_ptr<MetricRef<std::any>>> *castVersion =
     reinterpret_cast<map<string, shared_ptr<MetricRef<std::any>>>*>(&metrics);
   
-  /*for(auto&&kv : *castVersion) 
-  {
-    cout << kv.first << ": " <<  ", " << std::endl;
-  }*/
-
-  for(std::map<std::string, std::shared_ptr<MetricRefInterface>>::iterator itr =
-    metrics.begin(), itr_end = metrics.end(); itr != itr_end; ++itr)
-  {
-    std::string metric_name= itr->first;
-    double metric_value=0;
-    // cout<< (*itr->second).getTypeName()<<'\n';
-    metric_value=getValue(itr->second);
-    std::cout<< "Metric name:" << metric_name << "\n";
-    std::cout<< "Metric value:" << metric_value << "\n";
-    metric_publish.publishMetric(metric_name, application_name, host_name,  metric_value);
-    //metric_publish.publishMetricByHTTP_Request(metric_name, application_name, host_name,  metric_value);
-    //metric_publish.ccm_publishMetric("testament", application_name, host_name,  metric_value);
+  for (std::map<std::string, std::shared_ptr<MetricRefInterface>>::iterator itr =
+    metrics.begin(), itr_end = metrics.end(); itr != itr_end; ++itr) {
+      std::string metric_name = itr->first;
+      double metric_value = 0;
+      // cout<< (*itr->second).getTypeName()<<'\n';
+      metric_value = getValue(itr->second);
+      std::cout<< "Metric name:" << metric_name << "\n";
+      std::cout<< "Metric value:" << metric_value << "\n";
+      metric_publish_.publishMetric(metric_name, application_name_, host_name_,  metric_value);
+      //metric_publish_.publishMetricByHTTP_Request(metric_name, application_name, host_name,  metric_value);
+      //metric_publish_.ccm_publishMetric("testament", application_name, host_name,  metric_value);
   }
 }
 
@@ -114,47 +108,35 @@ MetricMonitor::publishThread()
     double thread_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();   
     return thread_execution_time ;
   } catch (std::exception e) {
-      std::cout << "Couldn't publish metrics: " << e.what() << '\n';
+    std::cout << "Couldn't publish metrics: " << e.what() << '\n';
   }
 }
 
 void
 MetricMonitor::stop() 
 {
-  should_run=false;
+  should_run_ = false;
 }
 
 void
 MetricMonitor::monitor() 
 {
-  for (uint64_t j=0; j< number_of_threads ;j++)
-  {
+  for (uint64_t j=0; j< number_of_threads_ ;j++) {
     std::cout << "Creating new thread \n" ;
-    threads.emplace_back(&MetricMonitor::publishThread, this);
+    threads_.emplace_back(&MetricMonitor::publishThread, this);
   }
 
-  for (auto& thread : threads) thread.join();
+  for (auto& thread : threads_) thread.join();
 
   std::cout<<"### Finished monitoring \n" ;
   std::cout << "\n================ Statistics ================\n";
-  std::cout << "Number of threads: " << number_of_threads << "\n" ; 
-  for (auto &f: threads)
-  {
+  std::cout << "Number of threads: " << number_of_threads_ << "\n" ; 
+  for (auto &f: threads_) {
     //auto s = f.get();
-    // std::cout << "Execution time [ms]: " << s << "\n";
-     
+    // std::cout << "Execution time [ms]: " << s << "\n";  
   }
 
   std::cout << "\n============================================\n";
 
 }
-
-
-
-
-
-
-
-
-
                                                                      

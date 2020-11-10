@@ -29,9 +29,9 @@ void
 MetricPublish::setPublisher(int portNumber, const std::string& databaseName,
                             const std::string& influxdbUri)
 {
-  port=portNumber;
-  database_name=databaseName;
-  influxdb_uri=influxdbUri;
+  port_ = portNumber;
+  database_name_ = databaseName;
+  influxdb_uri_ = influxdbUri;
 }	 
 
 void
@@ -59,7 +59,7 @@ MetricPublish::publishMetricByHTTPRequest(const std::string& metricName, const s
   std::string uri="http://"+ getInfluxDbUrl()+ ":" + std::to_string(getPort()) + 
     "/write?db="+getDatabaseName();
 
-  std::string data_binary=metricName+",host="+host_name+",application="+application_name+" value=
+  std::string data_binary=metricName+",host="+host_name+",application="+application_name+" value =
     "+std::to_string(metric_value)+" "+ std::to_string(timeSinceEpochMillisec());
   std::cout<<uri<< '\n';
     
@@ -75,7 +75,6 @@ MetricPublish::publishMetricByHTTPRequest(const std::string& metricName, const s
     curl_easy_cleanup(curl);
   }
   curl_global_cleanup();
-
 */
 } 
    
@@ -83,18 +82,17 @@ void
 MetricPublish::ccmPublishMetric(const std::string& metricName, const std::string& application_name,
                                 const std::string& host_name,double metric_value)
 {
-/*
-    dune::daq::ccm::CtrlNode node;
-    std::string uri="/write?db="+getDatabaseName();
-    std::string data_binary=metricName+",host="+host_name+","+"application="+application_name+" value="+std::to_string(metric_value);
+/*  
+  dune::daq::ccm::CtrlNode node;
+  std::string uri="/write?db="+getDatabaseName();
+  std::string data_binary=metricName+",host="+host_name+","+"application="+application_name + 
+    " value="+std::to_string(metric_value);
  
-
   try {
     const uint16_t port1 = ccm::Valid::portNumber(getPort());
-     std::cout << "Port number: " << getPort() << '\n';
-     std::cout << "Database name: " << getDatabaseName() << '\n';
-     node.addClient("client1", "localhost", port1); 
-
+    std::cout << "Port number: " << getPort() << '\n';
+    std::cout << "Database name: " << getDatabaseName() << '\n';
+    node.addClient("client1", "localhost", port1); 
   } catch (std::exception e) {
     std::cout << "Could not add controlled/controller entity: " << e.what() << '\n';
   } 
@@ -102,8 +100,6 @@ MetricPublish::ccmPublishMetric(const std::string& metricName, const std::string
   std::cout << "Going to sleep 2s...\n";
   std::this_thread::sleep_for(2s);   
   std::string content = uri + data_binary;
-
- 
 
   try {
     node.sendCommand("client1", data_binary);
@@ -118,18 +114,18 @@ MetricPublish::ccmPublishMetric(const std::string& metricName, const std::string
 const int
 MetricPublish::getPort()
 {
-  return port;
+  return port_;
 }
 
 const std::string&
 MetricPublish::getDatabaseName()
 {
-  return database_name;
+  return database_name_;
 }
 
 const std::string&
 MetricPublish::getInfluxDbUrl()
 {
-  return influxdb_uri;
+  return influxdb_uri_;
 }
  
