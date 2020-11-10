@@ -21,9 +21,9 @@ void
 DataRetrieval::setDataRetrieval(int portNumber, const std::string& databaseName,
                                 const std::string& influxdbUri)
 {
-  port_=portNumber;
-  database_name_=databaseName;
-  influxdb_uri_=influxdbUri;   
+  port_ = portNumber;
+  database_name_ = databaseName;
+  influxdb_uri_ = influxdbUri;   
 }
 
 void
