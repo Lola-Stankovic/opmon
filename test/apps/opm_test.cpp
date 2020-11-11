@@ -19,7 +19,16 @@ int main(int argc, char** argv)
   std::atomic<double> myMetric_double(500);
   std::atomic<size_t> myMetric_sizet(40960);
    
-  MetricMonitor mmonitor("localhost", "prometheus_lola", 8086,"AppName",  "HostName", 1 , 1);
+  MetricMonitor mmonitor("AppName",  "HostName", 1 , 1);
+
+  std::map<std::string, std::string> parameters;
+  parameters.insert({"influxdbUri", "localhost"});
+  parameters.insert({"databaseName", "prometheus_lola"});
+  parameters.insert({"portNumber", "8086"});
+
+  mmonitor.setupPublisher("influxdb", parameters);
+  mmonitor.setupPublisher("file", parameters);
+
   mmonitor.registerMetric<std::atomic<float>>("Temperature", std::ref(myMetric));   
   mmonitor.getValueOfMetric<std::atomic<float>>("Temperature");
   mmonitor.registerMetric<std::atomic<int>>("Humidity", std::ref(myMetric_int));   

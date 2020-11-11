@@ -12,7 +12,6 @@
 #include <stdio.h>
 
 #include "MetricPublish.hpp"
-#include "influxdb.hpp"
 
 using namespace std::chrono_literals;
 using namespace std;
@@ -26,26 +25,10 @@ timeSinceEpochMillisec()
 }
 
 void
-MetricPublish::setPublisher(int portNumber, const std::string& databaseName,
-                            const std::string& influxdbUri)
-{
-  port_ = portNumber;
-  database_name_ = databaseName;
-  influxdb_uri_ = influxdbUri;
-}	 
-
-void
 MetricPublish::publishMetric(const std::string& metricName, const std::string& application_name,
                              const std::string& host_name,double metric_value)
 {
-  influxdb_cpp::server_info si("127.0.0.1", getPort(), getDatabaseName());
-  influxdb_cpp::builder()
-  .meas(metricName)
-  .tag("host",  host_name)
-  .tag("application", application_name)
-  .field("x", metric_value)
-  .timestamp(timeSinceEpochMillisec())
-  .post_http(si);
+
 } 
 
 void
@@ -111,21 +94,3 @@ MetricPublish::ccmPublishMetric(const std::string& metricName, const std::string
 */
 }
 
-const int
-MetricPublish::getPort()
-{
-  return port_;
-}
-
-const std::string&
-MetricPublish::getDatabaseName()
-{
-  return database_name_;
-}
-
-const std::string&
-MetricPublish::getInfluxDbUrl()
-{
-  return influxdb_uri_;
-}
- 

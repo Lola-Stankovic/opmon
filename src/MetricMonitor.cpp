@@ -16,8 +16,7 @@
 
 using namespace std;
 
-MetricMonitor::MetricMonitor(const std::string& influxdbUri, const std::string& databaseName,
-                             int portNumber, const std::string& appName, const std::string& hostName,
+MetricMonitor::MetricMonitor(const std::string& appName, const std::string& hostName,
                              const long unsigned int numThreads, int rateLimiter)
 {
   should_run_ = true;
@@ -25,13 +24,24 @@ MetricMonitor::MetricMonitor(const std::string& influxdbUri, const std::string& 
   number_of_threads_ = numThreads;
   host_name_ = hostName ;
   application_name_ = appName;
-  metric_publish_ = MetricPublish();
-  metric_publish_.setPublisher(portNumber, databaseName, influxdbUri);
 }
 
 MetricMonitor::~MetricMonitor()
 {
 }
+
+void
+MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, std::string> parameters)
+{
+  if (metric_publish_ == nullptr) {
+    if (source == "influxdb")
+      metric_publish_ = makeMetricPublish("influx", parameters);
+    else if (source == "file")
+      metric_publish_ = makeMetricPublish("file", parameters); 
+  } else throw std::invalid_argument(
+    "setupPublisher should be called once.");
+}
+
 
 template <typename T> void 
 MetricMonitor::registerMetric(const std::string& metricName, std::reference_wrapper<T> myMetric)
@@ -87,7 +97,7 @@ MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInt
       metric_value = getValue(itr->second);
       std::cout<< "Metric name:" << metric_name << "\n";
       std::cout<< "Metric value:" << metric_value << "\n";
-      metric_publish_.publishMetric(metric_name, application_name_, host_name_,  metric_value);
+      (*metric_publish_).publishMetric(metric_name, application_name_, host_name_,  metric_value);
       //metric_publish_.publishMetricByHTTP_Request(metric_name, application_name, host_name,  metric_value);
       //metric_publish_.ccm_publishMetric("testament", application_name, host_name,  metric_value);
   }

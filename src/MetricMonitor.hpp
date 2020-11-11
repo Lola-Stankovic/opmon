@@ -19,10 +19,10 @@
 class MetricMonitor 
 {
 public:
-  MetricMonitor(const std::string& influxdbUri,const std::string& databaseName,
-                int portNumber, const std::string& appName, const std::string& hostName,
+  MetricMonitor(const std::string& appName, const std::string& hostName,
                 const long unsigned int numThreads, int rateLimiter);
   ~MetricMonitor();
+  void setupPublisher(const std::string& source, std::map<std::string, std::string> parameters);
   void start();    
   void stop();
   double publishThread();
@@ -40,7 +40,7 @@ public:
    
 private:
   std::atomic<bool> should_run_; // or active_
-  MetricPublish metric_publish_;
+  std::shared_ptr<MetricPublish> metric_publish_;
   int rate_;
   long unsigned int number_of_threads_;
   std::string host_name_;
