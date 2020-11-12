@@ -8,7 +8,8 @@
 #include <shared_mutex>
 #include <thread>
 #include <set>
-#include "MetricRegistry.hpp"
+
+#include "opmlib/MetricRegistry.hpp"
 
 size_t
 MetricRegistry::count() const

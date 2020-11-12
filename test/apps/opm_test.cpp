@@ -7,10 +7,9 @@
 #include <future>
 #include <thread>
 
-#include "../src/MetricRegistry.hpp"
-#include "../src/MetricMonitor.cpp"
 #include "../src/MetricRegistry.cpp"
-#include "../src/MetricMonitor.hpp"
+#include "../src/MetricMonitor.cpp"
+#include "opmlib/MetricMonitor.hpp"
 
 int main(int argc, char** argv)
 {
@@ -27,7 +26,7 @@ int main(int argc, char** argv)
   parameters.insert({"portNumber", "8086"});
 
   mmonitor.setupPublisher("influxdb", parameters);
-  mmonitor.setupPublisher("file", parameters);
+  //mmonitor.setupPublisher("file", parameters);
 
   mmonitor.registerMetric<std::atomic<float>>("Temperature", std::ref(myMetric));   
   mmonitor.getValueOfMetric<std::atomic<float>>("Temperature");

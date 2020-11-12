@@ -11,11 +11,10 @@
 #include <cstdint>
 #include <stdio.h>
 
-#include "MetricPublish.hpp"
+#include "opmlib/MetricPublish.hpp"
 
+using namespace dunedaq::opmlib;
 using namespace std::chrono_literals;
-using namespace std;
-using namespace std::chrono;
 
 uint64_t
 timeSinceEpochMillisec()

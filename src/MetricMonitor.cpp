@@ -11,8 +11,7 @@
 #include <set>
 #include <chrono>
 
-#include "MetricRegistry.hpp"
-#include "MetricMonitor.hpp"
+#include "opmlib/MetricMonitor.hpp"
 
 using namespace std;
 
@@ -31,13 +30,18 @@ MetricMonitor::~MetricMonitor()
 }
 
 void
-MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, std::string> parameters)
+MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, std::string> par)
 {
+  std::string uri;
   if (metric_publish_ == nullptr) {
-    if (source == "influxdb")
-      metric_publish_ = makeMetricPublish("influx", parameters);
-    else if (source == "file")
-      metric_publish_ = makeMetricPublish("file", parameters); 
+    if (source == "influxdb"){
+      uri = std::string("http://" + par["influxdbUri"] + ":" + par["databaseName"] +
+        "/write?db=" + par["portNumber"]);
+    }
+    else if (source == "file"){
+      uri = std::string("stdin://sourcecode/appfwk/schema/fdpc-job.json");
+    }
+    metric_publish_ = makeMetricPublish(uri);
   } else throw std::invalid_argument(
     "setupPublisher should be called once.");
 }
@@ -97,7 +101,7 @@ MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInt
       metric_value = getValue(itr->second);
       std::cout<< "Metric name:" << metric_name << "\n";
       std::cout<< "Metric value:" << metric_value << "\n";
-      (*metric_publish_).publishMetric(metric_name, application_name_, host_name_,  metric_value);
+      metric_publish_->publishMetric(metric_name, application_name_, host_name_,  metric_value);
       //metric_publish_.publishMetricByHTTP_Request(metric_name, application_name, host_name,  metric_value);
       //metric_publish_.ccm_publishMetric("testament", application_name, host_name,  metric_value);
   }

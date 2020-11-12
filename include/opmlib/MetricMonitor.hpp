@@ -50,6 +50,22 @@ private:
   
 };
 
+std::shared_ptr<MetricPublish>
+makeMetricPublish(std::string const& uri)
+{ 
+  std::string source = "influxdb";
+  std::string plugin_name = source + "MetricPublish";
+  static cet::BasicPluginFactory bpf("duneMetricPublish", "make"); 
+  std::shared_ptr<MetricPublish> cf_ptr;
+  try {
+    cf_ptr = bpf.makePlugin<std::shared_ptr<MetricPublish>>(plugin_name, uri);
+  } catch (const cet::exception &cexpt) {
+    //throw CommandFacilityCreationFailed(ERS_HERE, uri, cexpt);
+  }
+    return cf_ptr;
+    
+}
+
 #endif /* METRIC_MONITOR_H_ */
 
 

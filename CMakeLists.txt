@@ -14,11 +14,14 @@ set(OPMLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers)
 # Main library
 
 daq_add_library(*.cpp LINK_LIBRARIES ${OPMLIB_DEPENDENCIES})
+#daq_add_library (MetricMonitor.cpp MetricRegistry.cpp DataRetrieval.cpp LINK_LIBRARIES ${OPMLIB_DEPENDENCIES})
+
 
 ##############################################################################
 # Plugins
 
-#daq_add_plugin(stdinCommandFacility duneCommandFacility LINK_LIBRARIES opmlib)
+daq_add_plugin(influxdbMetricPublish duneMetricPublish LINK_LIBRARIES opmlib)
+daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmlib)
 
 ##############################################################################
 # Integration tests

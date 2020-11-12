@@ -17,17 +17,24 @@
 #include <ers/ers.h>
 #include <cetlib/BasicPluginFactory.h>
 
-
+using namespace dunedaq::opmlib;
 using namespace std::chrono_literals;
-using namespace std;
-using namespace std::chrono;
 
 class influxdbMetricPublish : public MetricPublish
 {
 public:
-  explicit influxdbMetricPublish(std::map<std::string, std::string> parameters)
+  explicit influxdbMetricPublish(std::string uri)
   {
-    setPublisher(parameters["portNumber"], parameters["databaseName"], parameters["influxdbUri"]);
+    auto col = uri.find_last_of(':');
+    auto sep = uri.find("://");
+    std::string fname;
+    if (col == std::string::npos || sep == std::string::npos) { // assume filename
+      fname = uri;
+    } else {
+      fname = uri.substr(sep+3);
+    }
+    std::cout << fname;
+    setPublisher(8086, "prometheus_lola", "localhost");
   }
 
   uint64_t
@@ -85,3 +92,9 @@ protected:
 
 
 };
+
+extern "C" {
+  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::string uri) {
+      return std::shared_ptr<dunedaq::opmlib::MetricPublish>(new influxdbMetricPublish(uri));
+  }
+}
