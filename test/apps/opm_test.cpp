@@ -7,8 +7,7 @@
 #include <future>
 #include <thread>
 
-#include "../src/MetricRegistry.cpp"
-#include "../src/MetricMonitor.cpp"
+#include "opmlib/MetricRegistry.hpp"
 #include "opmlib/MetricMonitor.hpp"
 
 int main(int argc, char** argv)
@@ -29,10 +28,11 @@ int main(int argc, char** argv)
   parameters.insert({"fileName", "prometheus_lola"});  
   mmonitor.setupPublisher("file", parameters);
 
-  mmonitor.registerMetric<std::atomic<float>>("Temperature", std::ref(myMetric));   
-  mmonitor.getValueOfMetric<std::atomic<float>>("Temperature");
-  mmonitor.registerMetric<std::atomic<int>>("Humidity", std::ref(myMetric_int));   
-  mmonitor.getValueOfMetric<std::atomic<int>>("Humidity");
+  MetricRegistry mregistry = MetricRegistry::getInstance();
+  mregistry.registerMetric<std::atomic<float>>("Temperature",std::ref(myMetric));   
+  mregistry.getValueOfMetric<std::atomic<float>>("Temperature");
+  mregistry.registerMetric<std::atomic<int>>("Humidity", std::ref(myMetric_int));   
+  mregistry.getValueOfMetric<std::atomic<int>>("Humidity");
   
   // 5 seconds later, I'll modify myMetrics:
   for (unsigned i=0; i < 10; ++i) {
@@ -43,8 +43,8 @@ int main(int argc, char** argv)
     //std::this_thread::sleep_for(5s);
   }
 
-  mmonitor.getValueOfMetric<std::atomic<float>>("Temperature");
-  mmonitor.getValueOfMetric<std::atomic<int>>("Humidity");
+  mregistry.getValueOfMetric<std::atomic<float>>("Temperature");
+  mregistry.getValueOfMetric<std::atomic<int>>("Humidity");
   mmonitor.monitor();
                                                                     
 }

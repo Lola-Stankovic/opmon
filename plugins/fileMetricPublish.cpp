@@ -20,6 +20,7 @@
 
 using namespace dunedaq::opmlib;
 using namespace std::chrono_literals;
+using namespace std;
 using json = nlohmann::json;
 
 class fileMetricPublish : public MetricPublish
@@ -37,7 +38,7 @@ public:
     }
     std::cout << fname << "\n";
     setFile(fname);
-    /*try {
+    try {
       std::ifstream ifs;
       ifs.open(fname, std::fstream::in);
       if (!ifs.is_open()) {
@@ -46,8 +47,9 @@ public:
       raw_commands_ = json::parse(ifs);
     } catch (const std::exception& ex) {
       //throw dunedaq::cmdlib::CommandParserError(ERS_HERE, ex.what());
-    }*/
+    }
   }
+  
 
   uint64_t
   timeSinceEpochMillisec()
@@ -84,7 +86,7 @@ public:
     std::cout << logging.dump(4) << std::endl;
     std::cout << std::setw(4) << logging << std::endl;
 
-    //output_file << std::setw(4) << logging << std::endl;
+    //output_file<< std::setw(4) << logging << std::endl;
 
   }
 
@@ -96,6 +98,8 @@ public:
 
 protected:
   typedef MetricPublish inherited;
+
+  json raw_commands_;
   std::string file_name_;
 
 };

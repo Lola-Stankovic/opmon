@@ -39,8 +39,8 @@ MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, s
         "/write?db=" + par["portNumber"]);
     }
     else if (source == "file"){
-      //uri = std::string("lola.json");
-      uri = std::string("stdin://sourcecode/appfwk/schema/lola.json");
+      uri = std::string(par["fileName"]);
+      //uri = std::string("stdin://sourcecode/appfwk/schema/lola.json");
     }
     metric_publish_ = makeMetricPublish(source, uri);
   } else throw std::invalid_argument(
