@@ -56,6 +56,7 @@ public:
   publishMetric(const std::string& metricName, const std::string& application_name,
                 const std::string& host_name,double metric_value)
   {
+    std::cout << "Publishing metrics to a influx database!" << std::endl;
     influxdb_cpp::server_info si("127.0.0.1", getPort(), getDatabaseName());
     influxdb_cpp::builder()
     .meas(metricName)

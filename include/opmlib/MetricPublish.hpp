@@ -37,8 +37,8 @@ class MetricPublish
 public:
   explicit MetricPublish( ) { }
   ~MetricPublish() { }
-  void publishMetric(const std::string& metricName, const std::string& application_name,
-                     const std::string& host_name,double metric_value);
+  virtual void publishMetric(const std::string& metricName, const std::string& application_name,
+                     const std::string& host_name,double metric_value) = 0;
   void publishMetricByHTTPRequest(const std::string& metricName, const std::string& application_name,
                                   const std::string& host_name,double metric_value);
   void ccmPublishMetric(const std::string& metricName, const std::string& application_name,

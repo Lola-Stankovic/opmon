@@ -7,8 +7,9 @@ daq_setup_environment()
 
 find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
-set(OPMLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers)
+set(OPMLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers nlohmann_json::nlohmann_json)
 
 ##############################################################################
 # Main library

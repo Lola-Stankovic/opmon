@@ -39,9 +39,10 @@ MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, s
         "/write?db=" + par["portNumber"]);
     }
     else if (source == "file"){
-      uri = std::string("stdin://sourcecode/appfwk/schema/fdpc-job.json");
+      //uri = std::string("lola.json");
+      uri = std::string("stdin://sourcecode/appfwk/schema/lola.json");
     }
-    metric_publish_ = makeMetricPublish(uri);
+    metric_publish_ = makeMetricPublish(source, uri);
   } else throw std::invalid_argument(
     "setupPublisher should be called once.");
 }

@@ -51,9 +51,8 @@ private:
 };
 
 std::shared_ptr<MetricPublish>
-makeMetricPublish(std::string const& uri)
+makeMetricPublish(const std::string& source, std::string const& uri)
 { 
-  std::string source = "influxdb";
   std::string plugin_name = source + "MetricPublish";
   static cet::BasicPluginFactory bpf("duneMetricPublish", "make"); 
   std::shared_ptr<MetricPublish> cf_ptr;

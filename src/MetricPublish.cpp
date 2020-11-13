@@ -24,13 +24,6 @@ timeSinceEpochMillisec()
 }
 
 void
-MetricPublish::publishMetric(const std::string& metricName, const std::string& application_name,
-                             const std::string& host_name,double metric_value)
-{
-
-} 
-
-void
 MetricPublish::publishMetricByHTTPRequest(const std::string& metricName, const std::string& application_name,
                                           const std::string& host_name,double metric_value)
 {

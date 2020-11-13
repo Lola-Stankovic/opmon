@@ -21,12 +21,13 @@ int main(int argc, char** argv)
   MetricMonitor mmonitor("AppName",  "HostName", 1 , 1);
 
   std::map<std::string, std::string> parameters;
-  parameters.insert({"influxdbUri", "localhost"});
+  /*parameters.insert({"influxdbUri", "localhost"});
   parameters.insert({"databaseName", "prometheus_lola"});
   parameters.insert({"portNumber", "8086"});
+  mmonitor.setupPublisher("influxdb", parameters);*/
 
-  mmonitor.setupPublisher("influxdb", parameters);
-  //mmonitor.setupPublisher("file", parameters);
+  parameters.insert({"fileName", "prometheus_lola"});  
+  mmonitor.setupPublisher("file", parameters);
 
   mmonitor.registerMetric<std::atomic<float>>("Temperature", std::ref(myMetric));   
   mmonitor.getValueOfMetric<std::atomic<float>>("Temperature");
