@@ -19,7 +19,7 @@ public:
                         const std::string& influxdb_uri);	 
   void retrieveValue(const std::string& metricName);
   void retrieveValueByHTTPRequest(const std::string& metricName);
-  const int getPort();
+  int getPort();
   const std::string& getDatabaseName();
   const std::string& getDatabaseHostAddress();
 

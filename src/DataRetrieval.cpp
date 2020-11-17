@@ -35,7 +35,7 @@ DataRetrieval::retrieveValue(const std::string& metricName)
   std::cout<< resp<< "\n";; 
 }
     
-const int
+int
 DataRetrieval::getPort()
 {
   return port_;
