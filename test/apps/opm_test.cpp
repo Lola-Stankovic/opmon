@@ -23,13 +23,13 @@ int main(int /*argc*/, char** /*argv*/)
   parameters.insert({"portNumber", "8086"});
   mmonitor.setupPublisher("influxdb", parameters);*/
 
-  parameters.insert({"fileName", "prometheus_lola"});  
+  parameters.insert({"fileName", "prometheus_lola"});
   mmonitor.setupPublisher("file", parameters);
 
   MetricRegistry mregistry = MetricRegistry::getInstance();
-  mregistry.registerMetric<std::atomic<float>>("Temperature",std::ref(myMetric));   
+  mregistry.registerMetric<std::atomic<float>>("Temperature",std::ref(myMetric));
   mregistry.getValueOfMetric<std::atomic<float>>("Temperature");
-  mregistry.registerMetric<std::atomic<int>>("Humidity", std::ref(myMetric_int));   
+  mregistry.registerMetric<std::atomic<int>>("Humidity", std::ref(myMetric_int));
   mregistry.getValueOfMetric<std::atomic<int>>("Humidity");
   
   // 5 seconds later, I'll modify myMetrics:
@@ -44,6 +44,4 @@ int main(int /*argc*/, char** /*argv*/)
   mregistry.getValueOfMetric<std::atomic<float>>("Temperature");
   mregistry.getValueOfMetric<std::atomic<int>>("Humidity");
   mmonitor.monitor(mregistry.getMetrics());
-                                                                    
-}
-                                                                     
+}                                                                    
