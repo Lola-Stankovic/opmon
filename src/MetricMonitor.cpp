@@ -64,33 +64,34 @@ MetricMonitor::getValueOfMetric(const std::string& metricName)
 double
 MetricMonitor::getValue(std::shared_ptr<MetricRefInterface> ref)
 {
+  double retval = 0;
   if ((*ref).getTypeName() == typeid(std::atomic<float>).name()) {
     std::reference_wrapper<std::atomic<float>> value = 
       dynamic_cast<MetricRef<std::atomic<float>>&>(*ref).getValue(); 
-    return (double) value.get();
+    retval = (double)value.get();
   } else if ((*ref).getTypeName() == typeid(std::atomic<int>).name()) { 
     std::reference_wrapper<std::atomic<int>> value =
       dynamic_cast<MetricRef<std::atomic<int>>&>(*ref).getValue(); 
-    return (double) value.get();
+    retval = (double)value.get();
   } else if ((*ref).getTypeName() == typeid(std::atomic<double>).name()) { 
     std::reference_wrapper<std::atomic<double>> value =
       dynamic_cast<MetricRef<std::atomic<double>>&>(*ref).getValue(); 
-    return (double) value.get();
+    retval = (double)value.get();
   } else if ((*ref).getTypeName() == typeid(std::atomic<size_t>).name()) {
     std::reference_wrapper<std::atomic<size_t>> value =
       dynamic_cast<MetricRef<std::atomic<size_t>>&>(*ref).getValue(); 
-    return (double) value.get();
+    retval = (double)value.get();
   }
+  return retval;
 }
 
 void
 MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics)
 {
-  map<string, shared_ptr<MetricRef<std::any>>> *castVersion =
-    reinterpret_cast<map<string, shared_ptr<MetricRef<std::any>>>*>(&metrics);
+  //map<string, shared_ptr<MetricRef<std::any>>> *castVersion =
+  //  reinterpret_cast<map<string, shared_ptr<MetricRef<std::any>>>*>(&metrics);
   
-  for (std::map<std::string, std::shared_ptr<MetricRefInterface>>::iterator itr =
-    metrics.begin(), itr_end = metrics.end(); itr != itr_end; ++itr) {
+  for (auto itr = metrics.begin(), itr_end = metrics.end(); itr != itr_end; ++itr) {
       std::string metric_name = itr->first;
       double metric_value = 0;
       // cout<< (*itr->second).getTypeName()<<'\n';
@@ -98,13 +99,13 @@ MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInt
       std::cout<< "Metric name:" << metric_name << "\n";
       std::cout<< "Metric value:" << metric_value << "\n";
       metric_publish_->publishMetric(metric_name, application_name_, host_name_,  metric_value);
-
   }
 }
 
 double
 MetricMonitor::publishThread()
-{    
+{
+  double exec_time = 0; 
   std::cout << "Going to sleep 1s...\n";
   std::this_thread::sleep_for(1s); 
   try {  
@@ -113,11 +114,11 @@ MetricMonitor::publishThread()
   
     publishMetrics(MetricRegistry::getInstance().getMetrics());
     auto end = std::chrono::high_resolution_clock::now();
-    double thread_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();   
-    return thread_execution_time ;
-  } catch (std::exception e) {
+    exec_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  } catch (const std::exception& e) {
     std::cout << "Couldn't publish metrics: " << e.what() << '\n';
   }
+  return exec_time;
 }
 
 void
@@ -129,23 +130,26 @@ MetricMonitor::stop()
 void
 MetricMonitor::monitor(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics) 
 {
-  for (uint64_t j=0; j< number_of_threads_ ;j++) {
+  for (uint64_t j=0; j<number_of_threads_; j++) {
     std::cout << "Creating new thread \n" ;
     publishMetrics(metrics);
     //threads_.emplace_back(&MetricMonitor::publishThread, this);
   }
 
-  for (auto& thread : threads_) thread.join();
+  for (auto& thread : threads_) {
+    thread.join();
+  }
 
   std::cout<<"### Finished monitoring \n" ;
   std::cout << "\n================ Statistics ================\n";
   std::cout << "Number of threads: " << number_of_threads_ << "\n" ; 
-  for (auto &f: threads_) {
-    //auto s = f.get();
-    // std::cout << "Execution time [ms]: " << s << "\n";  
-  }
+
+  /*
+    for (auto &f: threads_) {
+      auto s = f.get();
+       std::cout << "Execution time [ms]: " << s << "\n";  
+    }
+  */
 
   std::cout << "\n============================================\n";
-
-}
-                                                                     
+}                                                                    

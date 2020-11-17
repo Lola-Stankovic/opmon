@@ -43,16 +43,16 @@ public:
       if (typeid(T).name() == typeid(std::atomic<float>).name()) {
         std::reference_wrapper<std::atomic<float>> value =
           dynamic_cast<MetricRef<std::atomic<float>>&>(*metric_set[metricName]).getValue();
-        double a= (double) value.get();
-      } else if(typeid(T).name() == typeid(std::atomic<int>).name()) {
-          std::reference_wrapper<std::atomic<int>> value =
-            dynamic_cast<MetricRef<std::atomic<int>>&>(*metric_set[metricName]).getValue();
-        }
-        std::reference_wrapper<T> value =
-          dynamic_cast<MetricRef<T>&>(*metric_set[metricName]).getValue();
-        std::cout<< value.get()<<'\n';
-    } else throw std::invalid_argument(
-      metricName + " doesn't exist.");
+      } else if (typeid(T).name() == typeid(std::atomic<int>).name()) {
+        std::reference_wrapper<std::atomic<int>> value =
+          dynamic_cast<MetricRef<std::atomic<int>>&>(*metric_set[metricName]).getValue();
+      }
+      std::reference_wrapper<T> value =
+        dynamic_cast<MetricRef<T>&>(*metric_set[metricName]).getValue();
+      std::cout << value.get() << '\n';
+    } else {
+      throw std::invalid_argument(metricName + " doesn't exist.");
+    }
   }
 
   template <typename T>

@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 #include <atomic>
-#include <mutex>  // For std::unique_lock
-#include <shared_mutex>
 #include <chrono>
 #include <future>
 #include <thread>
@@ -10,7 +8,7 @@
 #include "opmlib/MetricRegistry.hpp"
 #include "opmlib/MetricMonitor.hpp"
 
-int main(int argc, char** argv)
+int main(int /*argc*/, char** /*argv*/)
 {
   std::atomic<float> myMetric(0.1);
   std::atomic<int> myMetric_int(5);
