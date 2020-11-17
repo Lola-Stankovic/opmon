@@ -15,7 +15,7 @@ int main(int /*argc*/, char** /*argv*/)
   std::atomic<double> myMetric_double(500);
   std::atomic<size_t> myMetric_sizet(40960);
    
-  MetricMonitor mmonitor("AppName",  "HostName", 1 , 1);
+  MetricMonitor mmonitor(1, 1, "HostName",  "AppName");
 
   std::map<std::string, std::string> parameters;
   /*parameters.insert({"influxdbUri", "localhost"});

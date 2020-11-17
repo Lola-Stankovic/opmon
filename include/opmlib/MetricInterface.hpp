@@ -9,27 +9,23 @@
 #include <thread>
 #include <set>
 
+
 class MetricRefInterface
 {
 public:
-  virtual ~MetricRefInterface() = 0;
-  virtual  const std::string getTypeName()= 0;
-
+  //virtual ~MetricRefInterface() = 0;
+  virtual const std::string getTypeName()= 0;
 };
 
-inline MetricRefInterface::~MetricRefInterface() 
-{
-}
-
 template <typename T>
-class MetricRef: public MetricRefInterface
+class MetricRef : public MetricRefInterface
 {
 public:
   MetricRef( T& ref) :	metric_ref_{ std::reference_wrapper<T>(ref)} 
   {
   }
 
-  virtual ~MetricRef() 
+  ~MetricRef() 
   {
   }
 
@@ -47,7 +43,3 @@ private:
   std::reference_wrapper<T> metric_ref_;
 
 };
-
-
-
-

@@ -19,10 +19,10 @@
 class MetricMonitor 
 {
 public:
-  MetricMonitor(const std::string& appName, const std::string& hostName,
-                const long unsigned int numThreads, int rateLimiter);
+  MetricMonitor(int rate, int numThreads,
+                const std::string& hostName, const std::string& appName);
   ~MetricMonitor();
-  void setupPublisher(const std::string& source, std::map<std::string, std::string> parameters);
+  void setupPublisher(const std::string& source, const std::map<std::string, std::string>& parameters);
   void start();    
   void stop();
   double publishThread();
@@ -39,10 +39,13 @@ public:
 private:
   std::atomic<bool> should_run_; // or active_
   std::shared_ptr<MetricPublish> metric_publish_;
+
+  // Internals
   int rate_;
   long unsigned int number_of_threads_;
   std::string host_name_;
   std::string application_name_;
+
   std::vector<std::thread> threads_;
   //mutable std::shared_mutex metrics_mutex_; 
   
@@ -65,8 +68,3 @@ makeMetricPublish(const std::string& source, std::map<std::string, std::string> 
 }
 
 #endif /* METRIC_MONITOR_H_ */
-
-
-
-
-

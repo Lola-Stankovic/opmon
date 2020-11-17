@@ -17,14 +17,14 @@
 
 using namespace std;
 
-MetricMonitor::MetricMonitor(const std::string& appName, const std::string& hostName,
-                             const long unsigned int numThreads, int rateLimiter)
+MetricMonitor::MetricMonitor(int rate, int numThreads,
+                             const std::string& hostName, const std::string& appName)
+  : rate_(rate)
+  , number_of_threads_(numThreads)
+  , host_name_(hostName)
+  , application_name_(appName)
 {
   should_run_ = true;
-  rate_ = rateLimiter;
-  number_of_threads_ = numThreads;
-  host_name_ = hostName ;
-  application_name_ = appName;
 }
 
 MetricMonitor::~MetricMonitor()
@@ -32,16 +32,16 @@ MetricMonitor::~MetricMonitor()
 }
 
 void
-MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, std::string> par)
+MetricMonitor::setupPublisher(const std::string& source, 
+                              const std::map<std::string, std::string>& parameters)
 {
-  std::string uri;
-  std::cout << "Setting a publisher!"<<std::endl;
+  std::cout << "Setting a publisher!" << std::endl;
   if (metric_publish_ == nullptr) {
-    metric_publish_ = makeMetricPublish(source, par);
-  } else throw std::invalid_argument(
-    "setupPublisher should be called once.");
+    metric_publish_ = makeMetricPublish(source, parameters);
+  } else {
+    throw std::runtime_error("setupPublisher should be called once.");
+  }
 }
-
 
 template <typename T> void 
 MetricMonitor::registerMetric(const std::string& metricName, std::reference_wrapper<T> myMetric)
