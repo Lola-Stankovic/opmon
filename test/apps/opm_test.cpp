@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
   mregistry.getValueOfMetric<std::atomic<float>>("Temperature");
   mregistry.getValueOfMetric<std::atomic<int>>("Humidity");
-  mmonitor.monitor();
+  mmonitor.monitor(mregistry.getMetrics());
                                                                     
 }
                                                                      

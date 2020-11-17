@@ -23,28 +23,16 @@ using namespace std::chrono_literals;
 class influxdbMetricPublish : public MetricPublish
 {
 public:
-  explicit influxdbMetricPublish(std::string uri)
+  explicit influxdbMetricPublish(std::map<std::string, std::string> par)
   {
-    auto col = uri.find_last_of(':');
-    auto sep = uri.find("://");
-    std::string fname;
-    if (col == std::string::npos || sep == std::string::npos) { // assume filename
-      fname = uri;
-    } else {
-      fname = uri.substr(sep+3);
-    }
-    std::cout << fname;
-    setPublisher(8086, "prometheus_lola", "localhost");
+    std::string uri;
+    uri = std::string("http://" + par["influxdbUri"] + ":" + par["databaseName"] +
+      "/write?db=" + par["portNumber"]);
+    setParameters(std::stoi(par["portNumber"]), par["databaseName"], par["influxdbUri"]);
   }
 
-  uint64_t
-  timeSinceEpochMillisec()
-  {
-    using namespace std::chrono;
-    return duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
-  }
   void
-  setPublisher(int portNumber, const std::string& databaseName,
+  setParameters(int portNumber, const std::string& databaseName,
                const std::string& influxdbUri)
   {
     port_ = portNumber;
@@ -95,7 +83,7 @@ protected:
 };
 
 extern "C" {
-  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::string uri) {
+  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::map<std::string, std::string> uri) {
       return std::shared_ptr<dunedaq::opmlib::MetricPublish>(new influxdbMetricPublish(uri));
   }
 }

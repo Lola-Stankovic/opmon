@@ -11,7 +11,9 @@
 #include <set>
 #include <chrono>
 
+#include "opmlib/MetricRegistry.hpp"
 #include "opmlib/MetricMonitor.hpp"
+
 
 using namespace std;
 
@@ -33,16 +35,9 @@ void
 MetricMonitor::setupPublisher(const std::string& source, std::map<std::string, std::string> par)
 {
   std::string uri;
+  std::cout << "Setting a publisher!"<<std::endl;
   if (metric_publish_ == nullptr) {
-    if (source == "influxdb"){
-      uri = std::string("http://" + par["influxdbUri"] + ":" + par["databaseName"] +
-        "/write?db=" + par["portNumber"]);
-    }
-    else if (source == "file"){
-      uri = std::string(par["fileName"]);
-      //uri = std::string("stdin://sourcecode/appfwk/schema/lola.json");
-    }
-    metric_publish_ = makeMetricPublish(source, uri);
+    metric_publish_ = makeMetricPublish(source, par);
   } else throw std::invalid_argument(
     "setupPublisher should be called once.");
 }
@@ -103,8 +98,7 @@ MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInt
       std::cout<< "Metric name:" << metric_name << "\n";
       std::cout<< "Metric value:" << metric_value << "\n";
       metric_publish_->publishMetric(metric_name, application_name_, host_name_,  metric_value);
-      //metric_publish_.publishMetricByHTTP_Request(metric_name, application_name, host_name,  metric_value);
-      //metric_publish_.ccm_publishMetric("testament", application_name, host_name,  metric_value);
+
   }
 }
 
@@ -115,9 +109,8 @@ MetricMonitor::publishThread()
   std::this_thread::sleep_for(1s); 
   try {  
     auto start = std::chrono::high_resolution_clock::now();        
-    //publish the metric
     std::cout << "The thread published the metrics " << "\n";
-    //get all metrics and publish them
+  
     publishMetrics(MetricRegistry::getInstance().getMetrics());
     auto end = std::chrono::high_resolution_clock::now();
     double thread_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();   
@@ -134,11 +127,12 @@ MetricMonitor::stop()
 }
 
 void
-MetricMonitor::monitor() 
+MetricMonitor::monitor(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics) 
 {
   for (uint64_t j=0; j< number_of_threads_ ;j++) {
     std::cout << "Creating new thread \n" ;
-    threads_.emplace_back(&MetricMonitor::publishThread, this);
+    publishMetrics(metrics);
+    //threads_.emplace_back(&MetricMonitor::publishThread, this);
   }
 
   for (auto& thread : threads_) thread.join();

@@ -26,10 +26,8 @@ public:
   void start();    
   void stop();
   double publishThread();
-  void monitor();
+  void monitor(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics);
   void publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics);
-  void ccmPublishMetrics(const std::string& metricName, const std::string& application_name,
-                         const std::string& host_name,double metric_value);
   double getValue(std::shared_ptr<MetricRefInterface> ref);
     
   template <typename T>
@@ -51,14 +49,15 @@ private:
 };
 
 std::shared_ptr<MetricPublish>
-makeMetricPublish(const std::string& source, std::string const& uri)
-{ 
+makeMetricPublish(const std::string& source, std::map<std::string, std::string> par)
+{
   std::string plugin_name = source + "MetricPublish";
   static cet::BasicPluginFactory bpf("duneMetricPublish", "make"); 
   std::shared_ptr<MetricPublish> cf_ptr;
   try {
-    cf_ptr = bpf.makePlugin<std::shared_ptr<MetricPublish>>(plugin_name, uri);
+    cf_ptr = bpf.makePlugin<std::shared_ptr<MetricPublish>>(plugin_name, par); 
   } catch (const cet::exception &cexpt) {
+     std::cout << "Catch exception." << std::endl;
     //throw CommandFacilityCreationFailed(ERS_HERE, uri, cexpt);
   }
     return cf_ptr;

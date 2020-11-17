@@ -1,15 +1,13 @@
-#include <iostream>
-#include <string>
 #include <map>
-#include <unistd.h>
-#include <future>
 #include <fstream>
+#include <string>
 #include <memory>
 #include <set>
 #include <chrono>
 #include <cstdint>
 #include <stdio.h>
 #include <iomanip>
+#include <sstream>
 
 #include "opmlib/MetricPublish.hpp"
 #include "influxdb.hpp"
@@ -26,8 +24,10 @@ using json = nlohmann::json;
 class fileMetricPublish : public MetricPublish
 {
 public:
-  explicit fileMetricPublish(std::string uri)
+  explicit fileMetricPublish(std::map<std::string, std::string> par)
   {
+    std::string uri;
+    uri = std::string(par["fileName"]);
     auto col = uri.find_last_of(':');
     auto sep = uri.find("://");
     std::string fname;
@@ -46,18 +46,11 @@ public:
       }
       raw_commands_ = json::parse(ifs);
     } catch (const std::exception& ex) {
+       std::cout << "Parsing error. " << std:: endl;
       //throw dunedaq::cmdlib::CommandParserError(ERS_HERE, ex.what());
     }
   }
   
-
-  uint64_t
-  timeSinceEpochMillisec()
-  {
-    using namespace std::chrono;
-    return duration_cast<nanoseconds>(system_clock::now().time_since_epoch()).count();
-  }
-
   void
   setFile(const std::string& fileName)
   {
@@ -68,11 +61,7 @@ public:
   publishMetric(const std::string& metricName, const std::string& application_name,
                 const std::string& host_name,double metric_value)
   {
-    std::cout << "Publishing metrics to a file!" << std::endl;
-    /*char hostname[HOST_NAME_MAX];
-    char username[LOGIN_NAME_MAX];
-    gethostname(hostname, HOST_NAME_MAX);
-    getlogin_r(username, LOGIN_NAME_MAX);*/	
+    std::cout << "Publishing metrics to a file!" << std::endl;	
     json logging;
     logging["user"] = "username";
     logging["machine"] = "hostname";
@@ -82,11 +71,11 @@ public:
     logging["host_name"] = host_name;
     logging["metric_value"] = metric_value;
 
-    std::ofstream output_file(std::string(file_name_));
     std::cout << logging.dump(4) << std::endl;
-    std::cout << std::setw(4) << logging << std::endl;
+    std::cout << std::setw(4) << logging << endl; 
 
-    //output_file<< std::setw(4) << logging << std::endl;
+    //std::ofstream output_file(std::string(file_name_));
+    //output_file << logging;
 
   }
 
@@ -105,7 +94,7 @@ protected:
 };
 
 extern "C" {
-  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::string uri) {
+  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::map<std::string, std::string> uri) {
       return std::shared_ptr<dunedaq::opmlib::MetricPublish>(new fileMetricPublish(uri));
   }
 }
