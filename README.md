@@ -1,4 +1,4 @@
-# opmlib
+# opmonlib
 
 To build this library, please do the following in the `src` directory:
 
