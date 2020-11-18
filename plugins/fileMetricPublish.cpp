@@ -16,7 +16,7 @@
 #include <nlohmann/json.hpp>
 #include <cetlib/BasicPluginFactory.h>
 
-using namespace dunedaq::opmlib;
+using namespace dunedaq::opmonlib;
 using namespace std::chrono_literals;
 using namespace std;
 using json = nlohmann::json;
@@ -94,7 +94,7 @@ protected:
 };
 
 extern "C" {
-  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::map<std::string, std::string> uri) {
-      return std::shared_ptr<dunedaq::opmlib::MetricPublish>(new fileMetricPublish(uri));
+  std::shared_ptr<dunedaq::opmonlib::MetricPublish> make(std::map<std::string, std::string> uri) {
+      return std::shared_ptr<dunedaq::opmonlib::MetricPublish>(new fileMetricPublish(uri));
   }
 }

@@ -13,7 +13,7 @@
 
 #include "opmlib/MetricPublish.hpp"
 
-using namespace dunedaq::opmlib;
+using namespace dunedaq::opmonlib;
 using namespace std::chrono_literals;
 
 uint64_t

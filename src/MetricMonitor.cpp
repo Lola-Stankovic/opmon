@@ -14,6 +14,7 @@
 #include "opmlib/MetricRegistry.hpp"
 #include "opmlib/MetricMonitor.hpp"
 
+using namespace dunedaq::opmonlib;
 using namespace std;
 
 MetricMonitor::MetricMonitor(int rate, int numThreads,
@@ -38,7 +39,7 @@ MetricMonitor::setupPublisher(const std::string& source,
   if (metric_publish_ == nullptr) {
     metric_publish_ = makeMetricPublish(source, parameters);
   } else {
-    throw std::runtime_error("setupPublisher should be called once.");
+    ers::error(SetupPublisherError(ERS_HERE, "setupPublisher should be called once."));
   }
 }
 
@@ -86,10 +87,7 @@ MetricMonitor::getValue(std::shared_ptr<MetricRefInterface> ref)
 
 void
 MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics)
-{
-  //map<string, shared_ptr<MetricRef<std::any>>> *castVersion =
-  //  reinterpret_cast<map<string, shared_ptr<MetricRef<std::any>>>*>(&metrics);
-  
+{ 
   for (auto itr = metrics.begin(), itr_end = metrics.end(); itr != itr_end; ++itr) {
       std::string metric_name = itr->first;
       double metric_value = 0;
@@ -115,7 +113,7 @@ MetricMonitor::publishThread()
     auto end = std::chrono::high_resolution_clock::now();
     exec_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   } catch (const std::exception& e) {
-    std::cout << "Couldn't publish metrics: " << e.what() << '\n';
+    ers::error(PublishingMetricsError(ERS_HERE, "Error while publishing metrics."));
   }
   return exec_time;
 }

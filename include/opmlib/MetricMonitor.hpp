@@ -7,14 +7,15 @@
 #include <atomic>
 #include <functional>
 #include <any>
-#include <mutex>  
-#include <shared_mutex>
 #include <thread>
 #include <set>
 #include <chrono>
 
+#include "Issues.hpp"
 #include "MetricRegistry.hpp"
 #include "MetricPublish.hpp"
+
+namespace dunedaq::opmonlib {
 
 class MetricMonitor 
 {
@@ -47,7 +48,6 @@ private:
   std::string application_name_;
 
   std::vector<std::thread> threads_;
-  //mutable std::shared_mutex metrics_mutex_; 
   
 };
 
@@ -60,11 +60,11 @@ makeMetricPublish(const std::string& source, std::map<std::string, std::string> 
   try {
     cf_ptr = bpf.makePlugin<std::shared_ptr<MetricPublish>>(plugin_name, par); 
   } catch (const cet::exception &cexpt) {
-     std::cout << "Catch exception." << std::endl;
-    //throw CommandFacilityCreationFailed(ERS_HERE, uri, cexpt);
+    throw MetricPublishCreationFailed(ERS_HERE, source, cexpt);
   }
-    return cf_ptr;
-    
+    return cf_ptr;   
+}
+
 }
 
 #endif /* METRIC_MONITOR_H_ */

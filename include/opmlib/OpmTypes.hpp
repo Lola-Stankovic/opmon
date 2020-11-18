@@ -1,11 +1,11 @@
-#ifndef OPMLIB_SRC_OPMTYPES_HPP_
-#define OPMLIB_SRC_OPMTYPES_HPP_
+#ifndef OPMONLIB_SRC_OPMTYPES_HPP_
+#define OPMONLIB_SRC_OPMTYPES_HPP_
 
 #include <memory>
 #include "MetricInterface.hpp"
 
 namespace dunedaq {
-namespace opmlib {
+namespace opmonlib {
 
 typedef std::shared_ptr<MetricRefInterface> MetricPtr;
 

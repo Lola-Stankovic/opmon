@@ -17,7 +17,7 @@
 #include <ers/ers.h>
 #include <cetlib/BasicPluginFactory.h>
 
-using namespace dunedaq::opmlib;
+using namespace dunedaq::opmonlib;
 using namespace std::chrono_literals;
 
 class influxdbMetricPublish : public MetricPublish
@@ -83,7 +83,7 @@ protected:
 };
 
 extern "C" {
-  std::shared_ptr<dunedaq::opmlib::MetricPublish> make(std::map<std::string, std::string> uri) {
-      return std::shared_ptr<dunedaq::opmlib::MetricPublish>(new influxdbMetricPublish(uri));
+  std::shared_ptr<dunedaq::opmonlib::MetricPublish> make(std::map<std::string, std::string> uri) {
+      return std::shared_ptr<dunedaq::opmonlib::MetricPublish>(new influxdbMetricPublish(uri));
   }
 }

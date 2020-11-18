@@ -8,6 +8,8 @@
 #include "opmlib/MetricRegistry.hpp"
 #include "opmlib/MetricMonitor.hpp"
 
+using namespace dunedaq::opmonlib;
+
 int main(int /*argc*/, char** /*argv*/)
 {
   std::atomic<float> myMetric(0.1);
@@ -18,10 +20,10 @@ int main(int /*argc*/, char** /*argv*/)
   MetricMonitor mmonitor(1, 1, "HostName",  "AppName");
 
   std::map<std::string, std::string> parameters;
-  /*parameters.insert({"influxdbUri", "localhost"});
+  parameters.insert({"influxdbUri", "localhost"});
   parameters.insert({"databaseName", "prometheus_lola"});
   parameters.insert({"portNumber", "8086"});
-  mmonitor.setupPublisher("influxdb", parameters);*/
+  mmonitor.setupPublisher("influxdb", parameters);
 
   parameters.insert({"fileName", "prometheus_lola"});
   mmonitor.setupPublisher("file", parameters);

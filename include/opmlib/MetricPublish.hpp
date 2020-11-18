@@ -1,5 +1,5 @@
-#ifndef OPMLIB_INCLUDE_OPMLIB_METRICPUBLISH_HPP_
-#define OPMLIB_INCLUDE_OPMLIB_METRICPUBLISH_HPP_
+#ifndef OPMONLIB_INCLUDE_OPMONLIB_METRICPUBLISH_HPP_
+#define OPMONLIB_INCLUDE_OPMONLIB_METRICPUBLISH_HPP_
 
 #include <cetlib/BasicPluginFactory.h>
 #include <cetlib/compiler_macros.h>
@@ -30,7 +30,7 @@
   }                                                                                                                    \
   }
 
-namespace dunedaq::opmlib {
+namespace dunedaq::opmonlib {
 
 class MetricPublish
 {

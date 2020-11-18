@@ -11,6 +11,8 @@
 
 #include "opmlib/MetricRegistry.hpp"
 
+using namespace dunedaq::opmonlib;
+
 size_t
 MetricRegistry::count() const
 {
@@ -26,8 +28,9 @@ MetricRegistry::unregisterMetric(const std::string& metricName)
   if (s_itt != metric_names_.end()) {
     metric_set.erase(metricName);
     metric_names_.erase(s_itt);
-  } else throw std::invalid_argument(
-    metricName + " doesn't exist.");
+  } else {
+    ers::error(MetricRegistryError(ERS_HERE, metricName + " doesn't exist."));
+    }
 }
 
 std::map<std::string, std::shared_ptr<MetricRefInterface>>
