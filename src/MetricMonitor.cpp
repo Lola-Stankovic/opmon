@@ -14,7 +14,6 @@
 #include "opmlib/MetricRegistry.hpp"
 #include "opmlib/MetricMonitor.hpp"
 
-
 using namespace std;
 
 MetricMonitor::MetricMonitor(int rate, int numThreads,

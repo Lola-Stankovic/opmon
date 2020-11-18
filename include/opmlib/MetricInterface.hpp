@@ -9,7 +9,6 @@
 #include <thread>
 #include <set>
 
-
 class MetricRefInterface
 {
 public:

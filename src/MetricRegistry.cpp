@@ -40,5 +40,4 @@ MetricRegistry::getMetrics()
       ret_set[itr->first] = std::static_pointer_cast<MetricRefInterface>(itr->second);
   }
   return ret_set;
-}
-                                                                    
+}                                                                    

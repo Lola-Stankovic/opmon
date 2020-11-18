@@ -31,8 +31,3 @@ private:
 };
 
 #endif /* DATA_RETRIEVAL_H_ */
-
-
-
-
-

@@ -63,8 +63,3 @@ makeMetricPublish(std::string const& uri)
 }
 
 #endif
-
-
-
-
-
