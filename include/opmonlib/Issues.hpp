@@ -30,6 +30,10 @@ ERS_DECLARE_ISSUE(opmonlib, MetricRegistryError,
                  "MetricRegistryError: " << error,
                  ((std::string)error))
 
+ERS_DECLARE_ISSUE(opmonlib, FilePublishError,
+                 "FilePublishError: " << error,
+                 ((std::string)error))
+
 }
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_ISSUES_HPP_   

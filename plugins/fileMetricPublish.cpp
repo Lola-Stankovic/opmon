@@ -43,12 +43,11 @@ public:
       std::ifstream ifs;
       ifs.open(fname, std::fstream::in);
       if (!ifs.is_open()) {
-        throw std::invalid_argument("Can't open file.");
+        throw dunedaq::opmonlib::FilePublishError(ERS_HERE, "Can't open file!");
       }
       raw_commands_ = json::parse(ifs);
     } catch (const std::exception& ex) {
-       std::cout << "Parsing error. " << std:: endl;
-      //throw dunedaq::cmdlib::CommandParserError(ERS_HERE, ex.what());
+      throw dunedaq::opmonlib::FilePublishError(ERS_HERE, ex.what());
     }
   }
   
