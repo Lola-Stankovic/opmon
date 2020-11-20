@@ -24,7 +24,7 @@ daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
 ##############################################################################
 # Integration tests
 
-daq_add_application(opmlib_test opm_test.cpp TEST LINK_LIBRARIES opmonlib)
+daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # No unit tests written
