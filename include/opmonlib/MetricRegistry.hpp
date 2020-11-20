@@ -1,5 +1,5 @@
-#ifndef METRIC_REGISTRY_H_
-#define METRIC_REGISTRY_H_
+#ifndef OPMONLIB_INCLUDE_OPMONLIB_METRICREGISTRY_HPP_
+#define OPMONLIB_INCLUDE_OPMONLIB_METRICREGISTRY_HPP_
 
 #include <iostream>
 #include <string>
@@ -42,7 +42,7 @@ public:
     StringSet::iterator s_itt(metric_names_.find(metricName));
     if (s_itt != metric_names_.end()) {
       std::reference_wrapper<T> value = dynamic_cast<MetricRef<T>&>(*metric_set[metricName]).getValue();
-      std::cout << "MetricRegistry::getValueOfMetric() -> " << value.get() << '\n';
+      ERS_INFO("MetricRegistry::getValueOfMetric() -> " << value.get());
     } else {
       ers::error(MetricRegistryError(ERS_HERE, metricName + " doesn't exist."));
     }
@@ -63,4 +63,4 @@ public:
 };
 
 }
-#endif /* METRIC_REGISTRY_H_ */
+#endif

@@ -35,30 +35,11 @@ void
 MetricMonitor::setupPublisher(const std::string& source, 
                               const std::map<std::string, std::string>& parameters)
 {
-  std::cout << "Setting a publisher!" << std::endl;
   if (metric_publish_ == nullptr) {
     metric_publish_ = makeMetricPublish(source, parameters);
   } else {
     ers::error(SetupPublisherError(ERS_HERE, "setupPublisher should be called once."));
   }
-}
-
-template <typename T> void 
-MetricMonitor::registerMetric(const std::string& metricName, std::reference_wrapper<T> myMetric)
-{
-  MetricRegistry::getInstance().registerMetric<T>(metricName,  myMetric);
-}
-
-void
-MetricMonitor::unregisterMetric(const std::string& metricName)
-{  
-  MetricRegistry::getInstance().unregisterMetric(metricName);
-}
-
-template <typename T> void
-MetricMonitor::getValueOfMetric(const std::string& metricName)
-{
-  MetricRegistry::getInstance().getValueOfMetric<T>(metricName);
 }
 
 double
@@ -89,13 +70,13 @@ void
 MetricMonitor::publishMetrics(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics)
 { 
   for (auto itr = metrics.begin(), itr_end = metrics.end(); itr != itr_end; ++itr) {
-      std::string metric_name = itr->first;
-      double metric_value = 0;
-      // cout<< (*itr->second).getTypeName()<<'\n';
-      metric_value = getValue(itr->second);
-      std::cout<< "Metric name:" << metric_name << "\n";
-      std::cout<< "Metric value:" << metric_value << "\n";
-      metric_publish_->publishMetric(metric_name, application_name_, host_name_,  metric_value);
+    std::string metric_name = itr->first;
+    double metric_value = 0;
+  
+    metric_value = getValue(itr->second);
+    ERS_INFO("Metric name:" << metric_name);
+    ERS_INFO("Metric value:" << metric_value);
+    metric_publish_->publishMetric(metric_name, application_name_, host_name_,  metric_value);
   }
 }
 
@@ -103,12 +84,10 @@ double
 MetricMonitor::publishThread()
 {
   double exec_time = 0; 
-  std::cout << "Going to sleep 1s...\n";
+  ERS_INFO("Going to sleep 1s...");
   std::this_thread::sleep_for(1s); 
   try {  
     auto start = std::chrono::high_resolution_clock::now();        
-    std::cout << "The thread published the metrics " << "\n";
-  
     publishMetrics(MetricRegistry::getInstance().getMetrics());
     auto end = std::chrono::high_resolution_clock::now();
     exec_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -128,7 +107,7 @@ void
 MetricMonitor::monitor(std::map<std::string, std::shared_ptr<MetricRefInterface>> metrics) 
 {
   for (uint64_t j=0; j<number_of_threads_; j++) {
-    std::cout << "Creating new thread \n" ;
+    ERS_INFO("Creating new thread:");
     publishMetrics(metrics);
     //threads_.emplace_back(&MetricMonitor::publishThread, this);
   }
@@ -137,16 +116,16 @@ MetricMonitor::monitor(std::map<std::string, std::shared_ptr<MetricRefInterface>
     thread.join();
   }
 
-  std::cout<<"### Finished monitoring \n" ;
-  std::cout << "\n================ Statistics ================\n";
-  std::cout << "Number of threads: " << number_of_threads_ << "\n" ; 
+  ERS_INFO("### Finished monitoring");
+  ERS_INFO("================ Statistics ================");
+  ERS_INFO("Number of threads: " << number_of_threads_ ); 
 
   /*
     for (auto &f: threads_) {
       auto s = f.get();
-       std::cout << "Execution time [ms]: " << s << "\n";  
+      ERS_INFO("Execution time [ms]: " << s << "\n");  
     }
   */
 
-  std::cout << "\n============================================\n";
+  ERS_INFO("============================================");
 }                                                                    

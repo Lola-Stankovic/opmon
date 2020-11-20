@@ -40,8 +40,7 @@ public:
   void
   publishMetric(const std::string& metricName, const std::string& application_name,
                 const std::string& host_name,double metric_value)
-  {
-    std::cout << "Publishing metrics to a file!" << std::endl;	
+  {	
     json logging;
     logging["user"] = "username";
     logging["machine"] = "hostname";
@@ -50,9 +49,6 @@ public:
     logging["application_name"] = application_name;
     logging["host_name"] = host_name;
     logging["metric_value"] = metric_value;
-
-    /*std::cout << logging.dump(4) << std::endl;
-    std::cout << std::setw(4) << logging << endl;*/ 
 
     ofs_ << logging.dump(4) << std::endl; //4 spaces to indent
 

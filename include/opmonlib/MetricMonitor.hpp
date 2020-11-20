@@ -1,5 +1,5 @@
-#ifndef METRIC_MONITOR_H_
-#define METRIC_MONITOR_H_
+#ifndef OPMONLIB_INCLUDE_OPMONLIB_METRICMONITOR_HPP_
+#define OPMONLIB_INCLUDE_OPMONLIB_METRICMONITOR_HPP_
 
 #include <iostream>
 #include <string>
@@ -67,4 +67,4 @@ makeMetricPublish(const std::string& source, const std::map<std::string, std::st
 
 }
 
-#endif /* METRIC_MONITOR_H_ */
+#endif

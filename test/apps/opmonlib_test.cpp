@@ -24,7 +24,7 @@ int main(int /*argc*/, char** /*argv*/)
   mmonitor.setupPublisher("file", parameters);
 
   MetricRegistry mregistry = MetricRegistry::getInstance();
-  mregistry.registerMetric<std::atomic<float>>("Temperature",std::ref(myMetric));
+  mregistry.registerMetric<std::atomic<float>>("Temperature", std::ref(myMetric));
   mregistry.getValueOfMetric<std::atomic<float>>("Temperature");
   mregistry.registerMetric<std::atomic<int>>("Humidity", std::ref(myMetric_int));
   mregistry.getValueOfMetric<std::atomic<int>>("Humidity");
