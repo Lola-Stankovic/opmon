@@ -20,11 +20,6 @@ int main(int /*argc*/, char** /*argv*/)
   MetricMonitor mmonitor(1, 1, "HostName",  "AppName");
 
   std::map<std::string, std::string> parameters;
-  /*parameters.insert({"influxdbUri", "localhost"});
-  parameters.insert({"databaseName", "prometheus_lola"});
-  parameters.insert({"portNumber", "8086"});
-  mmonitor.setupPublisher("influxdb", parameters);*/
-
   parameters.insert({"fileName", "metric_output.json"});
   mmonitor.setupPublisher("file", parameters);
 
