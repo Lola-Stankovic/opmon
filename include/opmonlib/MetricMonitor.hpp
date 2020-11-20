@@ -52,7 +52,7 @@ private:
 };
 
 std::shared_ptr<MetricPublish>
-makeMetricPublish(const std::string& source, std::map<std::string, std::string> par)
+makeMetricPublish(const std::string& source, const std::map<std::string, std::string>& par)
 {
   std::string plugin_name = source + "MetricPublish";
   static cet::BasicPluginFactory bpf("duneMetricPublish", "make"); 

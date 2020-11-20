@@ -24,12 +24,12 @@ using namespace std::chrono_literals;
 class influxdbMetricPublish : public MetricPublish
 {
 public:
-  explicit influxdbMetricPublish(std::map<std::string, std::string> par)
+  explicit influxdbMetricPublish(const std::map<std::string, std::string>& par)
   {
     std::string uri;
-    uri = std::string("http://" + par["influxdbUri"] + ":" + par["databaseName"] +
-      "/write?db=" + par["portNumber"]);
-    setParameters(std::stoi(par["portNumber"]), par["databaseName"], par["influxdbUri"]);
+    uri = std::string("http://" + par.at("influxdbUri") + ":" + par.at("databaseName") +
+      "/write?db=" + par.at("portNumber"));
+    setParameters(std::stoi(par.at("portNumber")), par.at("databaseName"), par.at("influxdbUri"));
   }
 
   void
@@ -55,7 +55,8 @@ public:
     .timestamp(timeSinceEpochMillisec())
     .post_http(si);
   }
-  const int
+
+  int
   getPort()
   {
     return port_;
