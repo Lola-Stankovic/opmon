@@ -1,6 +1,4 @@
-# opmonlib
-
-# opmonlib - Operational Monitoring Package
+# opmonlib - Operational Monitoring library
 
 ### Building and running examples:
 
