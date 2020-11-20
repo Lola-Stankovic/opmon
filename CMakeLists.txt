@@ -15,24 +15,16 @@ set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers nlohmann_json::nlo
 # Main library
 
 daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
-#daq_add_library (MetricMonitor.cpp MetricRegistry.cpp DataRetrieval.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
-
 
 ##############################################################################
 # Plugins
 
-daq_add_plugin(influxdbMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
 daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # Integration tests
 
-
 daq_add_application(opmlib_test opm_test.cpp TEST LINK_LIBRARIES opmonlib)
-daq_add_application(opmlib_retrieval opm_retrieval.cpp TEST LINK_LIBRARIES opmonlib)
-
-
-
 
 ##############################################################################
 # No unit tests written
