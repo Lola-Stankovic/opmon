@@ -11,7 +11,6 @@
 
 #include "opmonlib/MetricPublish.hpp"
 #include "opmonlib/Issues.hpp"
-#include "influxdb.hpp"
 
 #include <ers/ers.h>
 #include <nlohmann/json.hpp>
