@@ -5,8 +5,8 @@
 #include <future>
 #include <thread>
 
-#include "opmlib/MetricRegistry.hpp"
-#include "opmlib/MetricMonitor.hpp"
+#include "opmonlib/MetricRegistry.hpp"
+#include "opmonlib/MetricMonitor.hpp"
 
 using namespace dunedaq::opmonlib;
 

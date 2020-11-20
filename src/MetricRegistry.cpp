@@ -9,7 +9,7 @@
 #include <thread>
 #include <set>
 
-#include "opmlib/MetricRegistry.hpp"
+#include "opmonlib/MetricRegistry.hpp"
 
 using namespace dunedaq::opmonlib;
 

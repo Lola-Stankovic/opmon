@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <stdio.h>
 
-#include "opmlib/MetricPublish.hpp"
+#include "opmonlib/MetricPublish.hpp"
 
 using namespace dunedaq::opmonlib;
 using namespace std::chrono_literals;

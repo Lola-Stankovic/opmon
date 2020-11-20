@@ -11,8 +11,8 @@
 #include <set>
 #include <chrono>
 
-#include "opmlib/MetricRegistry.hpp"
-#include "opmlib/MetricMonitor.hpp"
+#include "opmonlib/MetricRegistry.hpp"
+#include "opmonlib/MetricMonitor.hpp"
 
 using namespace dunedaq::opmonlib;
 using namespace std;

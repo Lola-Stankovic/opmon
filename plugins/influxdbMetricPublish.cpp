@@ -11,7 +11,8 @@
 #include <cstdint>
 #include <stdio.h>
 
-#include "opmlib/MetricPublish.hpp"
+#include "opmonlib/MetricPublish.hpp"
+#include "opmonlib/Issues.hpp"
 #include "influxdb.hpp"
 
 #include <ers/ers.h>
