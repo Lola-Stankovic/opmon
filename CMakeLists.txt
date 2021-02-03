@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.12)
 project(opmonlib VERSION 0.0.0)
 
-find_package(daq-buildtools 1.2.1 REQUIRED)
+find_package(daq-cmake REQUIRED)
 
 daq_setup_environment()
 
 find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(appfwk REQUIRED)
 
 set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers nlohmann_json::nlohmann_json)
 
@@ -25,6 +26,7 @@ daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
 # Integration tests
 
 daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
+daq_add_application(test_infocollector test_infocollector.cpp TEST LINK_LIBRARIES nlohmann_json::nlohmann_json appfwk::appfwk)
 
 ##############################################################################
 # No unit tests written
