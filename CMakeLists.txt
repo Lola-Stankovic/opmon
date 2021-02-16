@@ -8,7 +8,6 @@ daq_setup_environment()
 find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(appfwk REQUIRED)
 
 set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers nlohmann_json::nlohmann_json)
 
@@ -20,12 +19,12 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
 ##############################################################################
 # Plugins
 
-daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
+#daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # Integration tests
 
-daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
+#daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # No unit tests written
