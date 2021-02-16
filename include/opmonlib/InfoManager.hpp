@@ -15,11 +15,11 @@ namespace dunedaq::opmonlib {
       void publish_info( int level );
       nlohmann::json gather_info( int level);
       void set_provider( opmonlib::InfoProvider& p );
+      void start(uint32_t interval_sec, uint32_t level);
+      void stop();
     
     private:
-      void start(uint32_t interval_sec, uint32_t level);
       void run(uint32_t interval_sec, uint32_t level);
-      void stop();
  
       mutable opmonlib::InfoProvider *m_ip = nullptr;
       std::string m_service;
