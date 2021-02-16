@@ -1,3 +1,7 @@
+#ifndef OPMONLIB_INCLUDE_OPMONLIB_INFOPROVIDER_HPP_
+#define OPMONLIB_INCLUDE_OPMONLIB_INFOPROVIDER_HPP_
+
+
 #include <iostream>
 #include "opmonlib/InfoCollector.hpp"
 
@@ -14,3 +18,6 @@ namespace dunedaq::opmonlib {
   };
 
 }
+
+
+#endif

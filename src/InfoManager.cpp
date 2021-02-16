@@ -28,21 +28,16 @@ void InfoManager::publish_info( int level ) {
 nlohmann::json InfoManager::gather_info( int level ) {
 
   nlohmann::json j;
+  dunedaq::opmonlib::InfoCollector ic;
+  m_ip->gather_stats(ic, level);       
+  j = ic.get_collected_infos();
   
-  for ( auto& [n, m] : m_modulemap) {   // How we gather stats in DAQModuleManager not sure
- 
-    dunedaq::opmonlib::InfoCollector ic;
-    m->m_ip.gather_stats(ic, level);       
-    j[m->get_name()] = ic.get_collected_infos();
- 
-  }
-
   return j;
 
 }
 
 
-void InfoManager::set_provider( const opmonlib::InfoProvider &p ){
+void InfoManager::set_provider( opmonlib::InfoProvider &p ){
 
   // Set the data member to point to selected InfoProvider
   m_ip = &p;

@@ -1,16 +1,19 @@
+#ifndef OPMONLIB_INCLUDE_OPMONLIB_INFOMANAGER_HPP_
+#define OPMONLIB_INCLUDE_OPMONLIB_INFOMANAGER_HPP_
+
 #include <iostream>
-#include "appfwk/DAQModuleManager.hpp"
+#include <nlohmann/json.hpp>
 #include "opmonlib/InfoProvider.hpp"
 
-namespace dundaq::opmonlib {
+namespace dunedaq::opmonlib {
 
-  class InfoManager {
-
+  class InfoManager 
+  {
     public:
       InfoManager( std::string service ); // Constructor, std::string is placeholder for instancing each info service
       void publish_info( int level );
       nlohmann::json gather_info( int level);
-      void set_provider( const opmonlib::InfoProvider &p );
+      void set_provider( opmonlib::InfoProvider &p );
     
     private:
       uint32_t m_time_interval_sec;
@@ -22,4 +25,4 @@ namespace dundaq::opmonlib {
 
 }
 
-
+#endif

@@ -1,16 +1,16 @@
 #include <iostream>
 #include <string>
 #include <chrono>
-#include "InfoCollector.hpp"
+#include "opmonlib/InfoCollector.hpp"
 
 using namespace dunedaq::opmonlib;
-using namespace src;
+using namespace std;
 
-void add( I&& infoclass ){
+template<typename I> void InfoCollector::add( I&& infoclass ){
  
-  m_infos[infoclass.get_classname()] = nlohmann::json{
+  m_infos.push_back(nlohmann::json{
     {"time", std::chrono::system_clock::now()},
-    {"data", infoclass}};
+    {"data", infoclass}});
 
 }
 
