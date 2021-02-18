@@ -21,7 +21,7 @@ void InfoManager::publish_info( int level ) {
 
   nlohmann::json j = gather_info(level);
   
-  std::cout << "Something Interesting: " << j.dump() << std::endl;  // print json?
+  std::cout <<  j.dump(2) << std::endl;  // print json?
 
 }
 
