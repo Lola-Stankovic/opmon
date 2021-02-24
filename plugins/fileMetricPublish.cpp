@@ -12,9 +12,18 @@
 #include "opmonlib/MetricPublish.hpp"
 #include "opmonlib/Issues.hpp"
 
-#include <ers/ers.h>
+#include <logging/Logging.hpp>
 #include <nlohmann/json.hpp>
 #include <cetlib/BasicPluginFactory.h>
+
+namespace {
+ERS_DECLARE_ISSUE(opmonlib, CannotPublishToFile,
+                 "Accessing file " << fname<< " failed: " << error,
+                 ((std::string)fname))
+                 ((std::string)error))
+
+}
+
 
 using namespace dunedaq::opmonlib;
 using namespace std::chrono_literals;
@@ -30,10 +39,10 @@ public:
     try {
       ofs_.open(file_name_, std::ios::out);
       if (!ofs_.is_open()) {
-        throw dunedaq::opmonlib::FilePublishError(ERS_HERE, "Can't open file!");
+        throw dunedaq::opmonlib::CannotPublishToFile(ERS_HERE, file_name_, "Can't open file!");
       }
     } catch (const std::exception& ex) {
-      throw dunedaq::opmonlib::FilePublishError(ERS_HERE, ex.what());
+      throw dunedaq::opmonlib::CannotPublishToFile(ERS_HERE, file_name_, ex.what());
     }
   }
   
