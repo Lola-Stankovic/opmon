@@ -48,7 +48,8 @@ void InfoManager::set_provider( opmonlib::InfoProvider& p ){
 
 void InfoManager::start(uint32_t interval_sec, uint32_t level) {
   m_running.store(true);
-  m_thread = std::thread(&InfoManager::run, this, interval_sec, level);
+  if(interval_sec > 0)
+    m_thread = std::thread(&InfoManager::run, this, interval_sec, level);
 }
 
 void InfoManager::run(uint32_t interval_sec, uint32_t level) { 
