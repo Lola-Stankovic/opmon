@@ -20,7 +20,7 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
 ##############################################################################
 # Plugins
 
-#daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
+#daq_add_plugin(fileMetricPublish duneMetricPublish stdoutOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # Integration tests
