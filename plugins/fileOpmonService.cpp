@@ -32,16 +32,12 @@ class fileOpmonService : public OpmonService
         if (!m_ofs.is_open()) {
            ers::error(BadFile(ERS_HERE, fname));
         } 
-        else {
-           TLOG() << "Opmon setup using file plugin";
-        }
     }
 
     void publish( nlohmann::json j )
     {
         if(m_ofs.is_open()) {  
             m_ofs << j.dump() << std::endl << std::flush;
-            std::cout << j.dump() << std::endl;
         }
         else {
             TLOG() << "Opmon file is not open";
