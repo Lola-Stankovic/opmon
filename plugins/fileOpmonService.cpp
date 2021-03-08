@@ -3,9 +3,8 @@
 #include <nlohmann/json.hpp>
 
 #include "opmonlib/OpmonService.hpp"
-#include <cetlib/BasicPluginFactor.h>
 
-namespace duendaq {
+namespace dunedaq {
 
      ERS_DECLARE_ISSUE(opmonlib, BadFile,
                      "Can not open file to store opmon data: " << filename,
@@ -14,7 +13,7 @@ namespace duendaq {
 }
 
 
-using namespace dunedaq::opmonlib;
+namespace dunedaq::opmonlib {
 
 class fileOpmonService : public OpmonService
 {
@@ -30,15 +29,15 @@ class fileOpmonService : public OpmonService
         } 
 
         m_ofs.open(fname, std::fstream::out);
-        if (!ofs.is_open()) {
-           ers::error(BadFile(ERS_HERE, fname);
+        if (!m_ofs.is_open()) {
+           ers::error(BadFile(ERS_HERE, fname));
         } 
     }
 
-    void publish( nlohmann::json j )
+    void publish( nlohmann::json /*j*/ )
     {
         if(m_ofs.is_open()) {  
-           m_ofs << dump();
+          //  m_ofs << dump();
         }
     }
   protected:
@@ -47,9 +46,11 @@ class fileOpmonService : public OpmonService
     std::ofstream m_ofs;
 };
 
+}
+
 extern "C" {
   std::shared_ptr<dunedaq::opmonlib::OpmonService> make(std::string service) {
-    return std::shared_ptr<dunedaq::opmonlib::OpmonService>(new fileOpmonService(service));
+    return std::shared_ptr<dunedaq::opmonlib::OpmonService>(new dunedaq::opmonlib::fileOpmonService(service));
   }
 }
 
