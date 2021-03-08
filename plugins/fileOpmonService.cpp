@@ -28,16 +28,23 @@ class fileOpmonService : public OpmonService
           fname = uri.substr(sep+3);
         } 
 
-        m_ofs.open(fname, std::fstream::out);
+        m_ofs.open(fname, std::ios::out | std::ios::app);
         if (!m_ofs.is_open()) {
            ers::error(BadFile(ERS_HERE, fname));
         } 
+        else {
+           TLOG() << "Opmon setup using file plugin";
+        }
     }
 
-    void publish( nlohmann::json /*j*/ )
+    void publish( nlohmann::json j )
     {
         if(m_ofs.is_open()) {  
-          //  m_ofs << dump();
+            m_ofs << j.dump() << std::endl << std::flush;
+            std::cout << j.dump() << std::endl;
+        }
+        else {
+            TLOG() << "Opmon file is not open";
         }
     }
   protected:
