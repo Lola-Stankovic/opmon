@@ -5,6 +5,7 @@
 
 #include <cetlib/BasicPluginFactory.h>
 #include <cetlib/compiler_macros.h>
+#include "logging/Logging.hpp"
 #include "Issues.hpp"
 
 #ifndef EXTERN_C_FUNC_DECLARE_START
@@ -18,12 +19,12 @@
    * @param klass Class to be defined as a Operational Monitoring Service
    */
 
-#define DEFINE_DUNE_OPMON_SERVICE(klass)                                                                            \
-  EXTERN_C_FUNC_DECLARE_START                                                                                          \
-  std::unique_ptr<dunedaq::opmonlib::OpmonService> make()                                                             \
-  {                                                                                                                    \
-    return std::unique_ptr<dunedaq::opmonlib::OpmonService>(new klass());                                             \
-  }                                                                                                                    \
+#define DEFINE_DUNE_OPMON_SERVICE(klass)                                                   \
+  EXTERN_C_FUNC_DECLARE_START                                                              \
+  std::unique_ptr<dunedaq::opmonlib::OpmonService> make()                                  \
+  {                                                                                        \
+    return std::unique_ptr<dunedaq::opmonlib::OpmonService>(new klass());                  \
+  }                                                                                        \
 } 
 
 
@@ -54,11 +55,11 @@ namespace dunedaq::opmonlib
   std::shared_ptr<OpmonService>
     makeOpmonService(std::string const& service)
     {
-      std::cout << "SERVICE = " << service << std::endl;
+      TLOG() << "SERVICE = " << service;
       auto sep = service.find("://");
       std::string scheme;
       if (sep == std::string::npos) { // simple path
-	scheme = "stdin";
+	scheme = "stdout";
       } else { // with scheme
 	scheme = service.substr(0, sep);
       }

@@ -10,22 +10,12 @@ using namespace dunedaq::opmonlib;
 class stdoutOpmonService : public OpmonService
 {
   public: 
-    explicit stdoutOpmonService(std::string service) : OpmonService(service) {
-      // Allocate resources as needed
-      auto col = uri.find_last_of(':');
-      auto sep = uri.find("://");
-      std::string fname;
-      if (col == std::string::npos || sep == std::string::npos) { // assume filename
-	fname = uri;
-      } else {
-	fname = uri.substr(sep+3);
-      }
+    explicit stdoutOpmonService(std::string uri) : OpmonService(uri) {
     }
 
     void publish( nlohmann::json j )
     {
-      std::cout << "Dumping json..." << std::endl;
-      std::cout << j.dump(2) << std::endl;
+      std::cout << j.dump() << std::endl;
     }
 
   protected:
