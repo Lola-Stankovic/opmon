@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(opmonlib VERSION 0.0.0)
+project(opmonlib VERSION 1.0.0)
 
 find_package(daq-cmake REQUIRED)
 
@@ -20,7 +20,8 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
 ##############################################################################
 # Plugins
 
-#daq_add_plugin(fileMetricPublish duneMetricPublish LINK_LIBRARIES opmonlib)
+daq_add_plugin(stdoutOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
+daq_add_plugin(fileOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # Integration tests

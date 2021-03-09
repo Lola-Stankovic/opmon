@@ -4,7 +4,6 @@
 include(CMakeFindDependencyMacro)
 
 find_dependency(cetlib)
-find_dependency(TBB)            # must be capitalized
 find_dependency(nlohmann_json)
 find_dependency(ers)
 find_dependency(logging)

@@ -3,6 +3,7 @@
 
 #include <nlohmann/json.hpp>
 #include "opmonlib/InfoProvider.hpp"
+#include "opmonlib/OpmonService.hpp"
 #include <atomic>
 #include <thread>
 
@@ -11,7 +12,8 @@ namespace dunedaq::opmonlib {
   class InfoManager 
   {
     public:
-      InfoManager( std::string service ); // Constructor, std::string is placeholder for instancing each info service
+      InfoManager( std::string service ); // Constructor
+      InfoManager( dunedaq::opmonlib::OpmonService& service );
       void publish_info( int level );
       nlohmann::json gather_info( int level);
       void set_provider( opmonlib::InfoProvider& p );
@@ -22,7 +24,7 @@ namespace dunedaq::opmonlib {
       void run(uint32_t interval_sec, uint32_t level);
  
       mutable opmonlib::InfoProvider *m_ip = nullptr;
-      std::string m_service;
+      std::shared_ptr<opmonlib::OpmonService> m_service;
       std::atomic<bool> m_running; 
       std::thread m_thread;
 
