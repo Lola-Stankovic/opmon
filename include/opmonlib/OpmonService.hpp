@@ -5,6 +5,8 @@
 
 #include <cetlib/BasicPluginFactory.h>
 #include <cetlib/compiler_macros.h>
+#include <nlohmann/json.hpp>
+
 #include "logging/Logging.hpp"
 #include "Issues.hpp"
 

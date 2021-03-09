@@ -10,16 +10,29 @@ namespace dunedaq::opmonlib {
   {
   public: 
     explicit stdoutOpmonService(std::string uri) : OpmonService(uri) {
+        auto sep = uri.find("://");
+        m_style="flat";
+        if (sep != std::string::npos) { // assume filename
+          m_style = uri.substr(sep+3);
+        }
     }
 
     void publish( nlohmann::json j )
     {
-      std::cout << j.dump() << std::endl;
+      if(m_style == "flat") {
+         std::cout << std::setw(4) << j.flatten() << '\n';
+      } 
+      else if (m_style == "formatted") { 
+         std::cout << j.dump(2) << std::endl;
+      else {
+         std::cout << j.dump() << std::endl;
+      }
     }
 
   protected:
     typedef OpmonService inherited;
-
+  private:
+    std::string m_style;
 };
 
 }
