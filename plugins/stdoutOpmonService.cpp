@@ -24,6 +24,7 @@ namespace dunedaq::opmonlib {
       } 
       else if (m_style == "formatted") { 
          std::cout << j.dump(2) << std::endl;
+      }
       else {
          std::cout << j.dump() << std::endl;
       }
