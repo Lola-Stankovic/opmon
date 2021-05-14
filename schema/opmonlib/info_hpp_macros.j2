@@ -7,7 +7,7 @@ using {{t.name}} = {{model.lang.types.sequence}}<{{t["items"]|replace(".","::")}
 
 {% macro declare_record(model, t) %}
 struct {{t.name}} {
-    static const class_name = "{{"::".join(model.path)+"::"+t.name}}";
+    inline static const std::string class_name = std::string("{{"::".join(model.path)+"::"+t.name}}");
 
     {% for f in t.fields %}
     // @brief {{f.doc}}
@@ -25,7 +25,7 @@ struct {{t.name}} {
 {%- endmacro -%}
 
 {% macro declare_number(model, t) %}
-{{ cppm.declare_boolean(model, t) }}
+{{ cppm.declare_number(model, t) }}
 {%- endmacro -%}
 
 {% macro declare_any(model, t) %}
