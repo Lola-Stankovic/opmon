@@ -1,0 +1,37 @@
+{# This provides some helper macros for C++ templates.  See also moo.templates.cpp #}
+{% import 'ocpp.hpp.j2' as cppm %}
+
+{% macro declare_sequence(model, t) %}
+using {{t.name}} = {{model.lang.types.sequence}}<{{t["items"]|replace(".","::")}}>;
+{%- endmacro -%}
+
+{% macro declare_record(model, t) %}
+struct {{t.name}} {
+    inline static const std::string class_name = std::string("{{"::".join(model.path)+"::"+t.name}}");
+
+    {% for f in t.fields %}
+    // @brief {{f.doc}}
+    {{f.item|listify|relpath(model.path)|join("::")}} {{f.name}} = {{cpp.field_default(model.all_types, f)}};
+    {% endfor %}
+};
+{%- endmacro -%}
+
+{% macro declare_boolean(model, t) %}
+{{ cppm.declare_boolean(model, t) }}
+{%- endmacro -%}
+
+{% macro declare_string(model, t) %}
+{{ cppm.declare_string(model, t) }}
+{%- endmacro -%}
+
+{% macro declare_number(model, t) %}
+{{ cppm.declare_number(model, t) }}
+{%- endmacro -%}
+
+{% macro declare_any(model, t) %}
+{{ cppm.declare_any(model, t) }}
+{%- endmacro -%}
+
+{% macro declare_enum(model, t) %}
+{{ cppm.declare_enum(model, t) }}
+{%- endmacro -%}
