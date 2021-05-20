@@ -17,5 +17,8 @@ outputs formatted json objects
 outputs a json object in one line
 - file:///file/path/file_name.out
 
-### Building and running examples:
+[Instructions for DAQ module users](Instructions-for-DAQ-module-users.md)
+
+### Building and running examples (_under construction_)
+
 
