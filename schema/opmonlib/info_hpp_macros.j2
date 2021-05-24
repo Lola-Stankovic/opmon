@@ -2,7 +2,7 @@
 {% import 'ocpp.hpp.j2' as cppm %}
 
 {% macro declare_sequence(model, t) %}
-using {{t.name}} = {{model.lang.types.sequence}}<{{t["items"]|replace(".","::")}}>;
+{{ cppm.declare_sequence(model, t) }}
 {%- endmacro -%}
 
 {% macro declare_record(model, t) %}
