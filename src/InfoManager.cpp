@@ -29,14 +29,16 @@ void InfoManager::publish_info( int level )
 nlohmann::json InfoManager::gather_info( int level ) 
 {
 
-  nlohmann::json j;
+  nlohmann::json j_info, j_parent;
   dunedaq::opmonlib::InfoCollector ic;
   // FIXME: check against nullptr!
   m_ip->gather_stats(ic, level);       
-  j = ic.get_collected_infos();
-  
-  return j;
+  j_info = ic.get_collected_infos();
 
+  j_parent[s_parent_tag] = {};
+  j_parent[s_parent_tag].swap(j_info[dunedaq::opmonlib::InfoCollector::s_children_tag]);
+
+  return j_parent;
 }
 
 

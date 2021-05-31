@@ -12,6 +12,8 @@ namespace dunedaq::opmonlib {
   class InfoManager 
   {
     public:
+      static inline constexpr char s_parent_tag[]{ "__parent" }; // Call it "top"?
+
       InfoManager( std::string service ); // Constructor
       InfoManager( dunedaq::opmonlib::OpmonService& service );
       void publish_info( int level );
