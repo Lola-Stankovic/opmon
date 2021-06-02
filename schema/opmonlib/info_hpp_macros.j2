@@ -7,7 +7,7 @@
 
 {% macro declare_record(model, t) %}
 struct {{t.name}} {
-    inline static const std::string class_name = std::string("{{".".join(model.path)+"."+t.name}}");
+    inline static const std::string info_type = std::string("{{".".join(model.path)+"."+t.name}}");
 
     {% for f in t.fields %}
     // @brief {{f.doc}}

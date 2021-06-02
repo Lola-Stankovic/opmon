@@ -1,23 +1,20 @@
 #ifndef OPMONLIB_INCLUDE_OPMONLIB_INFOPROVIDER_HPP_
 #define OPMONLIB_INCLUDE_OPMONLIB_INFOPROVIDER_HPP_
 
-
-#include <iostream>
 #include "opmonlib/InfoCollector.hpp"
+#include <iostream>
 
 namespace dunedaq::opmonlib {
 
-  class InfoProvider {
+class InfoProvider
+{
 
-    public:
+public:
+  virtual void gather_stats(opmonlib::InfoCollector& ic, int level) = 0;
 
-      virtual void gather_stats( opmonlib::InfoCollector &ic, int level ) = 0;
-
-    private:
-
-  };
+private:
+};
 
 }
-
 
 #endif
