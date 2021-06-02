@@ -1,9 +1,19 @@
-#include <iostream>
-#include <string>
+/**
+ * @file InfoManager.cpp
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
+#include "opmonlib/InfoManager.hpp"
 
 #include "opmonlib/InfoCollector.hpp"
 #include "opmonlib/InfoManager.hpp"
 #include "opmonlib/OpmonService.hpp"
+
+#include <iostream>
+#include <string>
 
 using namespace dunedaq::opmonlib;
 using namespace std;
@@ -48,7 +58,7 @@ InfoManager::set_provider(opmonlib::InfoProvider& p)
 }
 
 void
-InfoManager::start(uint32_t interval_sec, uint32_t level)
+InfoManager::start(uint32_t interval_sec, uint32_t level) // NOLINT(build/unsigned)
 {
   m_running.store(true);
   if (interval_sec > 0)
@@ -56,9 +66,9 @@ InfoManager::start(uint32_t interval_sec, uint32_t level)
 }
 
 void
-InfoManager::run(uint32_t interval_sec, uint32_t level)
+InfoManager::run(uint32_t interval_sec, uint32_t level) // NOLINT(build/unsigned)
 {
-  uint32_t countdown = 10 * interval_sec;
+  uint32_t countdown = 10 * interval_sec; // NOLINT(build/unsigned)
   while (m_running.load()) {
     if (countdown > 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));

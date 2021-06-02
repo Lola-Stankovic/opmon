@@ -1,3 +1,11 @@
+/**
+ * @file InfoCollector.hpp
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef OPMONLIB_INCLUDE_OPMONLIB_INFOCOLLECTOR_HPP_
 #define OPMONLIB_INCLUDE_OPMONLIB_INFOCOLLECTOR_HPP_
 
@@ -39,6 +47,6 @@ private:
   nlohmann::json m_infos;
 };
 
-}
+} // namespace dunedaq::opmonlib
 
-#endif
+#endif // OPMONLIB_INCLUDE_OPMONLIB_INFOCOLLECTOR_HPP_

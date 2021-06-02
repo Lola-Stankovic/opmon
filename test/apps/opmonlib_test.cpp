@@ -1,12 +1,21 @@
+/**
+ * @file opmonlib_test.cpp
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
+#include "opmonlib/MetricMonitor.hpp"
+#include "opmonlib/MetricRegistry.hpp"
+
 #include <atomic>
 #include <chrono>
 #include <future>
 #include <iostream>
+#include <map>
 #include <string>
 #include <thread>
-
-#include "opmonlib/MetricMonitor.hpp"
-#include "opmonlib/MetricRegistry.hpp"
 
 using namespace dunedaq::opmonlib;
 

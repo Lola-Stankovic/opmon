@@ -1,14 +1,24 @@
-#include <fstream>
-#include <nlohmann/json.hpp>
-#include <string>
+/**
+ * @file fileOpmonService.cpp
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
 
 #include "opmonlib/OpmonService.hpp"
+
+#include <nlohmann/json.hpp>
+
+#include <fstream>
+#include <memory>
+#include <string>
 
 namespace dunedaq {
 
 ERS_DECLARE_ISSUE(opmonlib, BadFile, "Can not open file to store opmon data: " << filename, ((std::string)filename))
 
-}
+} // namespace dunedaq
 
 namespace dunedaq::opmonlib {
 
@@ -49,7 +59,7 @@ private:
   std::ofstream m_ofs;
 };
 
-}
+} // namespace dunedaq::opmonlib
 
 extern "C"
 {

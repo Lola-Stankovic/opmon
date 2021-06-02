@@ -1,16 +1,28 @@
+/**
+ * @file OpmonService.hpp
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
+
 #ifndef OPMONLIB_INCLUDE_OPMONLIB_OPMONSERVICE_HPP_
 #define OPMONLIB_INCLUDE_OPMONLIB_OPMONSERVICE_HPP_
 
-#include <iostream>
+#include "Issues.hpp"
+
+#include "logging/Logging.hpp"
 
 #include <cetlib/BasicPluginFactory.h>
 #include <cetlib/compiler_macros.h>
 #include <nlohmann/json.hpp>
 
-#include "Issues.hpp"
-#include "logging/Logging.hpp"
+#include <iostream>
+#include <memory>
+#include <string>
 
 #ifndef EXTERN_C_FUNC_DECLARE_START
+// NOLINTNEXTLINE(build/define_used)
 #define EXTERN_C_FUNC_DECLARE_START                                                                                    \
   extern "C"                                                                                                           \
   {
@@ -21,6 +33,7 @@
  * @param klass Class to be defined as a Operational Monitoring Service
  */
 
+// NOLINTNEXTLINE(build/define_used)
 #define DEFINE_DUNE_OPMON_SERVICE(klass)                                                                               \
   EXTERN_C_FUNC_DECLARE_START                                                                                          \
   std::unique_ptr<dunedaq::opmonlib::OpmonService> make()                                                              \
