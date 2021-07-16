@@ -48,7 +48,7 @@ class OpmonService
 {
 public:
   explicit OpmonService(std::string /*service*/) {}
-  ~OpmonService();
+  virtual ~OpmonService() = default;
   OpmonService(const OpmonService&) = delete;            ///< OpmonService is not copy-constructible
   OpmonService& operator=(const OpmonService&) = delete; ///< OpmonService is not copy-assignable
   OpmonService(OpmonService&&) = delete;                 ///< OpmonService is not move-constructible
