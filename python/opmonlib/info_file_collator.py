@@ -32,14 +32,24 @@ def cli(output_file, json_files):
     # format is partition.objectinstance.key.time: value
 
     for jsonobj in jsons:
+        if '__parent' not in jsonobj:
+            continue
         for partition in jsonobj['__parent']:
             if partition not in data:
                 data[partition] = {}
             partitionobj = jsonobj['__parent'][partition]
+    
+            if '__children' not in partitionobj:
+                continue
+
             for objectinstance in partitionobj['__children']:
                 if objectinstance not in data[partition]:
                     data[partition][objectinstance] = {}
                 objectinstanceobj = partitionobj['__children'][objectinstance]
+            
+                if '__properties' not in objectinstanceobj:
+                    continue
+
                 for datatype in objectinstanceobj['__properties']:
                     datatypeobj = objectinstanceobj['__properties'][datatype]
                     thistime = datatypeobj['__time']
