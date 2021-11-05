@@ -13,6 +13,7 @@ namespace opmonlib {
 
 struct JSONTags
 {
+    static inline constexpr char tags[]{ "__tags" }; // parent tags
     static inline constexpr char parent[]{ "__parent" }; // Call it "top"?
     static inline constexpr char time[]{ "__time" };
     static inline constexpr char data[]{ "__data" };

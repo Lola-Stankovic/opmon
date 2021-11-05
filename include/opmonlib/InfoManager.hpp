@@ -24,12 +24,21 @@ namespace dunedaq::opmonlib {
 class InfoManager
 {
 public:
+  
   explicit InfoManager(std::string service); // Constructor
+  
   explicit InfoManager(dunedaq::opmonlib::OpmonService& service);
+  
   void publish_info(int level);
+  
   nlohmann::json gather_info(int level);
+  
   void set_provider(opmonlib::InfoProvider& p);
+  
+  void set_tags(std::map<std::string, std::string> tags);
+
   void start(uint32_t interval_sec, uint32_t level); // NOLINT(build/unsigned)
+                                                     //
   void stop();
 
 private:
@@ -37,6 +46,7 @@ private:
 
   mutable opmonlib::InfoProvider* m_ip = nullptr;
   std::shared_ptr<opmonlib::OpmonService> m_service;
+  std::map<std::string, std::string> m_tags;
   std::atomic<bool> m_running;
   std::thread m_thread;
 };
