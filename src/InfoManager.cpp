@@ -10,6 +10,7 @@
 
 #include "opmonlib/InfoCollector.hpp"
 #include "opmonlib/OpmonService.hpp"
+#include "opmonlib/JSONTags.hpp"
 
 #include <iostream>
 #include <string>
@@ -42,8 +43,8 @@ InfoManager::gather_info(int level)
   m_ip->gather_stats(ic, level);
   j_info = ic.get_collected_infos();
 
-  j_parent[s_parent_tag] = {};
-  j_parent[s_parent_tag].swap(j_info[dunedaq::opmonlib::InfoCollector::s_children_tag]);
+  j_parent[JSONTags::parent] = {};
+  j_parent[JSONTags::parent].swap(j_info[JSONTags::children]);
 
   return j_parent;
 }
