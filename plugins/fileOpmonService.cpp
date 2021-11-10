@@ -60,11 +60,5 @@ private:
 };
 
 } // namespace dunedaq::opmonlib
+DEFINE_DUNE_OPMON_SERVICE(dunedaq::opmonlib::fileOpmonService)
 
-extern "C"
-{
-  std::shared_ptr<dunedaq::opmonlib::OpmonService> make(std::string service)
-  {
-    return std::shared_ptr<dunedaq::opmonlib::OpmonService>(new dunedaq::opmonlib::fileOpmonService(service));
-  }
-}

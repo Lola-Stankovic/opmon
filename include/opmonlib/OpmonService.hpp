@@ -36,9 +36,9 @@
 // NOLINTNEXTLINE(build/define_used)
 #define DEFINE_DUNE_OPMON_SERVICE(klass)                                                                               \
   EXTERN_C_FUNC_DECLARE_START                                                                                          \
-  std::unique_ptr<dunedaq::opmonlib::OpmonService> make()                                                              \
+  std::shared_ptr<dunedaq::opmonlib::OpmonService> make(std::string service)                                           \
   {                                                                                                                    \
-    return std::unique_ptr<dunedaq::opmonlib::OpmonService>(new klass());                                              \
+    return std::shared_ptr<dunedaq::opmonlib::OpmonService>(new klass(service));                                       \
   }                                                                                                                    \
   }
 
