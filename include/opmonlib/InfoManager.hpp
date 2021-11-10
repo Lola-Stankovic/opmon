@@ -28,7 +28,7 @@ public:
   explicit InfoManager(std::string service); // Constructor
   
   explicit InfoManager(dunedaq::opmonlib::OpmonService& service);
-  
+
   void publish_info(int level);
   
   nlohmann::json gather_info(int level);
