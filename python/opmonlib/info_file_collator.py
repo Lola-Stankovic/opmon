@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import os
 import rich.traceback
@@ -41,6 +43,16 @@ def cli(output_file, json_files):
     
             if '__children' not in partitionobj:
                 continue
+
+            if '__properties' in partitionobj:
+                for datatype in partitionobj['__properties']:
+                    datatypeobj = partitionobj['__properties'][datatype]
+                    thistime = datatypeobj['__time']
+                    for key in datatypeobj['__data']:
+                        if key not in data[partition]:
+                            data[partition][key] = {}
+                        thisvalue = datatypeobj['__data'][key]
+                        data[partition][key][thistime] = thisvalue
 
             for objectinstance in partitionobj['__children']:
                 if objectinstance not in data[partition]:
