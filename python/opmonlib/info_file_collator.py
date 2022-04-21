@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import os
 import rich.traceback
@@ -31,33 +33,27 @@ def cli(output_file, json_files):
 
     # format is partition.objectinstance.key.time: value
 
-    for jsonobj in jsons:
-        if '__parent' not in jsonobj:
-            continue
-        for partition in jsonobj['__parent']:
-            if partition not in data:
-                data[partition] = {}
-            partitionobj = jsonobj['__parent'][partition]
-    
-            if '__children' not in partitionobj:
-                continue
+    def parse_children(childarr, parentobj):
+        for child in childarr:
+            if child not in parentobj:
+                parentobj[child] = {}
+            childobj = childarr[child]
 
-            for objectinstance in partitionobj['__children']:
-                if objectinstance not in data[partition]:
-                    data[partition][objectinstance] = {}
-                objectinstanceobj = partitionobj['__children'][objectinstance]
-            
-                if '__properties' not in objectinstanceobj:
-                    continue
+            if '__children' in childobj:
+                parse_children(childobj['__children'], parentobj[child])
 
-                for datatype in objectinstanceobj['__properties']:
-                    datatypeobj = objectinstanceobj['__properties'][datatype]
+            if '__properties' in childobj:
+                for datatype in childobj['__properties']:
+                    datatypeobj = childobj['__properties'][datatype]
                     thistime = datatypeobj['__time']
                     for key in datatypeobj['__data']:
-                        if key not in data[partition][objectinstance]:
-                            data[partition][objectinstance][key] = {}
+                        if key not in parentobj[child]:
+                            parentobj[child][key] = {}
                         thisvalue = datatypeobj['__data'][key]
-                        data[partition][objectinstance][key][thistime] = thisvalue
+                        parentobj[child][key][thistime] = thisvalue
+
+    for jsonobj in jsons:
+        parse_children(jsonobj['__parent'], data)
 
     json.dump(data, output_file, indent=4, sort_keys=True)
     console.log(f"Operation complete")
