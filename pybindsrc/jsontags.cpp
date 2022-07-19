@@ -22,12 +22,12 @@ void register_jsontags(py::module& m)
 {
 
   py::class_<opmonlib::JSONTags>(m,"JSONTags")   
-      .def("tags", &tags) 
-      .def("parent", &parent) 
-      .def("time", &time) 
-      .def("data", &data);
-      .def("children", &children) 
-      .def("properties", &properties); 
+    .def("tags", &JSONTags::tags) 
+    .def("parent", &JSONTags::parent) 
+    .def("time", &JSONTags::time) 
+    .def("data", &JSONTags::data)
+    .def("children", &JSONTags::children) 
+    .def("properties", &JSONTags::properties); 
 
 } 
 
