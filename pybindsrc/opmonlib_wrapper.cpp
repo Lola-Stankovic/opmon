@@ -14,12 +14,9 @@ namespace py = pybind11;
 namespace dunedaq::opmonlib {
 namespace python {
 	
-	extern void register_infocollector(py::module &);
-	extern void register_infomanager(py::module &);
-	extern void register_infoprovider(py::module &);
-	extern void register_issues(py::module &);
-	extern void register_jsontag(py::module &);
-	extern void register_opmonservice(py::module &);
+	extern void register_opmoncore(py::module &);
+	extern void register_opmonissues(py::module &);
+	extern void register_opmontags(py::module &);
 
 PYBIND11_MODULE(_daq_opmonlib_py, opmon_module) {
 
@@ -29,13 +26,9 @@ PYBIND11_MODULE(_daq_opmonlib_py, opmon_module) {
     py::module_ core_module = opmon_module.def_submodule("core");
     
     // register the components
-    dunedaq::opmonlib::python::register_infocollector(core_module);
-    dunedaq::opmonlib::python::register_infomanager(core_module);
-    dunedaq::opmonlib::python::register_infoprovider(core_module);
-    dunedaq::opmonlib::python::register_issues(core_module);
-    dunedaq::opmonlib::python::register_jsontag(core_module);
-    dunedaq::opmonlib::python::register_opmonservice(core_module);
-    
+    dunedaq::opmonlib::python::register_opmoncore(core_module);
+    dunedaq::opmonlib::python::register_opmonissues(core_module);
+    dunedaq::opmonlib::python::register_opmontags(core_module);    
 }
 
 } // namespace python
