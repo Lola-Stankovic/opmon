@@ -20,6 +20,8 @@ class InfoProvider
 public:
   virtual void gather_stats(opmonlib::InfoCollector& ic, int level) = 0;
 
+  virtual ~InfoProvider() = default;
+
 private:
 };
 
