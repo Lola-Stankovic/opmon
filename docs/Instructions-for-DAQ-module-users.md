@@ -66,7 +66,7 @@ Nested::example::get_info(opmonlib::InfoCollector& ci, int level)
 ```
 This will generate two `opmon` blocks. 
 The first of type `parentinfo::Info` associated to a `source_id` decided by upper level code, let's assume it's going to be `"parent.id"`. 
-The second block will be of type `daughterinfo::Info` and its `source_id` will be `"parent.id.daughter"`. 
+The second block will be of type `daughterinfo::Info` and its `source_id` will be `"parent.id.daughter_name"`. 
 
 Examples of this procedure can be seen in `dfmodule`, in the way the DFO publishes information related to the dfapplications: [DFO side](https://github.com/DUNE-DAQ/dfmodules/blob/0a6e39541fab66768040c19b23925ea62bc1cc94/plugins/DataFlowOrchestrator.cpp#L296-L300) and [Daughter side](https://github.com/DUNE-DAQ/dfmodules/blob/0a6e39541fab66768040c19b23925ea62bc1cc94/src/TriggerRecordBuilderData.cpp#L202). 
 
