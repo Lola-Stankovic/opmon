@@ -44,6 +44,33 @@ The timing module provides an example of how one can do this using its `InfoGath
   virtual void gather_endpoint_monitor_data(InfoGatherer<pdt::timingmon::TimingEndpointFMCMonitorData>& gatherer);
 ```
 
+## Dynamic structures
+
+The structures generated using the `opmon` schema cannot contain dynamic structures. 
+The idea being that dynamic information breaks the logic of the monitoring, i.e. it breaks the link between the source of information (`source_id`) and the information itself. 
+In order to preserve the structure of the `opmon` information and to publish dynamic information, a module needs to publish sub-component monitoring information and attach it to its parent.
+This is done creating a generic `InfoCollector` object that can be populated with a static schema content and then adding the `InfoCollector` object to the parent.
+Pseudo code is:
+```
+Nested::example::get_info(opmonlib::InfoCollector& ci, int level)
+{
+  parentinfo::Info par_info;
+  par_info.counter = ...
+  ci.add( par_info );
+  
+  opmonlib::InfoCollector tmp_ic;
+  daugtherinfo::Info info;
+  info.daugther_counter = ...
+  tmp_ic.add( info );
+  ci.add( "daughter_name", tmp_ic );
+```
+This will generate two `opmon` blocks. 
+The first of type `parentinfo::Info` associated to a `source_id` decided by upper level code, let's assume it's going to be `"parent.id"`. 
+The second block will be of type `daughterinfo::Info` and its `source_id` will be `"parent.id.daughter"`. 
+
+Examples of this procedure can be seen in `dfmodule`, in the way the DFO publishes information related to the dfapplications: [DFO side](https://github.com/DUNE-DAQ/dfmodules/blob/0a6e39541fab66768040c19b23925ea62bc1cc94/plugins/DataFlowOrchestrator.cpp#L296-L300) and [Daughter side](https://github.com/DUNE-DAQ/dfmodules/blob/0a6e39541fab66768040c19b23925ea62bc1cc94/src/TriggerRecordBuilderData.cpp#L202). 
+
+
 ## Testing
 
 The configuration of `opmonlib` is currently managed through the environment variables: `DUNEDAQ_OPMON_INTERVAL` and `DUNEDAQ_OPMON_LEVEL`. These can be seen further in `Application.cpp`:
