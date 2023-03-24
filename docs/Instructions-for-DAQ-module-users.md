@@ -53,6 +53,7 @@ In order to preserve the structure of the `opmon` information and to publish dyn
 This is done creating a generic `InfoCollector` object that can be populated with a static schema content and then adding the `InfoCollector` object to the parent.
 Pseudo code is:
 ```C++
+
 Nested::example::get_info(opmonlib::InfoCollector& ci, int level)
 {
   parentinfo::Info par_info;
@@ -64,6 +65,8 @@ Nested::example::get_info(opmonlib::InfoCollector& ci, int level)
   info.daughter_counter = ...
   tmp_ic.add( info );
   ci.add( "daughter_name", tmp_ic );
+}
+
 ```
 This will generate two `opmon` blocks. 
 The first of type `parentinfo::Info` associated to a `source_id` decided by upper level code, let's assume it's going to be `"parent.id"`. 
@@ -103,6 +106,7 @@ void TriggerRecordBuilderData::get_info(opmonlib::InfoCollector& ci, int /*level
 
   ci.add(info);
 }
+
 ```
 
 
