@@ -46,8 +46,9 @@ The timing module provides an example of how one can do this using its `InfoGath
 
 ## Dynamic structures
 
-The structures generated using the `opmon` schema cannot contain dynamic structures. 
-The idea being that dynamic information breaks the logic of the monitoring, i.e. it breaks the link between the source of information (`source_id`) and the information itself. 
+The structures generated using the `opmonlib` schema cannot contain dynamic structures, i.e. sequences and maps are not allowed. 
+The idea being that dynamic information breaks the logic of the monitoring: it breaks the link between the source of information (`source_id`) and the information itself. 
+
 In order to preserve the structure of the `opmon` information and to publish dynamic information, a module needs to publish sub-component monitoring information and attach it to its parent.
 This is done creating a generic `InfoCollector` object that can be populated with a static schema content and then adding the `InfoCollector` object to the parent.
 Pseudo code is:
@@ -59,16 +60,49 @@ Nested::example::get_info(opmonlib::InfoCollector& ci, int level)
   ci.add( par_info );
   
   opmonlib::InfoCollector tmp_ic;
-  daugtherinfo::Info info;
-  info.daugther_counter = ...
+  daughterinfo::Info info;
+  info.daughter_counter = ...
   tmp_ic.add( info );
   ci.add( "daughter_name", tmp_ic );
 ```
 This will generate two `opmon` blocks. 
 The first of type `parentinfo::Info` associated to a `source_id` decided by upper level code, let's assume it's going to be `"parent.id"`. 
 The second block will be of type `daughterinfo::Info` and its `source_id` will be `"parent.id.daughter_name"`. 
+Of course, any number of `InfoCollector` can be attached to a parent, effectively turning this procedure into having a dynamic structure. 
 
 Examples of this procedure can be seen in `dfmodule`, in the way the DFO publishes information related to the dfapplications: [DFO side](https://github.com/DUNE-DAQ/dfmodules/blob/0a6e39541fab66768040c19b23925ea62bc1cc94/plugins/DataFlowOrchestrator.cpp#L296-L300) and [Daughter side](https://github.com/DUNE-DAQ/dfmodules/blob/0a6e39541fab66768040c19b23925ea62bc1cc94/src/TriggerRecordBuilderData.cpp#L202). 
+The links point to the code itself, here are the important parts:
+```C++
+
+// DFO side: the parent that contains a number of dynamic subcomponents
+// in a map<string, TriggerRecordBuilderData> called m_dataflow_availability
+void DataFlowOrchestrator::get_info(opmonlib::InfoCollector& ci, int level) {
+
+for (auto& [name, app] : m_dataflow_availability) {
+    opmonlib::InfoCollector tmp_ic; 
+    app.get_info(tmp_ic, level);
+    ci.add(name, tmp_ic);
+  }
+}
+
+
+void TriggerRecordBuilderData::get_info(opmonlib::InfoCollector& ci, int /*level*/) {
+
+  dfapplicationinfo::Info info;
+
+  info.completed_trigger_records = m_complete_counter.exchange(0);
+  info.waiting_time = m_complete_microsecond.exchange(0);
+  info.min_completion_time = m_min_complete_time.exchange(std::numeric_limits<int64_t>::max());
+  info.max_completion_time = m_max_complete_time.exchange(0);
+
+  // fill metrics for pending TDs
+  info.min_time_since_assignment = std::numeric_limits<decltype(info.min_time_since_assignment)>::max();
+  info.max_time_since_assignment = 0;
+  info.total_time_since_assignment = 0;
+
+  ci.add(info);
+}
+```
 
 
 ## Testing
