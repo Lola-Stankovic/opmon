@@ -52,7 +52,7 @@ The idea being that dynamic information breaks the logic of the monitoring: it b
 In order to preserve the structure of the `opmon` information and to publish dynamic information, a module needs to publish sub-component monitoring information and attach it to its parent.
 This is done creating a generic `InfoCollector` object that can be populated with a static schema content and then adding the `InfoCollector` object to the parent.
 Pseudo code is:
-```
+```C++
 Nested::example::get_info(opmonlib::InfoCollector& ci, int level)
 {
   parentinfo::Info par_info;
@@ -85,9 +85,10 @@ for (auto& [name, app] : m_dataflow_availability) {
   }
 }
 
-
+// daughter side
 void TriggerRecordBuilderData::get_info(opmonlib::InfoCollector& ci, int /*level*/) {
 
+  // daughter schema-generated object
   dfapplicationinfo::Info info;
 
   info.completed_trigger_records = m_complete_counter.exchange(0);
