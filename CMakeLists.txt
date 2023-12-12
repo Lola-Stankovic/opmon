@@ -19,7 +19,7 @@ set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging n
 # Schemas
 
 daq_protobuf_codegen( *.proto )
-daq_codegen( info/testinfo.jsonnet TEMPLATES opmonlib/InfoStructs.hpp.j2 opmonlib/InfoNljs.hpp.j2 )
+daq_codegen( info/testinfo.jsonnet TEMPLATES opmonlib/InfoStructs.hpp.j2 opmonlib/InfoToProtobuf.hpp.j2 )
 
 ##############################################################################
 # Main library

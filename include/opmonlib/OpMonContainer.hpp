@@ -26,17 +26,19 @@ class OpMonContainer
 public:
 
   const auto & Entries() const { return m_entries; }
-  
+
   // // Templated method to grab info blocks
-  // template<typename I>
-  // void add(I&& infoclass)
-  // {
+  template<typename I>
+  void add(I&& infoclass)
+  {
+    nlohmann::json j_infoblock;
+    
   //   nlohmann::json j_infoblock;
   //   j_infoblock[JSONTags::time] = std::time(nullptr);
   //   j_infoblock[JSONTags::data] = infoclass;
 
   //   m_infos[JSONTags::properties][infoclass.info_type] = j_infoblock;
-  // }
+  }
 
   // // Puny getter
   // const nlohmann::json& get_collected_infos() { return m_infos; }
