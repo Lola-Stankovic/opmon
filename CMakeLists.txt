@@ -16,9 +16,10 @@ find_package(Boost COMPONENTS unit_test_framework regex REQUIRED)
 set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json ${PROTOBUF_LIBRARY}  )
 
 ##############################################################################
-# Schema
+# Schemas
 
 daq_protobuf_codegen( *.proto )
+daq_codegen( info/testinfo.jsonnet TEMPLATES opmonlib/InfoStructs.hpp.j2 opmonlib/InfoNljs.hpp.j2 )
 
 ##############################################################################
 # Main library

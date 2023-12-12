@@ -11,17 +11,12 @@ local info = {
    bool_t   : s.boolean("bool_t", doc="boolean field"),
 
    info: s.record("Info", [
-       s.field("capacity_rate", self.rate, 0, doc="Estimated TR rate that the application can generate, in Hz"),
-       s.field("outstanding_decisions", self.counter, 0, doc="Decisions currently in progress"),	 
-       s.field("completed_trigger_records", self.counter, 0, doc="Number of completed TR"),
-       s.field("min_completion_time", self.counter, 0, doc="Minimum time (us) for decision to complete"),
-       s.field("max_completion_time", self.counter, 0, doc="Maximum time (us) for decision to complete"),
-       s.field("waiting_time", self.counter, 0, doc="cumulative time (microseconds) for decisions to be completed"),
-       s.field("total_time_since_assignment", self.counter, 0, doc="total time since assignment for all current TDs (ms)"),
-       s.field("min_time_since_assignment", self.counter, 0, doc="shortest time since assignment among current TDs (ms)"),
-       s.field("max_time_since_assignment", self.counter, 0, doc="longest time since assignment among current TDs (ms)")
+       s.field("integer_example", self.counter, 0, doc="example of integer"),
+       s.field("float_example", self.rate, 0, doc="example of floating"),
+       s.field("string_example", self.string_t, doc="example of string"),
+       s.field("bool_example", self.bool_t, 0, doc="example of bool")
 
-   ], doc="Data Flow Application information")
+   ], doc="Test info")
 };
 
 moo.oschema.sort_select(info)
