@@ -18,12 +18,19 @@ message OpMonValue {
   oneof kind {
     // Represents a null value.
     NullValue null_value = 1;
-    // Represents a double value.
-    double number_value = 2;
-    // Represents a string value.
-    string string_value = 3;
+
     // Represents a boolean value.
-    bool bool_value = 4;
+    bool bool_value = 2;
+
+    // Represents an integer value.
+    int64 int_value = 3;
+
+    // Represents a double value.
+    double float_value = 10;
+    
+    // Represents a string value.
+    string string_value = 20;
+    
   }
   
 }
