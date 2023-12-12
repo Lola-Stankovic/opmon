@@ -34,7 +34,10 @@ daq_add_plugin(fileOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
 #daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
 
 ##############################################################################
-# No unit tests written
+#unit tests
+daq_add_unit_test( OpMonContainer_test    LINK_LIBRARIES opmonlib )
+
+
 
 ##############################################################################
 
