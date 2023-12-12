@@ -8,7 +8,7 @@
  */
 
 #include "opmonlib/OpMonContainer.hpp"
-#include "opmonlib/testinfo/InfoNljs.hpp"
+#include "opmonlib/testinfo/InfoToProtobuf.hpp"
 
 #define BOOST_TEST_MODULE OpMonContainer_test // NOLINT
 

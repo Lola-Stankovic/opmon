@@ -48,7 +48,7 @@ message OpMonEntry {
 
   google.protobuf.Timestamp time = 1;
   string opmon_id = 2;
-  string measurment = 3;
+  string measurement = 3;
   map<string, OpMonValue> data = 10;
-    
+
 }
