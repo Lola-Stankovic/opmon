@@ -11,8 +11,13 @@
 
 #define BOOST_TEST_MODULE OpMonContainer_test // NOLINT
 
+#include "boost/test/unit_test.hpp"
+
 using namespace dunedaq::opmonlib;
 
 BOOST_AUTO_TEST_SUITE(OpMonContainer_Test)
 
+
+
+BOOST_AUTO_TEST_SUITE_END()
 
