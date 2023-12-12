@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package dunedaq.opmon;
+
+// An OpMonEntry is just a collection of data with
+// - a name (measurement)
+// - an ID to identify where it's coming from (opmon_id)
+// - a time
+// - and a payload.
+
+// For the payload, we could use something like the native protobuf struct
+// But for us this is dangerous as this allows a recursion
+// So we are going to define a more restricted type that does not allow recursion
+message OpMonValue {
+
+  oneof kind {
+    // Represents a null value.
+    NullValue null_value = 1;
+    // Represents a double value.
+    double number_value = 2;
+    // Represents a string value.
+    string string_value = 3;
+    // Represents a boolean value.
+    bool bool_value = 4;
+  }
+  
+}
+
+// `NullValue` is a singleton enumeration to represent the null value for the
+// `Value` type union.
+//
+// The JSON representation for `NullValue` is JSON `null`.
+enum NullValue {
+  // Null value.
+  NULL_VALUE = 0;
+}
+
+message OpMonEntry {
+
+  google.protobuf.Timestamp time = 1;
+  string opmon_id = 2;
+  string measurment = 3;
+  map<string, OpMonValue> data = 10;
+    
+}
