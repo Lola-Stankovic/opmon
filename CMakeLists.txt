@@ -13,6 +13,11 @@ find_package(nlohmann_json REQUIRED)
 set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json)
 
 ##############################################################################
+# Schema
+
+daq_protobuf_codegen( *.proto )
+
+##############################################################################
 # Main library
 
 daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
