@@ -20,13 +20,13 @@ message OpMonValue {
     NullValue null_value = 1;
 
     // Represents a boolean value.
-    bool bool_value = 2;
+    bool boolean_value = 2;
 
     // Represents an integer value.
-    int64 int_value = 3;
+    int64 int8_value = 3;
 
     // Represents a double value.
-    double float_value = 10;
+    double float8_value = 10;
     
     // Represents a string value.
     string string_value = 20;

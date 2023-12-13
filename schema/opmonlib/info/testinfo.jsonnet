@@ -7,8 +7,8 @@ local s = moo.oschema.schema("dunedaq.opmonlib.testinfo");
 local info = {
    counter  : s.number("int8", "i8", doc="An signed integer of 8 bytes"),
    rate     : s.number("float8", "f8", doc="A signed float of 8 bytes"),
-   string_t : s.string("string_t", moo.re.ident,  doc="A string field"),
-   bool_t   : s.boolean("bool_t", doc="boolean field"),
+   string_t : s.string("string", moo.re.ident,  doc="A string field"),
+   bool_t   : s.boolean("boolean", doc="boolean field"),
 
    info: s.record("Info", [
        s.field("integer_example", self.counter, 0, doc="example of integer"),
