@@ -14,6 +14,7 @@
 #include <ctime>
 #include <list>
 
+#include <google/protobuf/message.h>
 #include "opmonlib/opmon_entry.pb.h"
 
 
@@ -27,11 +28,8 @@ public:
 
   const auto & Entries() const { return m_entries; }
 
-  // // Templated method to grab info blocks
-  template<typename I>
-  void add(I&& infoclass)
+  void add(::google::protobuf::Message && m)
   {
-    nlohmann::json j_infoblock;
     
   //   nlohmann::json j_infoblock;
   //   j_infoblock[JSONTags::time] = std::time(nullptr);
