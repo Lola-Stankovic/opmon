@@ -16,6 +16,8 @@
 
 #include "boost/test/unit_test.hpp"
 
+#include <google/protobuf/util/json_util.h>
+
 
 using namespace dunedaq::opmonlib;
 
@@ -23,7 +25,17 @@ BOOST_AUTO_TEST_SUITE(OpMonContainer_Test)
 
 BOOST_AUTO_TEST_CASE(conversion) {
 
+  dunedaq::opmonlib::OpMonContainer c;
+
+  dunedaq::opmon::TestInfo ti;
+  ti.set_int_example( 394 );
+
+  c.add(std::move(ti));
+
   
+  std::string res;
+  google::protobuf::util::MessageToJsonString( *c.entries().begin(), & res );
+  std::cout << res;
 }
 
 

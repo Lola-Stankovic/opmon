@@ -26,11 +26,15 @@ class OpMonContainer
   
 public:
 
-  const auto & Entries() const { return m_entries; }
+  const auto & entries() const { return m_entries; }
 
   void add(::google::protobuf::Message && m)
   {
-    
+
+    dunedaq::opmon::OpMonEntry entry;
+    entry.set_measurement( m.GetTypeName() );
+
+    m_entries.push_back( entry );
   //   nlohmann::json j_infoblock;
   //   j_infoblock[JSONTags::time] = std::time(nullptr);
   //   j_infoblock[JSONTags::data] = infoclass;
