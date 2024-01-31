@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(conversion) {
   dunedaq::opmon::TestInfo ti;
   ti.set_int_example( 394 );
 
-  c.add(std::move(ti));
+  c.add(std::move(ti), "my_info");
 
   
   std::string res;
