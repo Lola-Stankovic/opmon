@@ -11,6 +11,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include <iostream>
 #include <ctime>
 #include <chrono>
 #include <list>
@@ -39,24 +40,37 @@ public:
     entry.set_opmon_id( id );
     entry.set_measurement( m.GetTypeName() );
     
-    
-    
-    m_entries.push_back( entry );
-    
-  //   nlohmann::json j_infoblock;
-  //   j_infoblock[JSONTags::time] = std::time(nullptr);
-  //   j_infoblock[JSONTags::data] = infoclass;
+    const auto * descriptor_p = m.GetDescriptor();
+    const auto & des = *descriptor_p;
 
-  //   m_infos[JSONTags::properties][infoclass.info_type] = j_infoblock;
+    const auto * reflection_p = m.GetReflection();
+    const auto & ref = *reflection_p;
+
+    using namespace google::protobuf;
+    
+    auto count = des.field_count();
+    for ( int i = 0; i < count; ++i ) {
+      const auto * field_p = des.field(i);
+      if ( field_p -> is_repeated() ) continue;
+      auto name = field_p -> name();
+      auto type = field_p -> cpp_type();
+      dunedaq::opmon::OpMonValue value;
+      bool success = true;
+      switch (type) {
+      case FieldDescriptor::CppType::CPPTYPE_INT32:
+	value.set_int4_value( ref.GetInt32(m, field_p) );
+	break;
+      default:
+	success = false;
+	break;
+      }
+      if ( success ) 
+	(*entry.mutable_data())[name] = value;
+    }
+
+    if ( entry.data().size() > 0 ) 
+      m_entries.push_back( entry );
   }
-
-  // // Puny getter
-  // const nlohmann::json& get_collected_infos() { return m_infos; }
-
-  // // Method to construct hierarchical info
-  // void add(std::string name, InfoCollector& ic) { m_infos[JSONTags::children][name] = ic.get_collected_infos(); }
-  // // Method to check it there is any info stored
-  // bool is_empty() { return m_infos.empty(); }
 
 };
 

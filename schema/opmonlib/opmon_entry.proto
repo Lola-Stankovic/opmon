@@ -19,11 +19,16 @@ message OpMonValue {
     // Represents a null value.
     NullValue null_value = 1;
 
-    // Represents a boolean value.
-    bool boolean_value = 2;
+    // Represents an integer value.
+    int32 int4_value = 2;
 
+    
     // Represents an integer value.
     int64 int8_value = 3;
+
+    // Represents a boolean value.
+    bool boolean_value = 5;
+
 
     // Represents a double value.
     double float8_value = 10;
