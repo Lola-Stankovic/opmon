@@ -9,11 +9,11 @@ find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(logging REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(Protobuf REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 find_package(Boost COMPONENTS unit_test_framework regex REQUIRED)
 
 
-set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json ${PROTOBUF_LIBRARY}  )
+set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json  ${PROTOBUF_LIBRARY} )
 
 ##############################################################################
 # Schemas
@@ -23,7 +23,7 @@ daq_protobuf_codegen( *.proto info/*.proto )
 ##############################################################################
 # Main library
 
-daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES})
+daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES} )
 
 ##############################################################################
 # Plugins
