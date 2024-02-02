@@ -9,8 +9,7 @@ find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(logging REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(Protobuf CONFIG)
-find_package(Protobuf REQUIRED)
+find_package(Protobuf REQUIRED CONFIG)
 find_package(Boost COMPONENTS unit_test_framework regex REQUIRED)
 
 

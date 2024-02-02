@@ -86,8 +86,9 @@ public:
      	success = false;
      	break;
       } // switch on the cpp type
+      
       // it seems the following lines are causing the linking issue with the current system
-      //      if ( success ) 
+      // if ( success ) 
       //	(*entry.mutable_data())[name] = value;
     }
 
