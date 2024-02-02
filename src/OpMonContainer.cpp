@@ -76,9 +76,9 @@ void OpMonContainer::add(::google::protobuf::Message && m,
       (*entry.mutable_data())[name] = value;
   }
   
-    if ( entry.data().size() > 0 )
-      m_entries.push_back( entry );
-  }
-
+  if ( entry.data().size() > 0 )
+    m_entries.push_back( entry );
 }
+
+
 

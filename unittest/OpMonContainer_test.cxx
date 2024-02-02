@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(conversion) {
 
   
   std::string res;
-  google::protobuf::util::MessageToJsonString( *c.entries().begin(), & res );
+  google::protobuf::util::MessageToJsonString( *c.get_entries().begin(), & res );
   std::cout << res;
 }
 
