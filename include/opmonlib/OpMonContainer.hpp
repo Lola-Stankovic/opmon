@@ -31,6 +31,12 @@ public:
   void add(::google::protobuf::Message && m, std::string id="");
   void add(OpMonContainer &&, std::string id="");
   void add_parent_info(const std::string & parent);
+
+  auto clear() {
+    decltype(m_entries) ret;
+    std::swap(m_entries, ret);
+    return ret;
+  }
 };
 
 } // namespace dunedaq::opmonlib

@@ -86,6 +86,10 @@ void OpMonContainer::add(OpMonContainer && c, std::string id) {
   if ( ! id.empty() ) {
     c.add_parent_info(id);
   }
+
+  auto to_add = c.clear();
+  
+  m_entries.insert( m_entries.end(), to_add.begin(), to_add.end() );
 }
 
 
