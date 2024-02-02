@@ -81,4 +81,22 @@ void OpMonContainer::add(::google::protobuf::Message && m,
 }
 
 
+void OpMonContainer::add(OpMonContainer && c, std::string id) {
 
+  if ( ! id.empty() ) {
+    c.add_parent_info(id);
+  }
+}
+
+
+void OpMonContainer::add_parent_info( const std::string & parent_name ) {
+
+  for( auto & entry : m_entries ) {
+    auto new_name = parent_name;
+    if ( !entry.opmon_id().empty() ) {
+      new_name += '.';
+      new_name += entry.opmon_id();
+    }
+    entry.set_opmon_id(new_name);
+  }
+}

@@ -9,8 +9,8 @@
 #ifndef OPMONLIB_INCLUDE_OPMONLIB_OPMONCONTAINER_HPP_
 #define OPMONLIB_INCLUDE_OPMONLIB_OPMONCONTAINER_HPP_
 
-#include <nlohmann/json.hpp>
 
+#include <string>
 #include <list>
 
 #include <google/protobuf/message.h>
@@ -29,7 +29,8 @@ public:
   const auto & get_entries() const { return m_entries; }
 
   void add(::google::protobuf::Message && m, std::string id="");
-
+  void add(OpMonContainer &&, std::string id="");
+  void add_parent_info(const std::string & parent);
 };
 
 } // namespace dunedaq::opmonlib
