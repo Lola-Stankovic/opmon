@@ -29,13 +29,25 @@ BOOST_AUTO_TEST_CASE(conversion) {
 
   dunedaq::opmon::TestInfo ti;
   ti.set_int_example( 394 );
+  ti.set_float_example( 3.14 );
+  ti.set_string_example( "test" );
+  ti.set_bool_example( true );
 
   c.add(std::move(ti), "my_info");
 
+  dunedaq::opmon::ComplexInfo ci;
+  ci.set_another_float(6.28);
+  *ci.mutable_sub_message() = ti;
+  //ci.mutable_r_field() -> Add(42);   // this gives linking problems
+
+  c.add(std::move(ci), "complex");
+
   
-  std::string res;
-  google::protobuf::util::MessageToJsonString( *c.get_entries().begin(), & res );
-  std::cout << res;
+  for ( const auto & e : c.get_entries() ) {
+    std::string res;
+    google::protobuf::util::MessageToJsonString( e, & res );
+    std::cout << res << std::endl;
+  }
 }
 
 
