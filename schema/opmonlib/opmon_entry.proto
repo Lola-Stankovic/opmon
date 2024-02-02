@@ -19,22 +19,25 @@ message OpMonValue {
     // Represents a null value.
     NullValue null_value = 1;
 
-    // Represents an integer value.
+    // Intergener values
     int32 int4_value = 2;
-
-    
-    // Represents an integer value.
     int64 int8_value = 3;
 
+    // unsigned values
+    uint32 uint4_value = 4;
+    uint64 uint8_value = 5;
+
+    // double and float
+    double double_value = 10;
+    float float_value = 11;
+    
     // Represents a boolean value.
-    bool boolean_value = 5;
-
-
-    // Represents a double value.
-    double float8_value = 10;
+    bool boolean_value = 15;
     
     // Represents a string value.
     string string_value = 20;
+
+    // all other types are neglected if inserted in a monitoring schema
     
   }
   

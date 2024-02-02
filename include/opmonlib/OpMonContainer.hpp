@@ -52,20 +52,43 @@ public:
     for ( int i = 0; i < count; ++i ) {
       const auto * field_p = des.field(i);
       if ( field_p -> is_repeated() ) continue;
+
       auto name = field_p -> name();
       auto type = field_p -> cpp_type();
       dunedaq::opmon::OpMonValue value;
       bool success = true;
       switch (type) {
       case FieldDescriptor::CppType::CPPTYPE_INT32:
-	value.set_int4_value( ref.GetInt32(m, field_p) );
-	break;
+     	value.set_int4_value( ref.GetInt32(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_INT64:
+     	value.set_int8_value( ref.GetInt64(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_UINT32:
+     	value.set_uint4_value( ref.GetUInt32(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_UINT64:
+     	value.set_uint8_value( ref.GetUInt64(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_DOUBLE:
+     	value.set_double_value( ref.GetDouble(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_FLOAT:
+     	value.set_float_value( ref.GetFloat(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_BOOL:
+     	value.set_boolean_value( ref.GetBool(m, field_p) );
+    	break;
+      case FieldDescriptor::CppType::CPPTYPE_STRING:
+     	value.set_string_value( ref.GetString(m, field_p) );
+    	break;
       default:
-	success = false;
-	break;
-      }
-      if ( success ) 
-	(*entry.mutable_data())[name] = value;
+     	success = false;
+     	break;
+      } // switch on the cpp type
+      // it seems the following lines are causing the linking issue with the current system
+      //      if ( success ) 
+      //	(*entry.mutable_data())[name] = value;
     }
 
     if ( entry.data().size() > 0 ) 
