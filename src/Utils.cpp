@@ -8,10 +8,7 @@
 
 #include "opmonlib/Utils.hpp"
 
-using namespace dunedaq::opmonlib;
-
-
-dunedaq::opmon::OpMonEntry to_entry(::google::protobuf::Message && m) {
+dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::Message & m) {
 
   dunedaq::opmon::OpMonEntry entry;
   entry.set_measurement( m.GetTypeName() );

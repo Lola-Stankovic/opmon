@@ -20,7 +20,7 @@
 
 namespace dunedaq::opmonlib {
 
-  dunedaq::opmon::OpMonEntry to_entry(::google::protobuf::Message && m);
+  dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m);
 
 }  // namespace dunedaq::opmonlib
 

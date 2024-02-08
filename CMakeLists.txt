@@ -38,7 +38,8 @@ daq_add_plugin(fileOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 #unit tests
-daq_add_unit_test( OpMonContainer_test    LINK_LIBRARIES opmonlib )
+daq_add_unit_test( OpMonContainer_test      LINK_LIBRARIES opmonlib )
+daq_add_unit_test( schema_conversion_test   LINK_LIBRARIES opmonlib )
 
 
 
