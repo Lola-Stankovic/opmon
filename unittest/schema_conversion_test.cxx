@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE(conversion) {
 
   BOOST_TEST( test_entry.data().size() == 4 );   //check that all the entry of the simple schema are in
   BOOST_TEST( complex_entry.data().size() == 1 );   //check that complex objects are not serialised
-  
-  //auto value = test_entry.data().find("int_example");
+
+  //auto value = test_entry.data().find("int_example");  // this causes linking problems
   //  auto final_int =  value->second.int8_value();
   //BOOST_TEST( final_int == int_value );
   
