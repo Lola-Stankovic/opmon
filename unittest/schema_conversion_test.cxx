@@ -40,30 +40,43 @@ BOOST_AUTO_TEST_CASE(conversion) {
   dunedaq::opmon::ComplexInfo ci;
   ci.set_another_float(float_value);
   *ci.mutable_sub_message() = ti;
-  //ci.mutable_r_field() -> Add(42);   // this gives linking problems
+  ci.mutable_r_field() -> Add(42);   
 
   auto test_entry = to_entry( ti );
   auto complex_entry = to_entry( ci );
 
-  std::string res;
-  google::protobuf::util::MessageToJsonString( test_entry, & res );
-  std::cout << res << std::endl;
+  // std::string res;
+  // google::protobuf::util::MessageToJsonString( test_entry, & res );
+  // std::cout << res << std::endl;
 
-  res.clear();
-  google::protobuf::util::MessageToJsonString( complex_entry, & res );
-  std::cout << res << std::endl;
+  // res.clear();
+  // google::protobuf::util::MessageToJsonString( complex_entry, & res );
+  // std::cout << res << std::endl;
 
   BOOST_TEST( test_entry.data().size() == 4 );   //check that all the entry of the simple schema are in
   BOOST_TEST( complex_entry.data().size() == 1 );   //check that complex objects are not serialised
 
-  auto value = test_entry.data().find("int_example");  // this causes linking problems
-  //  auto final_int =  value->second.int8_value();
-  //BOOST_TEST( final_int == int_value );
-  
-  // for ( const auto & e : c.get_entries() ) {
+  // checks that the values are preserved correctly
+  auto value = test_entry.data().find("int_example");  
+  auto final_int =  value->second.int8_value();
+  BOOST_TEST( final_int == int_value );
 
-  
-  // }
+  value = test_entry.data().find("float_example");
+  auto final_double = value -> second.double_value();
+  BOOST_TEST( final_double == double_value );
+
+  value = test_entry.data().find("string_example");
+  auto final_string = value -> second.string_value();
+  BOOST_TEST( final_string == string_value );
+
+  value = test_entry.data().find("bool_example");
+  auto final_bool = value -> second.boolean_value();
+  BOOST_TEST( final_bool == bool_value );
+
+  value = complex_entry.data().find("another_float");
+  auto final_float = value -> second.float_value();
+  BOOST_TEST( final_float == float_value );
+
 }
 
 
