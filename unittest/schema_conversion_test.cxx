@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(conversion) {
   dunedaq::opmon::ComplexInfo ci;
   ci.set_another_float(float_value);
   *ci.mutable_sub_message() = ti;
-  //ci.mutable_r_field() -> Add(42);   // this gives linking problems
+  ci.mutable_r_field() -> Add(42); 
 
   auto test_entry = to_entry( ti );
   auto complex_entry = to_entry( ci );
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(conversion) {
   BOOST_TEST( test_entry.data().size() == 4 );   //check that all the entry of the simple schema are in
   BOOST_TEST( complex_entry.data().size() == 1 );   //check that complex objects are not serialised
 
-  //auto value = test_entry.data().find("int_example");  // this causes linking problems
+  auto value = test_entry.data().find("int_example");
   //  auto final_int =  value->second.int8_value();
   //BOOST_TEST( final_int == int_value );
   

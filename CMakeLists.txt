@@ -9,11 +9,12 @@ find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(logging REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(absl REQUIRED)
 find_package(Protobuf REQUIRED CONFIG)
 find_package(Boost COMPONENTS unit_test_framework regex REQUIRED)
 
 
-set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json protobuf::libprotobuf )
+set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json protobuf::libprotobuf absl::log_internal_check_op )
 
 ##############################################################################
 # Schemas
