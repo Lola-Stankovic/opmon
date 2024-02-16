@@ -7,7 +7,7 @@
  */
 
 #include "opmonlib/OpMonFacility.hpp"
-
+#include <google/protobuf/util/json_util.h>
 
 #include <iostream>
 #include <memory>
@@ -15,39 +15,29 @@
 
 namespace dunedaq::opmonlib {
 
-class stdoutOpMonFacility : public OpMonServiceFacility
+class stdoutOpMonFacility : public OpMonFacility
 {
 public:
   explicit stdoutOpMonFacility(std::string uri)
-    : OpmonService(uri)
+    : OpMonFacility(uri)
   {
-    auto sep = uri.find("://");
-    m_style = "flat";
-    if (sep != std::string::npos) { // assume filename
-      m_style = uri.substr(sep + 3);
-    }
+    // auto sep = uri.find("://");
+    // we'll keep this free for possible improvements
+
+    m_opt.add_whitespace = true;
+    m_opt.preserve_proto_field_names = true;
+
   }
   
-  void publish(opmon::OpMonEntry && e) override 
-  {
-
-    static auto opt = stdoutOpMonFacility::generate_json_option();
-  
+  void publish(opmon::OpMonEntry && e) override {
     std::string json;
-    google::protobuf::util::MessageToJsonString( e, & json, opt );
+    google::protobuf::util::MessageToJsonString( e, & json, m_opt );
     std::cout << json << std::endl;   // MR: should we push to TLOG() instead?
-    
   }
 
-protected:
-  static auto generate_json_option() {
-    using namespace google::protobuf::util;
-    static JsonPrintOptions opt;
-    opt.add_whitespace = true;
-    opt.preserve_proto_field_names = true;
-    return opt;
-  }
-
+private:
+  google::protobuf::util::JsonPrintOptions m_opt;
+  
 };
 
 } // namespace dunedaq::opmonlib

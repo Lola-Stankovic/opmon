@@ -77,7 +77,7 @@ makeOpMonFacility(std::string const& facility)
   try {
     os_ptr = bpf.makePlugin<std::shared_ptr<OpMonFacility>>(plugin_name, facility);
   } catch (const cet::exception& cexpt) {
-    throw OpMonFacilityCreationFailedERS_HERE, plugin_name, cexpt);
+    throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name, cexpt);
   } catch (const ers::Issue& iexpt) {
     throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name, iexpt);
   } catch (...) { // NOLINT JCF Jan-27-2021 violates letter of the law but not the spirit
