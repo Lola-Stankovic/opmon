@@ -34,11 +34,11 @@
  */
 
 // NOLINTNEXTLINE(build/define_used)
-#define DEFINE_DUNE_OPMON_SERVICE(klass)                                                                               \
+#define DEFINE_DUNE_OPMON_FACILITY(klass)                                                                               \
   EXTERN_C_FUNC_DECLARE_START                                                                                          \
-  std::shared_ptr<dunedaq::opmonlib::OpMonFacility> make(std::string service)                                           \
+  std::shared_ptr<dunedaq::opmonlib::OpMonFacility> make(std::string facility)                                           \
   {                                                                                                                    \
-    return std::shared_ptr<dunedaq::opmonlib::OpMonFacility>(new klass(service));                                       \
+    return std::shared_ptr<dunedaq::opmonlib::OpMonFacility>(new klass(facility));                                       \
   }                                                                                                                    \
   }
 
