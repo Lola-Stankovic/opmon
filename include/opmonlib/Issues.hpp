@@ -16,6 +16,11 @@ namespace dunedaq {
 
 ERS_DECLARE_ISSUE(opmonlib, OpmonServiceCreationFailed, "OpmonServiceCreationFailed: " << error, ((std::string)error))
 
+ERS_DECLARE_ISSUE(opmonlib,
+		  OpMonFacilityCreationFailed,
+		  "Facility " << type << ": creation failed",
+		  ((std::string)type))
+)
 } // namespace dunedaq
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_ISSUES_HPP_
