@@ -7,7 +7,8 @@
  * received with this code.
  */
 
-#inlcude "opmonlib/OpMonFacility.hpp"
+#include "opmonlib/OpMonFacility.hpp"
+#include "opmonlib/Utils.hpp"
 #include "opmonlib/info/test.pb.h"
 
 #define BOOST_TEST_MODULE opmon_facility_test // NOLINT
@@ -22,11 +23,26 @@ BOOST_AUTO_TEST_SUITE(Opmon_Facility_Test)
 
 BOOST_AUTO_TEST_CASE(Invalid_Creation) {
 
+  BOOST_CHECK_THROW( auto service = makeOpMonFacility("invalid://"),
+		     OpMonFacilityCreationFailed );
+
+  BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("") );
+  
 }
 
 
 BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
+  
+  auto service = makeOpMonFacility("cout"); 
 
+  dunedaq::opmon::TestInfo ti;
+  ti.set_int_example( 42 );
+  ti.set_float_example( 12.34 );
+  ti.set_string_example( "anohter_test" );
+  ti.set_bool_example( true );
+
+  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ti ) ) ) ;
+  
 }
 
 
