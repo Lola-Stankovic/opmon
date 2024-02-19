@@ -43,6 +43,7 @@ daq_add_plugin(stdoutOpMonFacility duneOpMonFacility LINK_LIBRARIES opmonlib)
 #unit tests
 daq_add_unit_test( OpMonContainer_test      LINK_LIBRARIES opmonlib )
 daq_add_unit_test( schema_conversion_test   LINK_LIBRARIES opmonlib )
+daq_add_unit_test( opmon_facility_test   LINK_LIBRARIES opmonlib )
 
 
 
