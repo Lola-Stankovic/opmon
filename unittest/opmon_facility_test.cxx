@@ -48,6 +48,18 @@ BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
 
 BOOST_AUTO_TEST_CASE(File_facility) {
 
+  BOOST_CHECK_THROW( auto service = makeOpMonFacility("file:///impossible_file.txt"),
+		     OpMonFacilityCreationFailed);
+
+  auto service = makeOpMonFacility("file://./test_file.txt");
+
+  dunedaq::opmon::TestInfo ti;
+  ti.set_int_example( 42 );
+  ti.set_float_example( 12.34 );
+  ti.set_string_example( "anohter_test" );
+  ti.set_bool_example( true );
+
+  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ti ) ) ) ;
 }
 
 
