@@ -47,24 +47,29 @@ namespace dunedaq::opmonlib {
 class OpMonFacility
 {
 public:
-  explicit OpMonFacility(std::string /*service*/) {}
+  explicit OpMonFacility(std::string uri) : m_uri(uri) {;}
+  
   virtual ~OpMonFacility() = default;
   OpMonFacility(const OpMonFacility&) = delete;            ///< OpMonFacility is not copy-constructible
   OpMonFacility& operator=(const OpMonFacility&) = delete; ///< OpMonFacility is not copy-assignable
   OpMonFacility(OpMonFacility&&) = delete;                 ///< OpMonFacility is not move-constructible
   OpMonFacility& operator=(OpMonFacility&&) = delete;      ///< OpMonFacility is not move-assignable
 
+  const auto & get_URI() const { return m_uri; }
+
   // Publish information
   virtual void publish(opmon::OpMonEntry &&) = 0;
-
+  
 private:
+  std::string m_uri;
 };
 
 std::shared_ptr<OpMonFacility>
 makeOpMonFacility(std::string const& facility)
 {
   TLOG() << "FACILITY = " << facility;
-  auto sep = facility.find("://");
+  const std::string hook = "://";
+  auto sep = facility.find(hook);
   std::string scheme;
   if (sep == std::string::npos) { // simple path
     scheme = "stdout";
@@ -76,10 +81,10 @@ makeOpMonFacility(std::string const& facility)
   std::shared_ptr<OpMonFacility> os_ptr;
   try {
     os_ptr = bpf.makePlugin<std::shared_ptr<OpMonFacility>>(plugin_name, facility);
-  } catch (const cet::exception& cexpt) {
-    throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name, cexpt);
   } catch (const ers::Issue& iexpt) {
     throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name, iexpt);
+  } catch (const cet::exception& cexpt) {
+    throw OpMonFacilityCreationFailedWithCause(ERS_HERE, plugin_name, cexpt.what());
   } catch (...) { // NOLINT JCF Jan-27-2021 violates letter of the law but not the spirit
     throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name);
   }

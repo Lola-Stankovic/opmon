@@ -6,7 +6,7 @@
  * received with this code.
  */
 
-#include "opmonlib/OpMonFacility.hpp"
+#include "opmonlib/JSonOpMonFacility.hpp"
 #include <google/protobuf/util/json_util.h>
 
 #include <iostream>
@@ -15,29 +15,18 @@
 
 namespace dunedaq::opmonlib {
 
-class stdoutOpMonFacility : public OpMonFacility
+class stdoutOpMonFacility : public JSonOpMonFacility
 {
 public:
   explicit stdoutOpMonFacility(std::string uri)
-    : OpMonFacility(uri)
-  {
-    // auto sep = uri.find("://");
-    // we'll keep this free for possible improvements
-
-    m_opt.add_whitespace = true;
-    m_opt.preserve_proto_field_names = true;
-
-  }
+    : JSonOpMonFacility(uri) { ; }
   
   void publish(opmon::OpMonEntry && e) override {
     std::string json;
-    google::protobuf::util::MessageToJsonString( e, & json, m_opt );
-    std::cout << json << std::endl;   // MR: should we push to TLOG() instead?
+    google::protobuf::util::MessageToJsonString( e, & json, get_json_options() );
+    TLOG() << json << std::endl; 
   }
 
-private:
-  google::protobuf::util::JsonPrintOptions m_opt;
-  
 };
 
 } // namespace dunedaq::opmonlib
