@@ -24,7 +24,7 @@ public:
   void publish(opmon::OpMonEntry && e) override {
     std::string json;
     google::protobuf::util::MessageToJsonString( e, & json, get_json_options() );
-    TLOG() << json << std::endl; 
+    TLOG() << "OpMon metric: " << json << std::endl; 
   }
 
 };
