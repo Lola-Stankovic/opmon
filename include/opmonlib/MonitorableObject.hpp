@@ -24,10 +24,12 @@ class MonitorableObject
 public:
 
   using child_ptr = std::weak_ptr<MonitorableObject>;
+  using new_child_ptr = std::shared_ptr<MonitorableObject>;
   using opmon_level = uint32_t; // NOLINT(build/unsigned)     
   using opmon_id = std::string;
   
-  opmon_id get_opmon_id() noexcept const { return m_id; }
+  opmon_id get_opmon_id() noexcept const {
+    return m_parent_opmon_id.empty() ? m_opmon_name : m_parent_opmon_id + '.' + m_opmon_name; }
 
 protected:
 
@@ -35,10 +37,11 @@ protected:
     * Append a register object to the chain
     * The children will be modified using information from the this parent
     */
-  void register_child( std::string name, child_ptr ) ;
+  void register_child( std::string name, new_child_ptr ) ;
 
   /**
    * Convert the message into an OpMonEntry and then uses the pointer to the Facility to publish the entry
+   * This also timestamps the message with the time of the invocation
    */
   bool publish( google::protobuf::Message && ) const;
 
@@ -52,26 +55,21 @@ protected:
    * Hook for customisable pubblication
    */
   virtual void generate_opmon_data() {;}
-
-  /**
-   * hook to add children in the chain
-   */
-  void register_child( std::string name, child_ptr ) ;
     
 private:
 
   /**
    * utilities for linking with parent and top levels
    */
-  void inherit_parent_properties( const MonitorableObject & parent );
-  opmon_id set_opmon_id( opmon_id parent, opmon_id name);
+  void inherit_parent_properties( const MonitorableObject & parent );   // funcion called on the children as well
 
   std::list<child_ptr> m_children ;
   std::mutex m_children_mutex;
+  std::conditional_variable m_linking;
 
   std::shared_ptr<opmonlib::OpmonService> m_service;
-  opmon_id m_id;
-
+  opmon_id m_parent_opmon_id;
+  opmon_id m_opmon_name;
 };
 
 } // namespace dunedaq::opmonlib
