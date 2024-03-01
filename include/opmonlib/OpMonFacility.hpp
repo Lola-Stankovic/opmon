@@ -42,7 +42,7 @@
   }                                                                                                                    \
   }
 
-namespace dundaq {
+namespace dunedaq {
 
   ERS_DECLARE_ISSUE(opmonlib,
 		    OpMonPublishFailure,

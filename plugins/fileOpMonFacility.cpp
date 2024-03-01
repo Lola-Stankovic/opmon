@@ -41,9 +41,9 @@ namespace dunedaq::opmonlib {
     try {
       m_ofs << json << std::endl << std::flush;
     } catch ( std::ios_base::failure except ) {
-      throw dundaq::opmonlib::OpMonPublishFailure( ERS_HERE,
-						   get_URI(), e.measurement(), e.opmon_id(),
-						   WritingFailed(ERS_HERE, json, except) );
+      throw OpMonPublishFailure( ERS_HERE,
+				 get_URI(), e.measurement(), e.opmon_id(),
+				 WritingFailed(ERS_HERE, json, except) );
     }
     
   }

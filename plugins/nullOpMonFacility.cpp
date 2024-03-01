@@ -27,10 +27,10 @@ class nullOpMonFacility : public OpMonFacility
 public:
   explicit nullOpMonFacility(std::string uri) : OpMonFacility(uri) {;}
   
-  void publish(opmon::OpMonEntry && e) const noexcept override {
-    throw dundaq::opmonlib::OpMonPublishFailure(ERS_HERE,
-						get_URI(), e.measurement(), e.opmon_id(),
-						NullOpMonFacilityInvoked(ERS_HERE) );
+  void publish(opmon::OpMonEntry && e) const override {
+    throw OpMonPublishFailure(ERS_HERE,
+			      get_URI(), e.measurement(), e.opmon_id(),
+			      NullOpMonFacilityInvoked(ERS_HERE) );
   }
 
 };

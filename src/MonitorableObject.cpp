@@ -56,7 +56,7 @@ void MonitorableObject::publish( google::protobuf::Message && m ) const noexcept
   // But the facility can fail
   try {
     m_facility->publish(std::move(e));
-  } catch ( dundaq::opmonlib::OpMonPublishFailure e ) {
+  } catch ( OpMonPublishFailure e ) {
     ers::error(e);
   }
  
