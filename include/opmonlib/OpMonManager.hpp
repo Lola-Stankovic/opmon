@@ -9,45 +9,45 @@
 #ifndef OPMONLIB_INCLUDE_OPMONLIB_OPMONMANAGER_HPP_
 #define OPMONLIB_INCLUDE_OPMONLIB_OPMONMANAGER_HPP_
 
-#include "opmonlib/OpMonFacility.hpp"
+#include "opmonlib/MonitorableObject.hpp"
 
-#include <memory>
-#include <string>
-#include <thread>
-#include <chrono>
-#include <list>
+namespace dunedaq {
+
+  ERS_DECLARE_ISSUE( opmonlib,
+		     ThreadNameTooLong,
+		     "The name " << name << " is too long for a thread name",
+		     ((std::string)name)
+		     )
+
+  ERS_DECLARE_ISSUE( opmonlib,
+		     ErrorWhileCollecting,
+		     "OpMon data collection failed",
+		     ERS_EMPTY )
+}
 
 namespace dunedaq::opmonlib {
 
-  class MonitorableObject;
-
-  using	opmon_level = uint32_t; // NOLINT(build/unsigned)                                                             
-
-
-  
-class OpMonManager
+class OpMonManager : public MonitorableObject 
 {
 public:
 
-  using child_ptr = std::weak_ptr<MonitorableObject>;
-  
-  explicit OpMonManager(std::string name,
-			std::string service); // Constructor
+  explicit OpMonManager(std::string session,
+			std::string name,
+			std::string opmon_facility_uri);
+  ~OpMonManager();
+
+  using MonitorableObject::register_child ;
   
   // data collecting loop
-  void start(std::chrono::seconds, opmon_level); // NOLINT(build/unsigned)
+  void start(std::chrono::seconds, opmon_level); 
   void stop();
 
 protected:
-  void collect(opmon_level) ;  // instruct the registered children to publish regular interval metrics  
-  
+  void run(std::chrono::seconds, opmon_level ); // function used by thread
+
 private:
 
-  std::shared_ptr<opmonlib::OpmonService> m_service;
-  std::list<child_ptr> m_children ;
-
   std::jthread m_thread;
-  void run(std::chrono::seconds, opmon_level ); // function used by thread
 
 };
 
