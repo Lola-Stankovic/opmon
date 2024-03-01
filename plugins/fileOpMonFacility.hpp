@@ -13,13 +13,20 @@
 #include <opmonlib/JSonOpMonFacility.hpp>
 
 #include <fstream>
+#include <mutex>
 
 namespace dunedaq {
 
 ERS_DECLARE_ISSUE(opmonlib,
 		  BadFile,
 		  "Can not open file: " << filename,
-		  ((std::string)filename))
+		  ((std::string)filename) )
+
+ERS_DECLARE_ISSUE(opmonlib,
+		  WritingFailed,
+		  "Failed to write. Message: " << message,
+		  ((std::string)message)
+		  )
 
 } // namespace dunedaq
 
@@ -31,10 +38,11 @@ class fileOpMonFacility
 public:
   explicit fileOpMonFacility(std::string uri);
 
-  void publish(opmon::OpMonEntry && e) override;
+  void publish(opmon::OpMonEntry && e) const override;
 
 private:
-  std::ofstream m_ofs;
+  mutable std::ofstream m_ofs;
+  mutable std::mutex m_mutex;
   
 };
   

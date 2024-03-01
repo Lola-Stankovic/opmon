@@ -42,6 +42,18 @@
   }                                                                                                                    \
   }
 
+namespace dundaq {
+
+  ERS_DECLARE_ISSUE(opmonlib,
+		    OpMonPublishFailure,
+		    uri << " Failed to publish " << measurment << " from " << opmon_id,
+		    ((std::string)uri)((std::string)measurment)((std::string)opmon_id)
+		    )
+
+}
+  
+
+
 namespace dunedaq::opmonlib {
 
 class OpMonFacility
@@ -58,7 +70,11 @@ public:
   const auto & get_URI() const { return m_uri; }
 
   // Publish information
-  virtual void publish(opmon::OpMonEntry &&) = 0;
+  virtual void publish(opmon::OpMonEntry &&) const = 0;
+  /**
+   * The implmentations of this functions need to be thread safe
+   * This function can throw, but it is guaranteed to throw an OpMonPublishFailure
+   */
   
 private:
   std::string m_uri;

@@ -12,10 +12,27 @@
 #include "opmonlib/OpMonFacility.hpp"
 #include <google/protobuf/message.h>
 
-#include <list>
+#include <map>
 #include <memory>
 #include <string>
 #include <mutex>
+
+namespace dunedaq {
+
+  ERS_DECLARE_ISSUE( opmonlib,
+		     NonUniqueChildName,
+		     name << " already present in the child list",
+		     ((std::string)name)
+		     )
+	  
+  ERS_DECLARE_ISSUE( opmonlib,
+		     EntryWithNoData,
+		     "OpMonEntry of type " << type << " has no data",
+		     ((std::string)type)
+		   )
+
+}
+
 
 namespace dunedaq::opmonlib {
 
@@ -28,7 +45,7 @@ public:
   using opmon_level = uint32_t; // NOLINT(build/unsigned)     
   using opmon_id = std::string;
   
-  opmon_id get_opmon_id() noexcept const {
+  opmon_id get_opmon_id() const noexcept {
     return m_parent_opmon_id.empty() ? m_opmon_name : m_parent_opmon_id + '.' + m_opmon_name; }
 
 protected:
@@ -43,7 +60,7 @@ protected:
    * Convert the message into an OpMonEntry and then uses the pointer to the Facility to publish the entry
    * This also timestamps the message with the time of the invocation
    */
-  bool publish( google::protobuf::Message && ) const;
+  void publish( google::protobuf::Message && ) const noexcept ;
 
   /**
    * Instructs the object to pusblish regular interval metrics.
@@ -63,11 +80,10 @@ private:
    */
   void inherit_parent_properties( const MonitorableObject & parent );   // funcion called on the children as well
 
-  std::list<child_ptr> m_children ;
+  std::map<std::string, child_ptr> m_children ;
   std::mutex m_children_mutex;
-  std::conditional_variable m_linking;
 
-  std::shared_ptr<opmonlib::OpmonService> m_service;
+  std::shared_ptr<opmonlib::OpMonFacility> m_facility = makeOpMonFacility("null://");
   opmon_id m_parent_opmon_id;
   opmon_id m_opmon_name;
 };

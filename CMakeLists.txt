@@ -32,6 +32,7 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES} )
 daq_add_plugin(stdoutOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
 daq_add_plugin(fileOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
 
+daq_add_plugin(nullOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
 daq_add_plugin(stdoutOpMonFacility duneOpMonFacility LINK_LIBRARIES opmonlib)
 daq_add_plugin(fileOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
 

@@ -7,6 +7,8 @@
  */
 
 #include "fileOpMonFacility.hpp"
+#include <iostream>
+
 
 namespace dunedaq::opmonlib {
 
@@ -29,12 +31,20 @@ namespace dunedaq::opmonlib {
   }
   
 
-  void fileOpMonFacility::publish(opmon::OpMonEntry && e) {
+  void fileOpMonFacility::publish(opmon::OpMonEntry && e) const {
     std::string json;
     google::protobuf::util::MessageToJsonString( e, & json,
 						 get_json_options() );
-    
-    m_ofs << json << std::endl << std::flush;
+
+    std::unique_lock<std::mutex> lock(m_mutex);
+
+    try {
+      m_ofs << json << std::endl << std::flush;
+    } catch ( std::ios_base::failure except ) {
+      throw dundaq::opmonlib::OpMonPublishFailure( ERS_HERE,
+						   get_URI(), e.measurement(), e.opmon_id(),
+						   WritingFailed(ERS_HERE, json, except) );
+    }
     
   }
   
