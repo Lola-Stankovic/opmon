@@ -8,6 +8,7 @@
 
 #include <opmonlib/MonitorableObject.hpp>
 #include <opmonlib/Utils.hpp>
+#include <logging/Logging.hpp>
 
 #include <google/protobuf/util/time_util.h>
 

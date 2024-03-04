@@ -11,8 +11,6 @@
 
 #include "Issues.hpp"
 
-#include "logging/Logging.hpp"
-
 #include <cetlib/BasicPluginFactory.h>
 #include <cetlib/compiler_macros.h>
 #include "opmonlib/opmon_entry.pb.h"
@@ -80,32 +78,7 @@ private:
   std::string m_uri;
 };
 
-std::shared_ptr<OpMonFacility>
-makeOpMonFacility(std::string const& facility)
-{
-  TLOG() << "FACILITY = " << facility;
-  const std::string hook = "://";
-  auto sep = facility.find(hook);
-  std::string scheme;
-  if (sep == std::string::npos) { // simple path
-    scheme = "stdout";
-  } else { // with scheme
-    scheme = facility.substr(0, sep);
-  }
-  std::string plugin_name = scheme + "OpMonFacility";
-  static cet::BasicPluginFactory bpf("duneOpMonFacility", "make");
-  std::shared_ptr<OpMonFacility> os_ptr;
-  try {
-    os_ptr = bpf.makePlugin<std::shared_ptr<OpMonFacility>>(plugin_name, facility);
-  } catch (const ers::Issue& iexpt) {
-    throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name, iexpt);
-  } catch (const cet::exception& cexpt) {
-    throw OpMonFacilityCreationFailedWithCause(ERS_HERE, plugin_name, cexpt.what());
-  } catch (...) { // NOLINT JCF Jan-27-2021 violates letter of the law but not the spirit
-    throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name);
-  }
-  return os_ptr;
-}
+std::shared_ptr<OpMonFacility> makeOpMonFacility(std::string const& facility) ;
 
 } // namespace dunedaq::opmonlib
 

@@ -6,7 +6,10 @@
  * received with this code.
  */
 
+#include <chrono>
+
 #include <opmonlib/OpMonManager.hpp>
+#include <logging/Logging.hpp>
 
 using namespace dunedaq::opmonlib;
 
@@ -14,8 +17,7 @@ using namespace dunedaq::opmonlib;
 OpMonManager::OpMonManager( std::string session,
 			    std::string name,
 			    std::string opmon_facility_uri)
-  : m_parent_opmon_id(session)
-  , m_opmon_name(name) {
+  : MonitorableObject( name, session) {
 
   m_facility = makeOpMonFacility(opmon_facility_uri);
   
@@ -23,54 +25,64 @@ OpMonManager::OpMonManager( std::string session,
 
 
 OpMonManager::~OpMonManager() {
-
   stop();
 }
 
 
 void OpMonManager::start(std::chrono::seconds interval, opmon_level level) {
 
+  if (m_thread_p) {
+    try {
+      m_thread_p->stop_working_thread();
+    } catch (const utilities::ThreadingIssue & ti){
+      ers::warning( ti );
+    }
+  }
+
+  TLOG() << "Starting a new monitoring thread" ;
+
+  auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1, interval, level);
+  m_thread_p.reset(new dunedaq::utilities::WorkerThread( running_function ) );
+
   auto name = get_opmon_id();
   name += ".opmon";
-  
-  m_thread = jthread( & OpMonManager::run, this, interval, level );
-  auto handle = m_thread.native_handle;
-  auto rc =  pthread_setname_np(handle, name.c_str());    
-   if (rc != 0) {
-    ers::warning(ThreadNameTooLong(ERS_HERE, name));
-  }
-  
+
+  m_thread_p->start_working_thread(name);
 }
 
 
 
 void OpMonManager::stop() {
-  m_thread.request_stop();
-  m_thread.join();
+
+  if ( m_thread_p ) {
+    m_thread_p->stop_working_thread();
+  } else {
+    throw MonitoringThreadNotSet(ERS_HERE);
+  }
+  
 }
   
 
 
-void OpMonManager::run(std::chrono::seconds interval, opmon_level level ) {
+void OpMonManager::run(std::atomic<bool> & running,
+		       std::chrono::seconds interval, opmon_level level ) {
 
   auto sleep_interval = std::chrono::milliseconds(100);
+  
+  auto last_collection_time = std::chrono::steady_clock::now();
+  
+  while( running.load() ) {
     
-  auto stop_token = m_thead.get_stop_token();
-  decltype(stop_token) counter = 0;
-  
-  
-  while( ! stop_token.stop_requested() ) {
-
     std::this_thread::sleep_for(sleep_interval);
-    counter += sleep_interval ;
-
-    if ( counter > interval ) {
-      counter = 0;
+    auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() - last_collection_time);
+    
+    if ( time_span >= interval ) {
+      last_collection_time = std::chrono::steady_clock::now();
       try {
 	collect(level);
-      } catch ( ers::Issue i ) {
+      } catch ( const ers::Issue & i ) {
 	ers::error( ErrorWhileCollecting(ERS_HERE, i) );
-      } catch (std::exception e ) {
+      } catch ( const std::exception & e ) {
 	ers::error( ErrorWhileCollecting(ERS_HERE, e) );
       } catch (...) {
 	ers::error( ErrorWhileCollecting(ERS_HERE) );

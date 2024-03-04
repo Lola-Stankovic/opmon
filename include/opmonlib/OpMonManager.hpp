@@ -10,20 +10,28 @@
 #define OPMONLIB_INCLUDE_OPMONLIB_OPMONMANAGER_HPP_
 
 #include "opmonlib/MonitorableObject.hpp"
+#include "utilities/WorkerThread.hpp" 
 
 namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
-		     ThreadNameTooLong,
-		     "The name " << name << " is too long for a thread name",
-		     ((std::string)name)
-		     )
+                     MonitoringThreadNotSet,
+                     "Monitoring thread not set",
+                     ERS_EMPTY )
 
+  
   ERS_DECLARE_ISSUE( opmonlib,
 		     ErrorWhileCollecting,
 		     "OpMon data collection failed",
 		     ERS_EMPTY )
+
+  ERS_DECLARE_ISSUE( opmonlib,
+		     FailedMonitoringThread,
+		     "Monitoring thread failed to start",
+		     ERS_EMPTY )
 }
+
+
 
 namespace dunedaq::opmonlib {
 
@@ -34,7 +42,8 @@ public:
   explicit OpMonManager(std::string session,
 			std::string name,
 			std::string opmon_facility_uri);
-  ~OpMonManager();
+  
+  virtual ~OpMonManager();
 
   using MonitorableObject::register_child ;
   
@@ -43,11 +52,12 @@ public:
   void stop();
 
 protected:
-  void run(std::chrono::seconds, opmon_level ); // function used by thread
+  void run( std::atomic<bool> & running,
+	    std::chrono::seconds, opmon_level ); // function used by thread
 
 private:
 
-  std::jthread m_thread;
+  std::unique_ptr<utilities::WorkerThread> m_thread_p;
 
 };
 

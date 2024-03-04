@@ -44,11 +44,29 @@ public:
   using new_child_ptr = std::shared_ptr<MonitorableObject>;
   using opmon_level = uint32_t; // NOLINT(build/unsigned)     
   using opmon_id = std::string;
+
+  friend class OpMonManager;
+  
+  /**
+   * copy and move constructors are deleted as they violate the linking chain
+   */
+  MonitorableObject( const MonitorableObject & ) = delete ;
+  MonitorableObject & operator = ( const MonitorableObject &) = delete;
+  MonitorableObject( MonitorableObject && ) = delete;
+  MonitorableObject & operator = (MonitorableObject &&) = delete;    
+  
+  virtual ~MonitorableObject() {;}
   
   opmon_id get_opmon_id() const noexcept {
     return m_parent_opmon_id.empty() ? m_opmon_name : m_parent_opmon_id + '.' + m_opmon_name; }
 
 protected:
+
+  /**
+   * default constructors are ok as they set the links correctly
+   * i.e. The service points to the null and the names are not set
+   */
+  MonitorableObject() = default;
 
   /**
     * Append a register object to the chain
@@ -62,24 +80,32 @@ protected:
    */
   void publish( google::protobuf::Message && ) const noexcept ;
 
-  /**
-   * Instructs the object to pusblish regular interval metrics.
-   * It also instruct the children to execute their collect methods.
-   */     
-  void collect(opmon_level) ;
 
   /**
    * Hook for customisable pubblication
    */
   virtual void generate_opmon_data() {;}
-    
+
 private:
 
+  /**
+   * Instructs the object to pusblish regular interval metrics.
+   * It also instruct the children to execute their collect methods.
+   */     
+  void collect(opmon_level) ;
+    
   /**
    * utilities for linking with parent and top levels
    */
   void inherit_parent_properties( const MonitorableObject & parent );   // funcion called on the children as well
 
+  /**
+   * Contructor to set initial strings
+   */ 
+  MonitorableObject( opmon_id name, opmon_id parent_id = "" )
+    : m_parent_opmon_id(parent_id)
+    , m_opmon_name(name) {;}
+  
   std::map<std::string, child_ptr> m_children ;
   std::mutex m_children_mutex;
 

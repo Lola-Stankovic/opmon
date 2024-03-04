@@ -6,7 +6,9 @@
  * received with this code.
  */
 
+#include <logging/Logging.hpp>
 #include "opmonlib/JSonOpMonFacility.hpp"
+
 #include <google/protobuf/util/json_util.h>
 
 #include <iostream>
@@ -24,7 +26,7 @@ public:
   void publish(opmon::OpMonEntry && e) const override {
     std::string json;
     google::protobuf::util::MessageToJsonString( e, & json, get_json_options() );
-    TLOG() << "OpMon metric: " << json << std::endl;
+    TLOG() << "OpMon metric: " << json ;
   }
 
 };
