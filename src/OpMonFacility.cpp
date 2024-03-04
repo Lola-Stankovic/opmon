@@ -11,7 +11,7 @@
 
 using namespace dunedaq::opmonlib;
 
-std::shared_ptr<OpMonFacility> makeOpMonFacility(std::string const& facility) {
+std::shared_ptr<OpMonFacility> dunedaq::opmonlib::makeOpMonFacility(std::string const& facility) {
 
   TLOG() << "FACILITY = " << facility;
 
