@@ -79,7 +79,7 @@ void OpMonManager::run(std::atomic<bool> & running,
     if ( time_span >= interval ) {
       last_collection_time = std::chrono::steady_clock::now();
       try {
-	collect(level);
+	publish( collect(level) );
       } catch ( const ers::Issue & i ) {
 	ers::error( ErrorWhileCollecting(ERS_HERE, i) );
       } catch ( const std::exception & e ) {
