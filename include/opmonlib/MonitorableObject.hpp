@@ -11,6 +11,7 @@
 
 #include "opmonlib/OpMonFacility.hpp"
 #include <google/protobuf/message.h>
+#include <opmonlib/info/MonitoringTreeInfo.pb.h>
 
 #include <map>
 #include <memory>
@@ -80,19 +81,25 @@ protected:
    */
   void publish( google::protobuf::Message && ) const noexcept ;
 
-
   /**
-   * Hook for customisable pubblication
+   * Hook for customisable pubblication. 
+   * The function can throw, exception will be caught by the monitoring thread
+   * 
+   * \return The function is supposed to return the number of published measurements
+   *         this is used for monitoring purposes. 
+   *         It can return negative values to signal an error, without throwing 
    */
-  virtual void generate_opmon_data() {;}
+  virtual int generate_opmon_data() {return 0;}
 
 private:
 
   /**
    * Instructs the object to pusblish regular interval metrics.
    * It also instruct the children to execute their collect methods.
+   * 
+   * \return It returns a protobuf schema object to monitor the tree
    */     
-  void collect(opmon_level) ;
+  opmon::MonitoringTreeInfo collect(opmon_level) ;
     
   /**
    * utilities for linking with parent and top levels

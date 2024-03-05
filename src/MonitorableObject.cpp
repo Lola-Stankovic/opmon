@@ -12,6 +12,8 @@
 
 #include <google/protobuf/util/time_util.h>
 
+#include <chrono>
+
 using namespace dunedaq::opmonlib;
 
 void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
@@ -57,35 +59,74 @@ void MonitorableObject::publish( google::protobuf::Message && m ) const noexcept
   // But the facility can fail
   try {
     m_facility->publish(std::move(e));
-  } catch ( OpMonPublishFailure e ) {
+  } catch ( const OpMonPublishFailure & e ) {
     ers::error(e);
   }
  
 }
 
 
-void MonitorableObject::collect( opmon_level l) {
+opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) {
 
-  generate_opmon_data();
+  auto start_time = std::chrono::high_resolution_clock::now();
+
+  opmon::MonitoringTreeInfo info;
+
+  info.set_n_invalid_links(0);
+
+  int n_metrics = 0;
+  try {
+    n_metrics = generate_opmon_data();
+  } catch ( const ers::Issue & i ) {
+    n_metrics = -1;
+    // MR: shall we loop on the causes to count the errors better?
+  }
+    
+  if (n_metrics>0) {
+    info.set_n_publishing_nodes(1);
+    info.set_n_published_measurements( n_metrics );
+  } else {
+    info.set_n_errors( -n_metrics );
+  }
 
   std::unique_lock<std::mutex> lock(m_children_mutex);
 
+  info.set_n_registered_nodes( m_children.size() );
+
+  unsigned int n_invalid_links = 0;
+  
   for ( auto it = m_children.begin(); it != m_children.end(); ) {
 
     auto ptr = it->second.lock();
     
     if( ptr ) {
-      ptr->collect(l);  // MR: can we make this an async? There is no point to wait all done here
+      auto child_info = ptr->collect(l);  // MR: can we make this an async? There is no point to wait all done here
+      info.set_n_registered_nodes( info.n_registered_nodes() + child_info.n_registered_nodes() );
+      info.set_n_publishing_nodes( info.n_publishing_nodes() + child_info.n_publishing_nodes() );
+      info.set_n_invalid_links( info.n_invalid_links() + child_info.n_invalid_links() );
+      info.set_n_published_measurements( info.n_published_measurements() + child_info.n_published_measurements() );
+      info.set_n_errors( info.n_errors() + child_info.n_errors() );
     }
 
     // prune the dead links
     if ( it->second.expired() ) {
       it = m_children.erase(it);
+      ++n_invalid_links;
     } else {
       ++it;
     }
   }
 
+  info.set_n_invalid_links( info.n_invalid_links() + n_invalid_links );
+  
+  
+  auto stop_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( stop_time - start_time );
+  info.set_clockwall_elapsed_time_us( duration.count() );
+  info.set_cpu_elapsed_time_us( duration.count() ); // MR: this is ok for now but needs changing if we use async collection
+  
+  return info;
 }
 
 
