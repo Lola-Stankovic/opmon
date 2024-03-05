@@ -32,6 +32,11 @@ namespace dunedaq {
 		     ((std::string)type)
 		   )
 
+  ERS_DECLARE_ISSUE( opmonlib,
+                     ErrorWhileCollecting,
+                     "OpMon data collection failed",
+                     ERS_EMPTY )
+
 }
 
 
@@ -99,7 +104,7 @@ private:
    * 
    * \return It returns a protobuf schema object to monitor the tree
    */     
-  opmon::MonitoringTreeInfo collect(opmon_level) ;
+  opmon::MonitoringTreeInfo collect(opmon_level) noexcept ;
     
   /**
    * utilities for linking with parent and top levels

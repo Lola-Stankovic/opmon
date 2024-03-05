@@ -38,6 +38,7 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
   p -> m_opmon_name = name;
   p -> inherit_parent_properties( *this );
 
+  TLOG() << "Child " << name << " registered to " << get_opmon_id() ;
 }
 
 
@@ -66,10 +67,12 @@ void MonitorableObject::publish( google::protobuf::Message && m ) const noexcept
 }
 
 
-opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) {
+opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
+  TLOG() << "Collecting data from " << get_opmon_id();
+  
   opmon::MonitoringTreeInfo info;
 
   info.set_n_invalid_links(0);
@@ -79,7 +82,18 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) {
     n_metrics = generate_opmon_data();
   } catch ( const ers::Issue & i ) {
     n_metrics = -1;
-    // MR: shall we loop on the causes to count the errors better?
+    auto cause_ptr = i.cause();
+    while ( cause_ptr ) {
+      --n_metrics;
+      cause_ptr = cause_ptr->cause();
+    }
+    ers::error( ErrorWhileCollecting(ERS_HERE, i) );
+  } catch (  const std::exception & e ) {
+    n_metrics = -1;
+    ers::error( ErrorWhileCollecting(ERS_HERE, e) );
+  } catch (...) {
+    n_metrics = -1;
+    ers::error( ErrorWhileCollecting(ERS_HERE) );
   }
     
   if (n_metrics>0) {
@@ -132,6 +146,19 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) {
 
 void MonitorableObject::inherit_parent_properties( const MonitorableObject & parent ) {
 
+  m_facility = parent.m_facility;
+  m_parent_opmon_id = parent.get_opmon_id();
+  
+  std::unique_lock<std::mutex> lock(m_children_mutex);
+
+  for ( const auto & [key,wp] : m_children ) {
+
+    auto p = wp.lock();
+    if ( p ) {
+      p->inherit_parent_properties(*this);
+    }
+    
+  }
   
 }
 

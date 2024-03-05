@@ -19,12 +19,6 @@ namespace dunedaq {
                      "Monitoring thread not set",
                      ERS_EMPTY )
 
-  
-  ERS_DECLARE_ISSUE( opmonlib,
-		     ErrorWhileCollecting,
-		     "OpMon data collection failed",
-		     ERS_EMPTY )
-
   ERS_DECLARE_ISSUE( opmonlib,
 		     FailedMonitoringThread,
 		     "Monitoring thread failed to start",
