@@ -35,7 +35,7 @@ public:
 
   explicit OpMonManager(std::string session,
 			std::string name,
-			std::string opmon_facility_uri);
+			std::string opmon_facility_uri = "stdout");
   
   virtual ~OpMonManager();
 

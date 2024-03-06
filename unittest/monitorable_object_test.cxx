@@ -8,6 +8,7 @@
 
 #include "opmonlib/info/test.pb.h"
 #include "opmonlib/MonitorableObject.hpp"
+#include "opmonlib/OpMonManager.hpp"
 
 #define BOOST_TEST_MODULE monitorable_object_test // NOLINT
 
@@ -22,86 +23,31 @@ BOOST_AUTO_TEST_SUITE(Monitorable_Object_Test)
 
 struct my_fixture {
 
-  MonitorableObject;
+  class TestObject : public MonitorableObject {
+
+  public:
+    using MonitorableObject::register_child;
+    TestObject() : MonitorableObject() {;}
+  };
+
+  my_fixture()
+    : manager("test", "manager")
+    , node_p(new TestObject) {;}  
   
+  OpMonManager manager;
+  std::shared_ptr<TestObject> node_p;
+   
 };
 
 
+BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
 
-
-BOOST_AUTO_TEST_CASE(Invalid_Creation) {
-
-  BOOST_CHECK_THROW( auto service = makeOpMonFacility("invalid://"),
-		     OpMonFacilityCreationFailed );
-
-  BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("") );
-  BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("null://") );
+  BOOST_CHECK_EQUAL( node_p->get_opmon_id(), "" );
+  BOOST_CHECK_EQUAL( manager.get_opmon_id(), "test.manager" );
   
 }
 
 
-BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
-  
-  auto service = makeOpMonFacility("cout"); 
-
-  dunedaq::opmon::TestInfo ti;
-  ti.set_int_example( 42 );
-  ti.set_float_example( 12.34 );
-  ti.set_string_example( "anohter_test" );
-  ti.set_bool_example( true );
-
-  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ti ) ) ) ;
-  
-}
-
-
-BOOST_AUTO_TEST_CASE(null_facility) {
-  
-  auto service = makeOpMonFacility("null://"); 
-
-  dunedaq::opmon::TestInfo ti;
-  ti.set_int_example( 42 );
-  ti.set_float_example( 12.34 );
-  ti.set_string_example( "null_test" );
-  ti.set_bool_example( true );
-
-  BOOST_CHECK_THROW ( service -> publish(  to_entry( ti ) ),
-		      dunedaq::opmonlib::OpMonPublishFailure ) ;
-  
-}
-
-
-BOOST_AUTO_TEST_CASE(File_facility) {
-
-  BOOST_CHECK_THROW( auto service = makeOpMonFacility("file:///impossible_file.txt"),
-		     OpMonFacilityCreationFailed);
-
-  auto service = makeOpMonFacility("file://./test_file.txt");
-
-  auto pub_func = [&](int i){
-    auto opmon_id = "unit.test.thread_" + std::to_string(i);
-    for (auto j = 0; j < 5; ++j ) {
-      dunedaq::opmon::TestInfo ti;
-      ti.set_int_example( i*1000 + j );
-      ti.set_string_example( "test" );
-      auto e = to_entry( ti );
-      e.set_opmon_id(opmon_id);
-      BOOST_CHECK_NO_THROW( service->publish( std::move(e) ) );
-    }
-  };
-
-  const int n = 30;
-  std::vector<std::future<void>> threads(n);
-
-  for( auto i = 0 ; i < n; ++i ) {
-    threads[i] = async(std::launch::async, pub_func, i);
-  }
-  
-  for ( auto & t : threads ) {
-    BOOST_CHECK_NO_THROW( t.get() );
-  }
-  
-}
 
 
 BOOST_AUTO_TEST_SUITE_END()
