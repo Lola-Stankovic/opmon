@@ -25,7 +25,9 @@ OpMonManager::OpMonManager( std::string session,
 
 
 OpMonManager::~OpMonManager() {
-  stop();
+  try {
+    stop();
+  } catch ( ... ) {;}
 }
 
 
