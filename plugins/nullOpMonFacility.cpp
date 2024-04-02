@@ -7,6 +7,7 @@
  */
 
 #include "opmonlib/OpMonFacility.hpp"
+#include "opmonlib/Utils.hpp"
 
 #include <iostream>
 #include <memory>
@@ -29,7 +30,8 @@ public:
   
   void publish(opmon::OpMonEntry && e) const override {
     throw OpMonPublishFailure(ERS_HERE,
-			      get_URI(), e.measurement(), e.opmon_id(),
+			      get_URI(), e.measurement(),
+			      to_string(e.origin()),
 			      NullOpMonFacilityInvoked(ERS_HERE) );
   }
 

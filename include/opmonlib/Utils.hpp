@@ -22,6 +22,10 @@ namespace dunedaq::opmonlib {
 
   dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m);
 
+  std::string to_string( const dunedaq::opmon::OpMonId & );
+
+  dunedaq::opmon::OpMonId operator + (const dunedaq::opmon::OpMonId &,
+				      const  std::string & element );
 }  // namespace dunedaq::opmonlib
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_UTILS_HPP_

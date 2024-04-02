@@ -18,7 +18,7 @@ using namespace dunedaq::opmonlib;
 
 void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
 
-  std::unique_lock<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_children_mutex);
 
   // check if the name is already present to ensure uniqueness
   auto it = m_children.find(name) ;
@@ -38,11 +38,12 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
   p -> m_opmon_name = name;
   p -> inherit_parent_properties( *this );
 
-  TLOG() << "Child " << name << " registered to " << get_opmon_id() ;
+  TLOG() << "Child " << name << " registered to " << dunedaq::opmonlib::to_string(get_opmon_id()) ;
 }
 
 
-void MonitorableObject::publish( google::protobuf::Message && m ) const noexcept {
+void MonitorableObject::publish( google::protobuf::Message && m,
+				 const element_id & element ) const noexcept {
 
   auto timestamp = google::protobuf::util::TimeUtil::GetCurrentTime();
 
@@ -52,8 +53,19 @@ void MonitorableObject::publish( google::protobuf::Message && m ) const noexcept
     ers::warning( EntryWithNoData(ERS_HERE, e.measurement() ) );
     return ;
   }
+
+  auto id = get_opmon_id() ;
+  if ( ! element.empty() ) {
+    if ( m_children.count( element ) > 0 ) {
+      ers::error(NonUniqueChildName(ERS_HERE, element));
+      return;
+    }
+    else {
+      id = id + element;
+    }
+  }
   
-  e.set_opmon_id( get_opmon_id() );
+  *e.mutable_origin() = id;
   *e.mutable_time() = timestamp;
 
   // this pointer is always garanteed to be filled, even if with a null Facility.
@@ -71,7 +83,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  TLOG() << "Collecting data from " << get_opmon_id();
+  TLOG() << "Collecting data from " << dunedaq::opmonlib::to_string(get_opmon_id());
   
   opmon::MonitoringTreeInfo info;
 
@@ -103,7 +115,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
     info.set_n_errors( -n_metrics );
   }
 
-  std::unique_lock<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_children_mutex);
 
   info.set_n_registered_nodes( m_children.size() );
 
@@ -147,9 +159,9 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
 void MonitorableObject::inherit_parent_properties( const MonitorableObject & parent ) {
 
   m_facility = parent.m_facility;
-  m_parent_opmon_id = parent.get_opmon_id();
+  m_parent_id = parent.get_opmon_id();
   
-  std::unique_lock<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_children_mutex);
 
   for ( const auto & [key,wp] : m_children ) {
 

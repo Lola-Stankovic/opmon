@@ -52,10 +52,18 @@ enum NullValue {
   NULL_VALUE = 0;
 }
 
+message OpMonId {
+
+  string session = 1;
+  string application = 2;
+  string element = 3;
+  // element can have a structure like element.subelement
+}
+
 message OpMonEntry {
 
   google.protobuf.Timestamp time = 1;
-  string opmon_id = 2;
+  OpMonId origin = 2;
   string measurement = 3;
   map<string, OpMonValue> data = 10;
 

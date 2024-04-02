@@ -68,3 +68,48 @@ dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::M
   return entry;
 }
 
+
+std::string dunedaq::opmonlib::to_string( const dunedaq::opmon::OpMonId & id ) {
+
+  std::string ret(id.session());
+
+  if ( ! id.application().empty() ) {
+    ret += '.';
+    ret += id.application();
+  }
+  
+  if ( ! id.element().empty() ) {
+    ret += '.';
+      ret += id.element();
+  }
+  
+  return ret;
+}
+
+
+dunedaq::opmon::OpMonId dunedaq::opmonlib::operator + (const dunedaq::opmon::OpMonId & id,
+						       const  std::string & element ) {
+  if ( element.empty() ) return id;
+
+  dunedaq::opmon::OpMonId ret = id;
+
+  if ( id.session().empty() ) {
+    ret.set_session(element);
+    return ret;
+  }
+
+  if ( id.application().empty() ) {
+    ret.set_application(element);
+    return ret;
+  }
+
+  if ( id.element().empty() ) {
+    ret.set_element(element);
+  }
+  else {
+    ret.set_element( id.element() + '.' + element );
+  }
+
+  return ret;
+}
+

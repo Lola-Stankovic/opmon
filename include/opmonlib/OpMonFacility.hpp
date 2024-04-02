@@ -73,7 +73,7 @@ public:
    * The implmentations of this functions need to be thread safe
    * This function can throw, but it is guaranteed to throw an OpMonPublishFailure
    */
-  
+
 private:
   std::string m_uri;
 };

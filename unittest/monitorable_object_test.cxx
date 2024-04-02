@@ -42,8 +42,8 @@ struct my_fixture {
 
 BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
 
-  BOOST_CHECK_EQUAL( node_p->get_opmon_id(), "" );
-  BOOST_CHECK_EQUAL( manager.get_opmon_id(), "test.manager" );
+  BOOST_CHECK_EQUAL( to_string(node_p->get_opmon_id()), "" );
+  BOOST_CHECK_EQUAL( to_string(manager.get_opmon_id()), "test.manager" );
   
 }
 
