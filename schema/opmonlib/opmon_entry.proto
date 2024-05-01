@@ -7,6 +7,7 @@ package dunedaq.opmon;
 // An OpMonEntry is just a collection of data with
 // - a name (measurement)
 // - an ID to identify where it's coming from (opmon_id)
+// - optional custom info for user to add information related to the source. Ideally this is hardware info
 // - a time
 // - and a payload.
 
@@ -19,7 +20,7 @@ message OpMonValue {
     // Represents a null value.
     NullValue null_value = 1;
 
-    // Intergener values
+    // Integer values
     int32 int4_value = 2;
     int64 int8_value = 3;
 
@@ -43,6 +44,7 @@ message OpMonValue {
   
 }
 
+
 // `NullValue` is a singleton enumeration to represent the null value for the
 // `Value` type union.
 //
@@ -64,7 +66,8 @@ message OpMonEntry {
 
   google.protobuf.Timestamp time = 1;
   OpMonId origin = 2;
-  string measurement = 3;
+  map<string, string> custom_origin = 3;
+  string measurement = 5;
   map<string, OpMonValue> data = 10;
 
 }
