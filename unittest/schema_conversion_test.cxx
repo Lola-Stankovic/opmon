@@ -30,6 +30,8 @@ BOOST_AUTO_TEST_CASE(conversion) {
   const double double_value = 6.28;
   const std::string string_value = "my_test" ;
   const bool bool_value = true;
+  const auto tag_name = "channel";
+  const auto tag_value = "365";
   
   dunedaq::opmon::TestInfo ti;
   ti.set_int_example( int_value );
@@ -43,7 +45,7 @@ BOOST_AUTO_TEST_CASE(conversion) {
   ci.mutable_r_field() -> Add(42);   
 
   auto test_entry = to_entry( ti, {} );
-  auto complex_entry = to_entry( ci, {} );
+  auto complex_entry = to_entry( ci, {{tag_name, tag_value}} );
 
   // std::string res;
   // google::protobuf::util::MessageToJsonString( test_entry, & res );
@@ -77,6 +79,8 @@ BOOST_AUTO_TEST_CASE(conversion) {
   auto final_float = value -> second.float_value();
   BOOST_TEST( final_float == float_value );
 
+  BOOST_TEST( complex_entry.custom_origin().begin()->first  == tag_name);
+  BOOST_TEST( complex_entry.custom_origin().begin()->second == tag_value);
 }
 
 
