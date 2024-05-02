@@ -42,8 +42,8 @@ BOOST_AUTO_TEST_CASE(conversion) {
   *ci.mutable_sub_message() = ti;
   ci.mutable_r_field() -> Add(42);   
 
-  auto test_entry = to_entry( ti );
-  auto complex_entry = to_entry( ci );
+  auto test_entry = to_entry( ti, {} );
+  auto complex_entry = to_entry( ci, {} );
 
   // std::string res;
   // google::protobuf::util::MessageToJsonString( test_entry, & res );

@@ -12,6 +12,7 @@
 
 #include <string>
 #include <list>
+#include <map>
 
 #include <google/protobuf/message.h>
 #include "opmonlib/opmon_entry.pb.h"
@@ -20,12 +21,17 @@
 
 namespace dunedaq::opmonlib {
 
-  dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m);
+  using CustomOrigin = std::map<std::string, std::string> ;
+  
+  dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m,
+				      const CustomOrigin & co);
 
   std::string to_string( const dunedaq::opmon::OpMonId & );
 
   dunedaq::opmon::OpMonId operator + (const dunedaq::opmon::OpMonId &,
 				      const  std::string & element );
+
+  
 }  // namespace dunedaq::opmonlib
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_UTILS_HPP_

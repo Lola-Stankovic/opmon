@@ -43,11 +43,12 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
 
 
 void MonitorableObject::publish( google::protobuf::Message && m,
+				 CustomOrigin && co,
 				 const element_id & element ) const noexcept {
 
   auto timestamp = google::protobuf::util::TimeUtil::GetCurrentTime();
 
-  auto e = to_entry( m );
+  auto e = to_entry( m, co );
 
   if ( e.data().empty() ) {
     ers::warning( EntryWithNoData(ERS_HERE, e.measurement() ) );

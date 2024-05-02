@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
   ti.set_string_example( "anohter_test" );
   ti.set_bool_example( true );
 
-  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ti ) ) ) ;
+  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ti, {} ) ) ) ;
   
 }
 
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(null_facility) {
   ti.set_string_example( "null_test" );
   ti.set_bool_example( true );
 
-  BOOST_CHECK_THROW ( service -> publish(  to_entry( ti ) ),
+  BOOST_CHECK_THROW ( service -> publish(  to_entry( ti, {} ) ),
 		      dunedaq::opmonlib::OpMonPublishFailure ) ;
   
 }
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(File_facility) {
       dunedaq::opmon::TestInfo ti;
       ti.set_int_example( i*1000 + j );
       ti.set_string_example( "test" );
-      auto e = to_entry( ti );
+      auto e = to_entry( ti, {} );
       *e.mutable_origin() = id; 
       BOOST_CHECK_NO_THROW( service->publish( std::move(e) ) );
     }

@@ -85,9 +85,13 @@ protected:
    * This also timestamps the message with the time of the invocation.
    * It is possible to associate an element name to the published message.
    *    the element name is checked against the children to protect uniqueness. 
+   * It is alos possible to associate a custom origin in the form of a map<string,string>. 
+   *    This is designed to add information which is independent from the software structure
+   *    e.g.  channels or other hardware information.
    */
   void publish( google::protobuf::Message &&,
-		const element_id & element = "") const noexcept ;
+		CustomOrigin && co = {},
+		const element_id & element = "" ) const noexcept ;
 
   /**
    * Hook for customisable pubblication. 

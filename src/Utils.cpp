@@ -8,7 +8,8 @@
 
 #include "opmonlib/Utils.hpp"
 
-dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::Message & m) {
+dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::Message & m,
+						       const CustomOrigin & co) {
 
   dunedaq::opmon::OpMonEntry entry;
   entry.set_measurement( m.GetTypeName() );
@@ -65,6 +66,10 @@ dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::M
       (*entry.mutable_data())[name] = value;
   }
 
+  for ( const auto & [tag, value] : co ) {
+    (*entry.mutable_custom_origin())[tag] = value;
+  }
+  
   return entry;
 }
 
