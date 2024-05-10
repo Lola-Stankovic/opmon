@@ -92,7 +92,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
 
   int n_metrics = 0;
   try {
-    n_metrics = generate_opmon_data();
+    n_metrics = generate_opmon_data(l);
   } catch ( const ers::Issue & i ) {
     n_metrics = -1;
     auto cause_ptr = i.cause();

@@ -101,7 +101,7 @@ protected:
    *         this is used for monitoring purposes. 
    *         It can return negative values to signal an error, without throwing 
    */
-  virtual int generate_opmon_data() {return 0;}
+  virtual int generate_opmon_data(opmon_level) {return 0;}
 
 private:
 
