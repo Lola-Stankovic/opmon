@@ -22,9 +22,15 @@
 namespace dunedaq::opmonlib {
 
   using CustomOrigin = std::map<std::string, std::string> ;
+  using cr_map_type = std::invoke_result<decltype(&dunedaq::opmon::OpMonEntry::data),
+					 dunedaq::opmon::OpMonEntry>::type;
+  using map_type = std::remove_const<std::remove_reference<cr_map_type>::type>::type;
   
   dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m,
 				      const CustomOrigin & co);
+
+  map_type to_map(const google::protobuf::Message & m,
+		  std::string top_block = "");
 
   std::string to_string( const dunedaq::opmon::OpMonId & );
 
