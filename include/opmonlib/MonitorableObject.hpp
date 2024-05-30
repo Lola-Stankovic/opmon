@@ -23,8 +23,8 @@ namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
 		     NonUniqueChildName,
-		     name << " already present in the child list",
-		     ((std::string)name)
+		     name << " already present in the child list of " << opmon_id,
+		     ((std::string)name)((std::string)opmon_id) 
 		     )
 	  
   ERS_DECLARE_ISSUE( opmonlib,
@@ -35,8 +35,8 @@ namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
                      ErrorWhileCollecting,
-                     "OpMon data collection failed",
-                     ERS_EMPTY )
+                     "OpMon data collection failed in " << opmon_id,
+                     ((std::string)opmon_id) )
 
 }
 
@@ -96,12 +96,8 @@ protected:
   /**
    * Hook for customisable pubblication. 
    * The function can throw, exception will be caught by the monitoring thread
-   * 
-   * \return The function is supposed to return the number of published measurements
-   *         this is used for monitoring purposes. 
-   *         It can return negative values to signal an error, without throwing 
    */
-  virtual int generate_opmon_data(opmon_level) {return 0;}
+  virtual void generate_opmon_data(opmon_level) {return;}
 
 private:
 
@@ -133,6 +129,13 @@ private:
   std::shared_ptr<opmonlib::OpMonFacility> m_facility = makeOpMonFacility("null://");
   dunedaq::opmon::OpMonId m_parent_id;
   element_id m_opmon_name;
+
+  // info for monitoring the monitoring structure
+  using const_metric_counter_t = std::invoke_result<decltype(&dunedaq::opmonlib::opmon::MonitoringTreeInfo::n_published_measurements),
+						    dunedaq::opmonlib::opmon::MonitoringTreeInfo>::type;
+  using metric_counter_t = std::remove_const<const_metric_counter_t>::type;
+  mutable std::atomic<metric_counter_t> m_published_counter{0};
+  mutable std::atomic<metric_counter_t> m_error_counter{0};
 };
 
 } // namespace dunedaq::opmonlib

@@ -26,10 +26,10 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
     // This not desired because names are suppposed to be unique
     // But if the pointer is expired, there is no harm in override it
     if ( it -> second.expired() ) {
-      ers::warning(NonUniqueChildName(ERS_HERE, name));
+      ers::warning(NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id())));
     }
     else {
-      throw NonUniqueChildName(ERS_HERE, name);
+      throw NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id()));
     }
   }
   
@@ -38,7 +38,7 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
   p -> m_opmon_name = name;
   p -> inherit_parent_properties( *this );
 
-  TLOG() << "Child " << name << " registered to " << dunedaq::opmonlib::to_string(get_opmon_id()) ;
+  TLOG() << "Child " << name << " registered to " << to_string(get_opmon_id()) ;
 }
 
 
@@ -58,7 +58,9 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   auto id = get_opmon_id() ;
   if ( ! element.empty() ) {
     if ( m_children.count( element ) > 0 ) {
-      ers::error(NonUniqueChildName(ERS_HERE, element));
+      ers::error(NonUniqueChildName(ERS_HERE, element,
+				    to_string(get_opmon_id())));
+      ++m_error_counter;
       return;
     }
     else {
@@ -73,8 +75,10 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   // But the facility can fail
   try {
     m_facility->publish(std::move(e));
+    ++m_published_counter;
   } catch ( const OpMonPublishFailure & e ) {
     ers::error(e);
+    ++m_error_counter;
   }
  
 }
@@ -84,37 +88,35 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  TLOG() << "Collecting data from " << dunedaq::opmonlib::to_string(get_opmon_id());
+  TLOG() << "Collecting data from " << to_string(get_opmon_id());
   
   opmon::MonitoringTreeInfo info;
 
   info.set_n_invalid_links(0);
 
-  int n_metrics = 0;
   try {
-    n_metrics = generate_opmon_data(l);
+    generate_opmon_data(l);
   } catch ( const ers::Issue & i ) {
-    n_metrics = -1;
+    ++m_error_counter;
     auto cause_ptr = i.cause();
     while ( cause_ptr ) {
-      --n_metrics;
+      ++m_error_counter;
       cause_ptr = cause_ptr->cause();
     }
-    ers::error( ErrorWhileCollecting(ERS_HERE, i) );
+    ers::error( ErrorWhileCollecting(ERS_HERE, to_string(get_opmon_id()), i) );
   } catch (  const std::exception & e ) {
-    n_metrics = -1;
-    ers::error( ErrorWhileCollecting(ERS_HERE, e) );
+    ++m_error_counter;
+    ers::error( ErrorWhileCollecting(ERS_HERE, to_string(get_opmon_id()), e) );
   } catch (...) {
-    n_metrics = -1;
-    ers::error( ErrorWhileCollecting(ERS_HERE) );
+    ++m_error_counter;
+    ers::error( ErrorWhileCollecting(ERS_HERE, to_string(get_opmon_id())) );
   }
-    
-  if (n_metrics>0) {
+
+  info.set_n_published_measurements( m_published_counter.exchange(0) );
+  info.set_n_errors( m_error_counter.exchange(0) );
+  if (info.n_published_measurements() > 0) {
     info.set_n_publishing_nodes(1);
-    info.set_n_published_measurements( n_metrics );
-  } else {
-    info.set_n_errors( -n_metrics );
-  }
+  } 
 
   std::lock_guard<std::mutex> lock(m_children_mutex);
 
@@ -174,5 +176,4 @@ void MonitorableObject::inherit_parent_properties( const MonitorableObject & par
   }
   
 }
-
 
