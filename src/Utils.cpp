@@ -14,8 +14,7 @@ dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::M
   dunedaq::opmon::OpMonEntry entry;
   entry.set_measurement( m.GetTypeName() );
 
-  auto data = dunedaq::opmonlib::to_map(m);
-  entry.mutable_data()->insert(data.begin(), data.end());
+  *entry.mutable_data() = dunedaq::opmonlib::to_map(m);
   
   for ( const auto & [tag, value] : co ) {
     (*entry.mutable_custom_origin())[tag] = value;

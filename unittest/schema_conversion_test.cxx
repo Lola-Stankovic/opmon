@@ -56,7 +56,8 @@ BOOST_AUTO_TEST_CASE(conversion) {
   // std::cout << res << std::endl;
 
   BOOST_TEST( test_entry.data().size() == 4 );   //check that all the entry of the simple schema are in
-  BOOST_TEST( complex_entry.data().size() == 1 );   //check that complex objects are not serialised
+  BOOST_TEST( complex_entry.data().size() == 5 );   // check that repeated entries are not added,
+                                                    // but nested structures are
 
   // checks that the values are preserved correctly
   auto value = test_entry.data().find("int_example");  
@@ -78,6 +79,10 @@ BOOST_AUTO_TEST_CASE(conversion) {
   value = complex_entry.data().find("another_float");
   auto final_float = value -> second.float_value();
   BOOST_TEST( final_float == float_value );
+
+  value = complex_entry.data().find("sub_message.string_example");
+  final_string = value -> second.string_value();
+  BOOST_TEST( final_string == string_value );
 
   BOOST_TEST( complex_entry.custom_origin().begin()->first  == tag_name);
   BOOST_TEST( complex_entry.custom_origin().begin()->second == tag_value);

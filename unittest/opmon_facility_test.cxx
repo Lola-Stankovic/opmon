@@ -44,7 +44,11 @@ BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
   ti.set_string_example( "anohter_test" );
   ti.set_bool_example( true );
 
-  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ti, {} ) ) ) ;
+  dunedaq::opmon::ComplexInfo ci;
+  ci.set_another_float(1.23);
+  *ci.mutable_sub_message() = ti;
+
+  BOOST_CHECK_NO_THROW ( service -> publish(  to_entry( ci, {} ) ) ) ;
   
 }
 
