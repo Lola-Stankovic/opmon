@@ -4,14 +4,26 @@
 
 Before using opmonlib it is important to understand and define what needs to be monitored.
 
-Monotorable objects can then be captured in a `schema` file to create C++ structs using `moo`. Documentation and instructions on generating schema data structures and using moo can be found here:
+Monotorable objects can then be captured in a `schema` file to create C++ structs using `ProtoBuf`. 
+Documentation and instructions on generating schema data structures and using ProtoBuf can be found in the [ProtoBuf website](https://protobuf.dev/programming-guides/proto3/). 
+Relevant pages include also the description of the C++ API.
 
-* [Schema](https://brettviren.github.io/moo/dunedaq-appfwk-schema.html)
-* [Moo](https://brettviren.github.io/moo/buildsys.html#intro)
 
-Examples of how to write schemas can be found [here](https://github.com/DUNE-DAQ/timing/tree/feature/op_mon/schema/timing). In general each `.jsonnet` file contains definitions of types, and the objects to be monitored using these types. Each `schema` file will generate a C++ header file containing the structures which hold the monitoring data, as defined in the `.jsonnet` file. Typically each module may only need one struct to hold its monitoring information; however it is possible to create multiple nested structs within a schema, which are filled by the same module, as demonstrated by the timing module.
+% Examples of how to write schemas can be found [here](https://github.com/DUNE-DAQ/timing/tree/feature/op_mon/schema/timing). 
+In general each `.protobuf` file contains definitions of blocks that are published as single units.
+Each `schema` file will generate a C++ header file containing the structures which hold the monitoring data, as defined in the `.proto` file. 
+Typically each module may only need one struct to hold its monitoring information; however it is possible to create multiple nested structs within a schema, which are filled by the same module.
+
+% MR: add some example once listrev is done
+
+### Valid types
+As a generic schema language, `ProtoBuf` allows you do use simple types, but also lists, maps, etc.
+Be aware that apart from basic types and nested messages, other quantities are published and are ignored.
+ERS messages are generated whenever a structure with unpublishable entries are defined. 
 
 ## Filling and collecting structures
+
+
 
 Once the information structures have been generated, we need to fill them with data and collect the information for monitoring. 
 
