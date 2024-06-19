@@ -68,11 +68,12 @@ public:
   const auto & get_URI() const { return m_uri; }
 
   // Publish information
-  virtual void publish(opmon::OpMonEntry &&) const = 0;
   /**
-   * The implmentations of this functions need to be thread safe
+   * The implmentations of this functions need to be thread safe.
+   * It is a requirement to implement this function asyncronously.
    * This function can throw, but it is guaranteed to throw an OpMonPublishFailure
    */
+  virtual void publish(opmon::OpMonEntry &&) const = 0;
 
 private:
   std::string m_uri;
