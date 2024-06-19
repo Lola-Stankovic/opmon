@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <mutex>
+#include <condition_variable>
 
 namespace dunedaq {
 
@@ -28,22 +29,34 @@ ERS_DECLARE_ISSUE(opmonlib,
 		  ((std::string)message)
 		  )
 
+ERS_DECLARE_ISSUE(opmonlib,
+		  FacilityStopRequested,
+		  "Facility about to be destroyed and cannot write messages anymore.",
+		  ERS_EMPTY
+		  )
+
 } // namespace dunedaq
 
 namespace dunedaq::opmonlib {
 
 class fileOpMonFacility
   : public JSonOpMonFacility {
-  
+
 public:
   explicit fileOpMonFacility(std::string uri);
+  ~fileOpMonFacility();
 
   void publish(opmon::OpMonEntry && e) const override;
 
 private:
+  void write(opmon::OpMonEntry && e) const noexcept;
+  
   mutable std::ofstream m_ofs;
   mutable std::mutex m_mutex;
-  
+  mutable std::condition_variable m_writing_variable;
+  mutable std::atomic<uint16_t> m_writing_counter{0};
+  mutable std::atomic<bool> m_stop_request{false};
+
 };
   
 } // namespace dunedaq::opmonlib

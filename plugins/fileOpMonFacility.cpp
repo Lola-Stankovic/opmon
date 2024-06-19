@@ -9,6 +9,9 @@
 #include "fileOpMonFacility.hpp"
 #include "opmonlib/Utils.hpp"
 #include <iostream>
+#include <thread>
+
+#include <logging/Logging.hpp>
 
 
 namespace dunedaq::opmonlib {
@@ -31,24 +34,52 @@ namespace dunedaq::opmonlib {
     }
   }
   
+  fileOpMonFacility::~fileOpMonFacility() {
+    m_stop_request.store(true);
+
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_writing_variable.wait(lock,
+			    [&](){ return m_writing_counter.load() == 0; } );
+  }
 
   void fileOpMonFacility::publish(opmon::OpMonEntry && e) const {
+
+    if ( m_stop_request.load() ) {
+      throw OpMonPublishFailure( ERS_HERE,
+				 get_URI(), e.measurement(),
+				 to_string(e.origin()),
+				 FacilityStopRequested(ERS_HERE) );
+      
+    }
+    
+    ++m_writing_counter;
+    std::thread (& fileOpMonFacility::write,
+		 this, std::move(e)).detach();
+    
+  }
+
+  void fileOpMonFacility::write(opmon::OpMonEntry && e) const noexcept {
     std::string json;
     google::protobuf::util::MessageToJsonString( e, & json,
 						 get_json_options() );
 
-    std::lock_guard<std::mutex> lock(m_mutex);
-
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_writing_variable.wait(lock);
+    
     try {
       m_ofs << json << std::endl << std::flush;
     } catch ( const std::ios_base::failure & except ) {
-      throw OpMonPublishFailure( ERS_HERE,
-				 get_URI(), e.measurement(),
-				 to_string(e.origin()),
-				 WritingFailed(ERS_HERE, json, except) );
+      ers::error( OpMonPublishFailure( ERS_HERE,
+				       get_URI(), e.measurement(),
+				       to_string(e.origin()),
+				       WritingFailed(ERS_HERE, json, except) ) );
     }
-    
+
+    --m_writing_counter;
+    m_writing_variable.notify_one();
   }
+
+
   
 } // namespace dunedaq::opmonlib
 
