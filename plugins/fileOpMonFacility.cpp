@@ -35,11 +35,19 @@ namespace dunedaq::opmonlib {
   }
   
   fileOpMonFacility::~fileOpMonFacility() {
-    m_stop_request.store(true);
 
+    std::chrono::milliseconds max_delay( m_writing_counter.load());
+    
+    m_stop_request.store(true);
+       
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_writing_variable.wait(lock,
-			    [&](){ return m_writing_counter.load() == 0; } );
+    auto ret = m_writing_variable.wait_for(lock,
+					   max_delay,
+					   [&](){ return m_writing_counter.load() == 0; } ) ;
+    if ( ! ret ) {
+      throw FileClosedBeforeWritingComplete(ERS_HERE,
+					    max_delay.count(), m_writing_counter.load());
+    }
   }
 
   void fileOpMonFacility::publish(opmon::OpMonEntry && e) const {
@@ -64,7 +72,7 @@ namespace dunedaq::opmonlib {
 						 get_json_options() );
 
     std::unique_lock<std::mutex> lock(m_mutex);
-    m_writing_variable.wait(lock);
+    m_writing_variable.wait(lock, [&](){ return m_writing_counter.load() > 0;} );
     
     try {
       m_ofs << json << std::endl << std::flush;

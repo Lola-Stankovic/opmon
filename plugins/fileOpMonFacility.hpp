@@ -35,6 +35,13 @@ ERS_DECLARE_ISSUE(opmonlib,
 		  ERS_EMPTY
 		  )
 
+ERS_DECLARE_ISSUE(opmonlib,
+		  FileClosedBeforeWritingComplete,
+		  "Facility was destroyed after " << milliseconds << " ms with " << counter << " entries yet to be written",
+		  ((uint16_t)milliseconds)((uint16_t)counter)
+		  )
+
+
 } // namespace dunedaq
 
 namespace dunedaq::opmonlib {

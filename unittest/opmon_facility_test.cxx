@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(File_facility) {
     id.set_session("unit");
     id.set_application("test");
     id.set_element( "thread_"+std::to_string(i) );
-    for (auto j = 0; j < 5; ++j ) {
+    for (auto j = 0; j < 30; ++j ) {
       dunedaq::opmon::TestInfo ti;
       ti.set_int_example( i*1000 + j );
       ti.set_string_example( "test" );
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(File_facility) {
     }
   };
 
-  const int n = 30;
+  const int n = 50;
   std::vector<std::future<void>> threads(n);
 
   for( auto i = 0 ; i < n; ++i ) {
