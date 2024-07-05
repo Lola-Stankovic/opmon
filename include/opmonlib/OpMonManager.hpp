@@ -39,15 +39,16 @@ public:
   
   virtual ~OpMonManager();
 
-  using MonitorableObject::register_child ;
+  using MonitorableObject::register_child;
+  using MonitorableObject::set_opmon_level;
   
   // data collecting loop
-  void start(std::chrono::seconds, opmon_level); 
+  void start(std::chrono::seconds); 
   void stop();
 
 protected:
   void run( std::atomic<bool> & running,
-	    std::chrono::seconds, opmon_level ); // function used by thread
+	    std::chrono::seconds ); // function used by thread
 
 private:
 

@@ -131,6 +131,7 @@ protected:
    */
   virtual void generate_opmon_data() {return;}
 
+  
 private:
 
   /**
@@ -140,16 +141,16 @@ private:
    * \return It returns a protobuf schema object to monitor the tree
    */     
   opmon::MonitoringTreeInfo collect() noexcept ;
-    
+  
+  /**
+   * Hook to propagate the OpMonLevel at lower levels of the monitoring tree
+   */
+  void set_opmon_level( OpMonLevel ) noexcept; 
+
   /**
    * utilities for linking with parent and top levels
    */
   void inherit_parent_properties( const MonitorableObject & parent );   // funcion called on the children as well
-
-  /**
-   * Hook to propagate the OpMonLevel at lower levels of the monitoring tree
-   */
-  void set_opmonL_level( OpMonLevel ) noexcept; 
 
    /**
    * Contructor to set initial strings
