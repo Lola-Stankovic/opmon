@@ -47,6 +47,8 @@ public:
   void stop();
 
 protected:
+  using MonitorableObject::collect;
+  
   void run( std::atomic<bool> & running,
 	    std::chrono::seconds ); // function used by thread
 
