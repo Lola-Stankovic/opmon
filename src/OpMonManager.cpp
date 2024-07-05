@@ -31,7 +31,7 @@ OpMonManager::~OpMonManager() {
 }
 
 
-void OpMonManager::start(std::chrono::seconds interval, opmon_level level) {
+void OpMonManager::start(std::chrono::seconds interval) {
 
   if (m_thread_p) {
     try {
@@ -43,7 +43,7 @@ void OpMonManager::start(std::chrono::seconds interval, opmon_level level) {
 
   TLOG() << "Starting a new monitoring thread" ;
 
-  auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1, interval, level);
+  auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1, interval);
   m_thread_p.reset(new dunedaq::utilities::WorkerThread( running_function ) );
 
   auto name = get_opmon_id();
@@ -67,7 +67,7 @@ void OpMonManager::stop() {
 
 
 void OpMonManager::run(std::atomic<bool> & running,
-		       std::chrono::seconds interval, opmon_level level ) {
+		       std::chrono::seconds interval) {
 
   auto sleep_interval = std::chrono::milliseconds(100);
   
@@ -80,7 +80,7 @@ void OpMonManager::run(std::atomic<bool> & running,
     
     if ( time_span >= interval ) {
       last_collection_time = std::chrono::steady_clock::now();
-      publish( collect(level) );
+      publish( collect() );
       // there is no catch here because collect is supposed to catch all possible exceptions
       // In this way we should garantee the collection of metrics on the system
     }

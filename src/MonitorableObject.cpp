@@ -44,10 +44,16 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
 
 void MonitorableObject::publish( google::protobuf::Message && m,
 				 CustomOrigin && co,
+				 OpMonLevel l,
 				 const element_id & element ) const noexcept {
 
   auto timestamp = google::protobuf::util::TimeUtil::GetCurrentTime();
 
+  if ( ! MonitorableObject::publishable_metric( l, get_opmon_level() ) ) {
+    ++m_ignored_counter;
+    return;
+  }
+  
   auto e = to_entry( m, co );
 
   if ( e.data().empty() ) {
@@ -84,7 +90,7 @@ void MonitorableObject::publish( google::protobuf::Message && m,
 }
 
 
-opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
+opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -95,7 +101,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
   info.set_n_invalid_links(0);
 
   try {
-    generate_opmon_data(l);
+    generate_opmon_data();
   } catch ( const ers::Issue & i ) {
     ++m_error_counter;
     auto cause_ptr = i.cause();
@@ -113,6 +119,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
   }
 
   info.set_n_published_measurements( m_published_counter.exchange(0) );
+  info.set_n_ignored_measurements( m_ignored_counter.exchange(0) );
   info.set_n_errors( m_error_counter.exchange(0) );
   if (info.n_published_measurements() > 0) {
     info.set_n_publishing_nodes(1);
@@ -129,11 +136,12 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
     auto ptr = it->second.lock();
     
     if( ptr ) {
-      auto child_info = ptr->collect(l);  // MR: can we make this an async? There is no point to wait all done here
+      auto child_info = ptr->collect();  // MR: can we make this an async? There is no point to wait all done here
       info.set_n_registered_nodes( info.n_registered_nodes() + child_info.n_registered_nodes() );
       info.set_n_publishing_nodes( info.n_publishing_nodes() + child_info.n_publishing_nodes() );
       info.set_n_invalid_links( info.n_invalid_links() + child_info.n_invalid_links() );
       info.set_n_published_measurements( info.n_published_measurements() + child_info.n_published_measurements() );
+      info.set_n_ignored_measurements( info.n_ignored_measurements() + child_info.n_ignored_measurements() );
       info.set_n_errors( info.n_errors() + child_info.n_errors() );
     }
 
@@ -159,10 +167,24 @@ opmon::MonitoringTreeInfo MonitorableObject::collect( opmon_level l) noexcept {
 }
 
 
+void MonitorableObject::set_opmon_level( OpMonLevel l ) noexcept {
+
+  m_opmon_level = l;
+
+  std::lock_guard<std::mutex> lock(m_children_mutex);
+  for ( const auto & [key,wp] : m_children ) {
+    auto p = wp.lock();
+    if (p) {
+      p->set_opmon_level(l);
+    }
+  }
+}
+
 void MonitorableObject::inherit_parent_properties( const MonitorableObject & parent ) {
 
   m_facility = parent.m_facility;
   m_parent_id = parent.get_opmon_id();
+  m_opmon_level = parent.get_opmon_level();
   
   std::lock_guard<std::mutex> lock(m_children_mutex);
 
