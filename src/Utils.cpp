@@ -102,38 +102,39 @@ std::string dunedaq::opmonlib::to_string( const dunedaq::opmon::OpMonId & id ) {
     ret += id.application();
   }
   
-  if ( ! id.element().empty() ) {
+  for( int i = 0; i < id.substructure().size(); ++i ) {
     ret += '.';
-      ret += id.element();
+    ret += id.substructure()[i];
   }
-  
+
   return ret;
+}
+
+
+const dunedaq::opmon::OpMonId & dunedaq::opmonlib::operator += (dunedaq::opmon::OpMonId & id,
+								const  std::string & element) {
+  
+  if ( element.empty() ) return id;
+  
+  if ( id.session().empty() ) {
+    id.set_session(element);
+    return id;
+  }
+
+  if ( id.application().empty() ) {
+    id.set_application(element);
+    return id;
+  }
+
+  id.add_substructure(element);
+  return id;
 }
 
 
 dunedaq::opmon::OpMonId dunedaq::opmonlib::operator + (const dunedaq::opmon::OpMonId & id,
 						       const  std::string & element ) {
-  if ( element.empty() ) return id;
 
-  dunedaq::opmon::OpMonId ret = id;
-
-  if ( id.session().empty() ) {
-    ret.set_session(element);
-    return ret;
-  }
-
-  if ( id.application().empty() ) {
-    ret.set_application(element);
-    return ret;
-  }
-
-  if ( id.element().empty() ) {
-    ret.set_element(element);
-  }
-  else {
-    ret.set_element( id.element() + '.' + element );
-  }
-
+  auto ret = id;
+  ret += element;
   return ret;
 }
-

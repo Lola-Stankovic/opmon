@@ -86,7 +86,7 @@ public:
   
   virtual ~MonitorableObject() {;}
   
-  dunedaq::opmon::OpMonId get_opmon_id() const noexcept { return m_parent_id + m_opmon_name; }
+  auto get_opmon_id() const noexcept { return m_parent_id + m_opmon_name; }
 
   auto get_opmon_level() const noexcept { return m_opmon_level.load(); }
   

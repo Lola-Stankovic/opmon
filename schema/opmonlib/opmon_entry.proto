@@ -58,8 +58,7 @@ message OpMonId {
 
   string session = 1;
   string application = 2;
-  string element = 3;
-  // element can have a structure like element.subelement
+  repeated string substructure = 10;
 }
 
 

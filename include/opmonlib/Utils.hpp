@@ -34,8 +34,11 @@ namespace dunedaq::opmonlib {
 
   std::string to_string( const dunedaq::opmon::OpMonId & );
 
+  const dunedaq::opmon::OpMonId & operator += (dunedaq::opmon::OpMonId &,
+					       const  std::string & element);
+  
   dunedaq::opmon::OpMonId operator + (const dunedaq::opmon::OpMonId &,
-				      const  std::string & element );
+				      const  std::string & element ) ;
 
   
 }  // namespace dunedaq::opmonlib

@@ -78,9 +78,9 @@ BOOST_AUTO_TEST_CASE(File_facility) {
 
   auto pub_func = [&](int i){
     dunedaq::opmon::OpMonId id;
-    id.set_session("unit");
-    id.set_application("test");
-    id.set_element( "thread_"+std::to_string(i) );
+    id += "unit";
+    id += "test";
+    id += "thread_"+std::to_string(i);
     for (auto j = 0; j < 30; ++j ) {
       dunedaq::opmon::TestInfo ti;
       ti.set_int_example( i*1000 + j );
