@@ -61,7 +61,7 @@ void MonitorableObject::publish( google::protobuf::Message && m,
     return ;
   }
 
-  auto id = get_opmon_id() ;
+  *e.mutable_origin() = get_opmon_id() ;
   if ( ! element.empty() ) {
     if ( m_children.count( element ) > 0 ) {
       ers::error(NonUniqueChildName(ERS_HERE, element,
@@ -70,11 +70,10 @@ void MonitorableObject::publish( google::protobuf::Message && m,
       return;
     }
     else {
-      id = id + element;
+      *e.mutable_origin() += element;
     }
   }
   
-  *e.mutable_origin() = id;
   *e.mutable_time() = timestamp;
 
   // this pointer is always garanteed to be filled, even if with a null Facility.
