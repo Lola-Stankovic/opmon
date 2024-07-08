@@ -138,3 +138,4 @@ dunedaq::opmon::OpMonId dunedaq::opmonlib::operator + (const dunedaq::opmon::OpM
   ret += element;
   return ret;
 }
+

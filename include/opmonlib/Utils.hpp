@@ -40,7 +40,6 @@ namespace dunedaq::opmonlib {
   dunedaq::opmon::OpMonId operator + (const dunedaq::opmon::OpMonId &,
 				      const  std::string & element ) ;
 
-  
 }  // namespace dunedaq::opmonlib
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_UTILS_HPP_
