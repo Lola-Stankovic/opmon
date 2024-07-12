@@ -28,9 +28,9 @@ In particular, a `DAQModule` *is* a `MonitorableObject`.
 Two main functions are relevant for publishing:
 ```C++
 void publish( google::protobuf::Message &&,
-		CustomOrigin && co = {},
-    OpMonLevel l = to_level(EntryOpMonLevel::kDefault),
-		const element_id & element = "" ) const noexcept ;
+     	      CustomOrigin && co = {},
+              OpMonLevel l = to_level(EntryOpMonLevel::kDefault),
+	      const element_id & element = "" ) const noexcept ;
 virtual void generate_opmon_data(opmon_level) {return;}
 ```
 
