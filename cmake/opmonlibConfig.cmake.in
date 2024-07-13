@@ -7,6 +7,9 @@ find_dependency(cetlib)
 find_dependency(nlohmann_json)
 find_dependency(ers)
 find_dependency(logging)
+find_dependency(absl)
+find_dependency(Protobuf REQUIRED CONFIG)
+find_dependency(utilities)
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/@PROJECT_NAME@)
 
