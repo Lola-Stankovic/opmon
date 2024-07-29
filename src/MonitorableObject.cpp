@@ -44,8 +44,7 @@ void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
 
 void MonitorableObject::publish( google::protobuf::Message && m,
 				 CustomOrigin && co,
-				 OpMonLevel l,
-				 const element_id & element ) const noexcept {
+				 OpMonLevel l ) const noexcept {
 
   auto timestamp = google::protobuf::util::TimeUtil::GetCurrentTime();
 
@@ -64,17 +63,6 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   }
 
   *e.mutable_origin() = get_opmon_id() ;
-  if ( ! element.empty() ) {
-    if ( m_children.count( element ) > 0 ) {
-      ers::error(NonUniqueChildName(ERS_HERE, element,
-				    to_string(get_opmon_id())));
-      ++m_error_counter;
-      return;
-    }
-    else {
-      *e.mutable_origin() += element;
-    }
-  }
   
   *e.mutable_time() = timestamp;
 

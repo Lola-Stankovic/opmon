@@ -122,8 +122,7 @@ protected:
    */
   void publish( google::protobuf::Message &&,
 		CustomOrigin && co = {},
-		OpMonLevel l = to_level(EntryOpMonLevel::kDefault),
-		const element_id & element = "" ) const noexcept ;
+		OpMonLevel l = to_level(EntryOpMonLevel::kDefault) ) const noexcept ;
 
   /**
    * Hook for customisable pubblication. 
