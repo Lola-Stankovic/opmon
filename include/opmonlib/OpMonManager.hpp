@@ -9,6 +9,7 @@
 #ifndef OPMONLIB_INCLUDE_OPMONLIB_OPMONMANAGER_HPP_
 #define OPMONLIB_INCLUDE_OPMONLIB_OPMONMANAGER_HPP_
 
+#include <cstddef>
 #include "opmonlib/MonitorableObject.hpp"
 #include "utilities/WorkerThread.hpp" 
 
@@ -33,6 +34,9 @@ class OpMonManager : public MonitorableObject
 {
 public:
 
+  explicit OpMonManager(nullptr_t) :
+    OpMonManager( "NULL", "tree", "null://") {;}
+  
   explicit OpMonManager(std::string session,
 			std::string name,
 			std::string opmon_facility_uri = "stdout");
