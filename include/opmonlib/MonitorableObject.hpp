@@ -176,6 +176,7 @@ private:
   mutable std::atomic<metric_counter_t> m_published_counter{0};
   mutable std::atomic<metric_counter_t> m_ignored_counter{0};
   mutable std::atomic<metric_counter_t> m_error_counter{0};
+  mutable std::atomic<metric_counter_t> m_cpu_us_counter{0};
 };
 
 

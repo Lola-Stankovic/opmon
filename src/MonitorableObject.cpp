@@ -49,6 +49,8 @@ void MonitorableObject::publish( google::protobuf::Message && m,
 
   auto timestamp = google::protobuf::util::TimeUtil::GetCurrentTime();
 
+  auto start_time = std::chrono::high_resolution_clock::now();
+  
   if ( ! MonitorableObject::publishable_metric( l, get_opmon_level() ) ) {
     ++m_ignored_counter;
     return;
@@ -85,7 +87,12 @@ void MonitorableObject::publish( google::protobuf::Message && m,
     ers::error(e);
     ++m_error_counter;
   }
- 
+  
+  auto stop_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( stop_time - start_time );
+  m_cpu_us_counter += duration.count();
+
 }
 
 
@@ -122,7 +129,9 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
   info.set_n_errors( m_error_counter.exchange(0) );
   if (info.n_published_measurements() > 0) {
     info.set_n_publishing_nodes(1);
-  } 
+  }
+  info.set_cpu_elapsed_time_us( m_cpu_us_counter.exchange(0) ); 
+
 
   std::lock_guard<std::mutex> lock(m_children_mutex);
 
@@ -142,6 +151,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
       info.set_n_published_measurements( info.n_published_measurements() + child_info.n_published_measurements() );
       info.set_n_ignored_measurements( info.n_ignored_measurements() + child_info.n_ignored_measurements() );
       info.set_n_errors( info.n_errors() + child_info.n_errors() );
+      info.set_cpu_elapsed_time_us( info.cpu_elapsed_time_us() + child_info.cpu_elapsed_time_us() );
     }
 
     // prune the dead links
