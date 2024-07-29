@@ -26,12 +26,12 @@ OpMonManager::OpMonManager( std::string session,
 
 OpMonManager::~OpMonManager() {
   try {
-    stop();
+    stop_monitoring();
   } catch ( ... ) {;}
 }
 
 
-void OpMonManager::start(std::chrono::seconds interval) {
+void OpMonManager::start_monitoring(std::chrono::seconds interval) {
 
   if (m_thread_p) {
     try {
@@ -54,7 +54,7 @@ void OpMonManager::start(std::chrono::seconds interval) {
 
 
 
-void OpMonManager::stop() {
+void OpMonManager::stop_monitoring() {
 
   if ( m_thread_p ) {
     m_thread_p->stop_working_thread();

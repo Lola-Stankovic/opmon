@@ -47,8 +47,8 @@ public:
   using MonitorableObject::set_opmon_level;
   
   // data collecting loop
-  void start(std::chrono::seconds); 
-  void stop();
+  void start_monitoring(std::chrono::seconds); 
+  void stop_monitoring();
 
 protected:
   using MonitorableObject::collect;
