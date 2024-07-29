@@ -29,9 +29,6 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES} )
 ##############################################################################
 # Plugins
 
-daq_add_plugin(stdoutOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
-daq_add_plugin(fileOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
-
 daq_add_plugin(nullOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
 daq_add_plugin(stdoutOpMonFacility duneOpMonFacility LINK_LIBRARIES opmonlib)
 daq_add_plugin(fileOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
@@ -39,10 +36,8 @@ daq_add_plugin(fileOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
 ##############################################################################
 # Integration tests
 
-#daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
-
 ##############################################################################
-#unit tests
+# unit tests
 daq_add_unit_test( schema_conversion_test   LINK_LIBRARIES opmonlib )
 daq_add_unit_test( opmon_facility_test      LINK_LIBRARIES opmonlib )
 daq_add_unit_test( monitorable_object_test  LINK_LIBRARIES opmonlib )

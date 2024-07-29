@@ -29,8 +29,7 @@ Two main functions are relevant for publishing:
 ```C++
 void publish( google::protobuf::Message &&,
      	      CustomOrigin && co = {},
-              OpMonLevel l = to_level(EntryOpMonLevel::kDefault),
-	      const element_id & element = "" ) const noexcept ;
+              OpMonLevel l = to_level(EntryOpMonLevel::kDefault) ) const noexcept ;
 virtual void generate_opmon_data(opmon_level) {return;}
 ```
 
@@ -64,9 +63,6 @@ While the software stack might change (e.g, the name of an application or of a m
 Examples of valid tags to be used in the custom origins are: server name, channel, links, etc. 
 Adding information like application name, or session in the custorm origin is discouraged because it would be redundant. 
 
-Using the specification of an additional element is the logical equivament of adding a child to the current `MonitorableObject` and generating the data from that child instead of the current object. 
-This option is designed to be used for small objects that are simple or maybe short living such that they do not deserve to be full `MonitorableObjects`. 
-While this is handy because it does not require the registration of sub `MonitorableObejcts`, this requires to check the uniqueness of the `opmon_id` associated to the metric every time a metric is public, and therefore it is less efficient. 
 
 ## Registering sub components for your DAQModule
 
