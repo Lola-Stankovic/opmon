@@ -175,7 +175,12 @@ private:
   mutable std::atomic<metric_counter_t> m_published_counter{0};
   mutable std::atomic<metric_counter_t> m_ignored_counter{0};
   mutable std::atomic<metric_counter_t> m_error_counter{0};
-  mutable std::atomic<metric_counter_t> m_cpu_us_counter{0};
+
+  using const_time_counter_t = std::invoke_result<decltype(&dunedaq::opmonlib::opmon::MonitoringTreeInfo::cpu_elapsed_time_us),
+						  dunedaq::opmonlib::opmon::MonitoringTreeInfo>::type;
+  using time_counter_t = std::remove_const<const_metric_counter_t>::type;
+
+  mutable std::atomic<time_counter_t> m_cpu_us_counter{0};
 };
 
 
