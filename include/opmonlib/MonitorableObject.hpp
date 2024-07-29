@@ -178,6 +178,12 @@ private:
   mutable std::atomic<metric_counter_t> m_error_counter{0};
 };
 
+
+  class OpMonLink : public MonitorableObject {
+  public:
+    using MonitorableObject::register_child;
+  };
+  
 } // namespace dunedaq::opmonlib
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_MONITORABLEOBJECT_HPP_
