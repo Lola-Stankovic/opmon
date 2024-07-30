@@ -151,6 +151,11 @@ private:
    */
   void inherit_parent_properties( const MonitorableObject & parent );   // funcion called on the children as well
 
+  /**
+   * Recursive hook to unchain the tree
+   */
+  void reset() ;
+  
    /**
    * Contructor to set initial strings
    */ 

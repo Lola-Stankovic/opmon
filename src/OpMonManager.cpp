@@ -86,3 +86,24 @@ void OpMonManager::run(std::atomic<bool> & running,
     }
   }
 }
+
+
+void OpMonManager::reset() {
+  
+  try {
+    stop_monitoring();
+  } catch ( ... ) {;}
+
+  m_opmon_level = to_level(SystemOpMonLevel::kAll);
+
+  std::lock_guard<std::mutex> lock(m_children_mutex);
+  
+  for ( const auto & [key,wp] : m_children ) {
+    
+    auto p = wp.lock();
+    if ( p ) {
+      p->reset();
+    }
+    
+  }
+}

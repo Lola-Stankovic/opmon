@@ -50,6 +50,8 @@ public:
   void start_monitoring(std::chrono::seconds); 
   void stop_monitoring();
 
+  void reset();
+  
 protected:
   using MonitorableObject::collect;
   
