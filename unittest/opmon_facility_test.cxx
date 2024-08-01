@@ -8,6 +8,7 @@
  */
 
 #include "opmonlib/OpMonFacility.hpp"
+#include "NullOpMonFacility.hpp"
 #include "opmonlib/Utils.hpp"
 #include "opmonlib/info/test.pb.h"
 
@@ -25,6 +26,8 @@ BOOST_AUTO_TEST_SUITE(Opmon_Facility_Test)
 
 BOOST_AUTO_TEST_CASE(Invalid_Creation) {
 
+  auto p = std::make_shared<NullOpMonFacility>();
+  
   BOOST_CHECK_THROW( auto service = makeOpMonFacility("invalid://"),
 		     OpMonFacilityCreationFailed );
 
