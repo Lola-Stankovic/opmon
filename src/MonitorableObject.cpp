@@ -16,7 +16,7 @@
 
 using namespace dunedaq::opmonlib;
 
-void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
+void MonitorableObject::register_child( ElementId name, NewChildPtr p ) {
 
   std::lock_guard<std::mutex> lock(m_children_mutex);
 

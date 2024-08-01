@@ -54,9 +54,8 @@ namespace dunedaq::opmonlib {
 
   enum class EntryOpMonLevel : OpMonLevel {
     kTopPriority     = std::numeric_limits<OpMonLevel>::min(),
-    kAsync           = std::numeric_limits<OpMonLevel>::max()/4,
+    kEventDriven     = std::numeric_limits<OpMonLevel>::max()/4,
     kDefault         = std::numeric_limits<OpMonLevel>::max()/2,
-    kEventDriven     = (std::numeric_limits<OpMonLevel>::max()/4)*3,
     kLowestPrioriry  = std::numeric_limits<OpMonLevel>::max()-1
   };
 
@@ -70,9 +69,9 @@ class MonitorableObject
 {
 public:
 
-  using child_ptr = std::weak_ptr<MonitorableObject>;
-  using new_child_ptr = std::shared_ptr<MonitorableObject>;
-  using element_id = std::string;
+  using ChildPtr = std::weak_ptr<MonitorableObject>;
+  using NewChildPtr = std::shared_ptr<MonitorableObject>;
+  using ElementId = std::string;
 
   friend class OpMonManager;
   
@@ -106,7 +105,7 @@ protected:
     * Append a register object to the chain
     * The children will be modified using information from the this parent
     */
-  void register_child( std::string name, new_child_ptr ) ;
+  void register_child( ElementId name, NewChildPtr ) ;
 
   /**
    * Convert the message into an OpMonEntry and then uses the pointer to the Facility to publish the entry.
@@ -159,19 +158,19 @@ private:
    /**
    * Contructor to set initial strings
    */ 
-  MonitorableObject( element_id name, element_id parent_id = "" )
+  MonitorableObject( ElementId name, ElementId parent_id = "" )
     : m_parent_id()
     , m_opmon_name(name) {
     m_parent_id.set_session(parent_id);
   }
   
-  std::map<std::string, child_ptr> m_children ;
+  std::map<ElementId, ChildPtr> m_children ;
   std::mutex m_children_mutex;
 
   std::shared_ptr<opmonlib::OpMonFacility> m_facility = makeOpMonFacility("null://");
   dunedaq::opmon::OpMonId m_parent_id;
   std::atomic<OpMonLevel> m_opmon_level = to_level(SystemOpMonLevel::kAll);
-  element_id m_opmon_name;
+  ElementId m_opmon_name;
 
   // info for monitoring the monitoring structure
   using const_metric_counter_t = std::invoke_result<decltype(&dunedaq::opmonlib::opmon::MonitoringTreeInfo::n_published_measurements),
