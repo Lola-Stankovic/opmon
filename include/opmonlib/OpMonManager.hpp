@@ -36,7 +36,7 @@ class OpMonManager : protected MonitorableObject
 public:
 
   explicit OpMonManager(nullptr_t) :
-    OpMonManager( "NULL", "tree", MonitorableObject::s_default_facility_uri) {;}
+    MonitorableObject( "NULL", "tree") {;}
   
   explicit OpMonManager(std::string session,
 			std::string name,

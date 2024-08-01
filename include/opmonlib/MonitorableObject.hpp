@@ -167,7 +167,6 @@ private:
   std::atomic<OpMonLevel> m_opmon_level = to_level(SystemOpMonLevel::kAll);
   ElementId m_opmon_name;
 
-  static std::string s_default_facility_uri;
   static decltype(m_facility) s_default_facility;
   
   // info for monitoring the monitoring structure

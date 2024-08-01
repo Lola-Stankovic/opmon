@@ -6,6 +6,7 @@
  * received with this code.
  */
 
+#include <NullOpMonFacility.hpp>
 #include <opmonlib/MonitorableObject.hpp>
 #include <opmonlib/Utils.hpp>
 #include <logging/Logging.hpp>
@@ -16,8 +17,7 @@
 
 using namespace dunedaq::opmonlib;
 
-std::string MonitorableObject::s_default_facility_uri = "null://";
-std::shared_ptr<OpMonFacility> MonitorableObject::s_default_facility = makeOpMonFacility(MonitorableObject::s_default_facility_uri);
+std::shared_ptr<OpMonFacility> MonitorableObject::s_default_facility = std::make_shared<NullOpMonFacility>();
 
 void MonitorableObject::register_child( ElementId name, NewChildPtr p ) {
 

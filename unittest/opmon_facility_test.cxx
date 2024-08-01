@@ -26,13 +26,10 @@ BOOST_AUTO_TEST_SUITE(Opmon_Facility_Test)
 
 BOOST_AUTO_TEST_CASE(Invalid_Creation) {
 
-  auto p = std::make_shared<NullOpMonFacility>();
-  
   BOOST_CHECK_THROW( auto service = makeOpMonFacility("invalid://"),
 		     OpMonFacilityCreationFailed );
 
   BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("") );
-  BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("null://") );
   
 }
 
@@ -57,8 +54,8 @@ BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
 
 
 BOOST_AUTO_TEST_CASE(null_facility) {
-  
-  auto service = makeOpMonFacility("null://"); 
+
+  auto service = std::make_shared<NullOpMonFacility>(); 
 
   dunedaq::opmon::TestInfo ti;
   ti.set_int_example( 42 );
