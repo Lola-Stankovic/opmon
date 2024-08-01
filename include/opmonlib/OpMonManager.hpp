@@ -36,7 +36,7 @@ class OpMonManager : protected MonitorableObject
 public:
 
   explicit OpMonManager(nullptr_t) :
-    OpMonManager( "NULL", "tree", "null://") {;}
+    OpMonManager( "NULL", "tree", MonitorableObject::s_default_facility_uri) {;}
   
   explicit OpMonManager(std::string session,
 			std::string name,
@@ -53,8 +53,6 @@ public:
   void start_monitoring(std::chrono::seconds); 
   void stop_monitoring();
 
-  void reset();
-  
 protected:
   using MonitorableObject::collect;
   

@@ -150,11 +150,6 @@ private:
    */
   void inherit_parent_properties( const MonitorableObject & parent );   // funcion called on the children as well
 
-  /**
-   * Recursive hook to unchain the tree
-   */
-  void reset() ;
-  
    /**
    * Contructor to set initial strings
    */ 
@@ -167,11 +162,14 @@ private:
   std::map<ElementId, ChildPtr> m_children ;
   std::mutex m_children_mutex;
 
-  std::shared_ptr<opmonlib::OpMonFacility> m_facility = makeOpMonFacility("null://");
+  std::shared_ptr<opmonlib::OpMonFacility> m_facility = s_default_facility;
   dunedaq::opmon::OpMonId m_parent_id;
   std::atomic<OpMonLevel> m_opmon_level = to_level(SystemOpMonLevel::kAll);
   ElementId m_opmon_name;
 
+  static std::string s_default_facility_uri;
+  static decltype(m_facility) s_default_facility;
+  
   // info for monitoring the monitoring structure
   using const_metric_counter_t = std::invoke_result<decltype(&dunedaq::opmonlib::opmon::MonitoringTreeInfo::n_published_measurements),
 						    dunedaq::opmonlib::opmon::MonitoringTreeInfo>::type;
@@ -183,7 +181,6 @@ private:
   using const_time_counter_t = std::invoke_result<decltype(&dunedaq::opmonlib::opmon::MonitoringTreeInfo::cpu_elapsed_time_us),
 						  dunedaq::opmonlib::opmon::MonitoringTreeInfo>::type;
   using time_counter_t = std::remove_const<const_metric_counter_t>::type;
-
   mutable std::atomic<time_counter_t> m_cpu_us_counter{0};
 };
 
