@@ -48,6 +48,13 @@ struct my_fixture {
    
 };
 
+BOOST_AUTO_TEST_CASE(pointer_casting) {
+
+  std::shared_ptr<MonitorableObject> p = std::make_shared<OpMonLink>();
+  // std::shared_ptr<MonitorableObject> wrong_p = std::make_shared<OpMonManager>(nullptr);
+  // this conversion is not allowed. 
+}
+
 
 BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
 
