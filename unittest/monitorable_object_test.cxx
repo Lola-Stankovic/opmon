@@ -15,6 +15,7 @@
 #include "boost/test/unit_test.hpp"
 
 #include <vector>
+#include <type_traits>
 
 using namespace dunedaq::opmonlib;
 using namespace dunedaq::opmon;
@@ -50,9 +51,9 @@ struct my_fixture {
 
 BOOST_AUTO_TEST_CASE(pointer_casting) {
 
-  std::shared_ptr<MonitorableObject> p = std::make_shared<OpMonLink>();
-  // std::shared_ptr<MonitorableObject> wrong_p = std::make_shared<OpMonManager>(nullptr);
-  // this conversion is not allowed. 
+  static_assert(std::is_convertible_v<std::shared_ptr<OpMonLink>, std::shared_ptr<MonitorableObject>>);
+  static_assert(!std::is_convertible_v<std::shared_ptr<OpMonManager>, std::shared_ptr<MonitorableObject>>);
+
 }
 
 

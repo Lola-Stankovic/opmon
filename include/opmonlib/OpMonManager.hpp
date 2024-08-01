@@ -13,6 +13,7 @@
 #include "opmonlib/MonitorableObject.hpp"
 #include "utilities/WorkerThread.hpp" 
 
+
 namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
@@ -66,6 +67,7 @@ private:
 
 };
 
+ 
 } // namespace dunedaq::opmonlib
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_OPMONMANAGER_HPP_
