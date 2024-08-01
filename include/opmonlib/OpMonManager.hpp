@@ -30,7 +30,7 @@ namespace dunedaq {
 
 namespace dunedaq::opmonlib {
 
-class OpMonManager : public MonitorableObject 
+class OpMonManager : protected MonitorableObject 
 {
 public:
 
@@ -43,6 +43,8 @@ public:
   
   virtual ~OpMonManager();
 
+  using MonitorableObject::get_opmon_id;
+  using MonitorableObject::get_opmon_level;
   using MonitorableObject::register_child;
   using MonitorableObject::set_opmon_level;
   
