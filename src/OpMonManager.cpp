@@ -79,6 +79,7 @@ void OpMonManager::run(std::atomic<bool> & running,
     
     if ( time_span >= interval ) {
       last_collection_time = std::chrono::steady_clock::now();
+      TLOG() << "Publishing tree information from << " << to_string(get_opmon_id());
       publish( collect() );
       // there is no catch here because collect is supposed to catch all possible exceptions
       // In this way we should garantee the collection of metrics on the system
