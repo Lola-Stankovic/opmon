@@ -54,6 +54,7 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   auto start_time = std::chrono::high_resolution_clock::now();
   
   if ( ! MonitorableObject::publishable_metric( l, get_opmon_level() ) ) {
+    // MR: add a debut statement with trace
     ++m_ignored_counter;
     return;
   }
@@ -161,7 +162,6 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>( stop_time - start_time );
   info.set_clockwall_elapsed_time_us( duration.count() );
-  info.set_cpu_elapsed_time_us( duration.count() ); // MR: this is ok for now but needs changing if we use async collection
   
   return info;
 }

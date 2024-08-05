@@ -40,7 +40,7 @@ void OpMonManager::start_monitoring(std::chrono::seconds interval) {
     }
   }
 
-  TLOG() << "Starting a new monitoring thread" ;
+  TLOG() << "Starting a new monitoring thread with interval " << interval.count() << " seconds, at level " << get_opmon_level();
 
   auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1, interval);
   m_thread_p.reset(new dunedaq::utilities::WorkerThread( running_function ) );
@@ -79,7 +79,6 @@ void OpMonManager::run(std::atomic<bool> & running,
     
     if ( time_span >= interval ) {
       last_collection_time = std::chrono::steady_clock::now();
-      TLOG() << "Publishing tree information from << " << to_string(get_opmon_id());
       publish( collect() );
       // there is no catch here because collect is supposed to catch all possible exceptions
       // In this way we should garantee the collection of metrics on the system
