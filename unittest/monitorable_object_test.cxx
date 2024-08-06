@@ -6,7 +6,7 @@
  * received with this code.
  */
 
-#include "opmonlib/info/test.pb.h"
+#include "opmonlib/opmon/test.pb.h"
 #include "opmonlib/MonitorableObject.hpp"
 #include "opmonlib/OpMonManager.hpp"
 

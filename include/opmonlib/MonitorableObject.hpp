@@ -12,7 +12,7 @@
 #include "opmonlib/Utils.hpp"
 #include "opmonlib/OpMonFacility.hpp"
 #include <google/protobuf/message.h>
-#include <opmonlib/info/MonitoringTreeInfo.pb.h>
+#include <opmonlib/opmon/monitoring_tree.pb.h>
 
 #include <limits>
 #include <type_traits>

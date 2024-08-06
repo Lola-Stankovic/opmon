@@ -8,7 +8,7 @@
  */
 
 #include "opmonlib/Utils.hpp"
-#include "opmonlib/info/test.pb.h"
+#include "opmonlib/opmon/test.pb.h"
 
 #define BOOST_TEST_MODULE schema_conversion_test // NOLINT
 
