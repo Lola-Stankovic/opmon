@@ -29,7 +29,7 @@ void MonitorableObject::register_node( ElementId name, NewNodePtr p ) {
     // This not desired because names are suppposed to be unique
     // But if the pointer is expired, there is no harm in override it
     if ( it -> second.expired() ) {
-      ers::warning(NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id())));
+      ers::warning(NonUniqueNodeName(ERS_HERE, name, to_string(get_opmon_id())));
     }
     else {
       throw NonUniqueNodeName(ERS_HERE, name, to_string(get_opmon_id()));
@@ -125,13 +125,13 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
   info.set_cpu_elapsed_time_us( m_cpu_us_counter.exchange(0) ); 
 
 
-  std::lock_guard<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_node_mutex);
 
-  info.set_n_registered_nodes( m_children.size() );
+  info.set_n_registered_nodes( m_nodes.size() );
 
   unsigned int n_invalid_links = 0;
   
-  for ( auto it = m_children.begin(); it != m_children.end(); ) {
+  for ( auto it = m_nodes.begin(); it != m_nodes.end(); ) {
 
     auto ptr = it->second.lock();
     
@@ -148,7 +148,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
 
     // prune the dead links
     if ( it->second.expired() ) {
-      it = m_children.erase(it);
+      it = m_nodes.erase(it);
       ++n_invalid_links;
     } else {
       ++it;
@@ -171,8 +171,8 @@ void MonitorableObject::set_opmon_level( OpMonLevel l ) noexcept {
 
   m_opmon_level = l;
 
-  std::lock_guard<std::mutex> lock(m_children_mutex);
-  for ( const auto & [key,wp] : m_children ) {
+  std::lock_guard<std::mutex> lock(m_node_mutex);
+  for ( const auto & [key,wp] : m_nodes ) {
     auto p = wp.lock();
     if (p) {
       p->set_opmon_level(l);
@@ -186,9 +186,9 @@ void MonitorableObject::inherit_parent_properties( const MonitorableObject & par
   m_parent_id = parent.get_opmon_id();
   m_opmon_level = parent.get_opmon_level();
   
-  std::lock_guard<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_node_mutex);
 
-  for ( const auto & [key,wp] : m_children ) {
+  for ( const auto & [key,wp] : m_nodes ) {
 
     auto p = wp.lock();
     if ( p ) {
