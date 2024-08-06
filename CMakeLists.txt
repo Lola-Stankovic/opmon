@@ -5,6 +5,7 @@ find_package(daq-cmake REQUIRED)
 
 daq_setup_environment()
 
+#find_package(okdalgen REQUIRED)
 find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(logging REQUIRED)
@@ -20,6 +21,7 @@ set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging n
 # Schemas
 
 daq_protobuf_codegen( *.proto info/*.proto )
+#daq_oks_codegen(opmon.schema.xml)
 
 ##############################################################################
 # Main library
