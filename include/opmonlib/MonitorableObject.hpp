@@ -24,8 +24,8 @@
 namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
-		     NonUniqueChildName,
-		     name << " already present in the child list of " << opmon_id,
+		     NonUniqueNodeName,
+		     name << " already present in the node list of " << opmon_id,
 		     ((std::string)name)((std::string)opmon_id) 
 		     )
 	  
@@ -69,8 +69,8 @@ class MonitorableObject
 {
 public:
 
-  using ChildPtr = std::weak_ptr<MonitorableObject>;
-  using NewChildPtr = std::shared_ptr<MonitorableObject>;
+  using NodePtr = std::weak_ptr<MonitorableObject>;
+  using NewNodePtr = std::shared_ptr<MonitorableObject>;
   using ElementId = std::string;
 
   friend class OpMonManager;
@@ -105,7 +105,7 @@ protected:
     * Append a register object to the chain
     * The children will be modified using information from the this parent
     */
-  void register_child( ElementId name, NewChildPtr ) ;
+  void register_node( ElementId name, NewNodePtr ) ;
 
   /**
    * Convert the message into an OpMonEntry and then uses the pointer to the Facility to publish the entry.
@@ -159,8 +159,8 @@ private:
     m_parent_id.set_session(parent_id);
   }
   
-  std::map<ElementId, ChildPtr> m_children ;
-  std::mutex m_children_mutex;
+  std::map<ElementId, NodePtr> m_nodes ;
+  std::mutex m_node_mutex;
 
   std::shared_ptr<opmonlib::OpMonFacility> m_facility = s_default_facility;
   dunedaq::opmon::OpMonId m_parent_id;
@@ -186,7 +186,7 @@ private:
 
   class OpMonLink : public MonitorableObject {
   public:
-    using MonitorableObject::register_child;
+    using MonitorableObject::register_node;
   };
   
 } // namespace dunedaq::opmonlib

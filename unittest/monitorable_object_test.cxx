@@ -35,7 +35,7 @@ struct my_fixture {
   class TestObject : public MonitorableObject {
 
   public:
-    using MonitorableObject::register_child;
+    using MonitorableObject::register_node;
     using MonitorableObject::publish;
     TestObject() : MonitorableObject() {;}
   };
@@ -62,14 +62,14 @@ BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
   BOOST_CHECK_EQUAL( to_string(node_p->get_opmon_id()), "" );
   BOOST_CHECK_EQUAL( to_string(manager.get_opmon_id()), "test.manager" );
 
-  manager.register_child("child", node_p);
+  manager.register_node("child", node_p);
   BOOST_CHECK_EQUAL( to_string(node_p->get_opmon_id()), "test.manager.child" );
 }
 
 
 BOOST_FIXTURE_TEST_CASE( opmon_level, my_fixture ) {
 
-  manager.register_child("child", node_p);
+  manager.register_node("child", node_p);
   auto parent_level = manager.get_opmon_level();
   auto child_level  = node_p->get_opmon_level();
 
@@ -88,10 +88,10 @@ BOOST_FIXTURE_TEST_CASE( opmon_level, my_fixture ) {
 
 BOOST_FIXTURE_TEST_CASE( counters, my_fixture ) {
 
-  manager.register_child("child", node_p);
+  manager.register_node("child", node_p);
 
   std::shared_ptr<TestObject> child(new TestObject);
-  node_p->register_child("grand_child", child);
+  node_p->register_node("grand_child", child);
   
   dunedaq::opmon::TestInfo ct;
   ct.set_string_example( "child_test" );

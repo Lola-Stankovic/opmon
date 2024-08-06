@@ -19,29 +19,29 @@ using namespace dunedaq::opmonlib;
 
 std::shared_ptr<OpMonFacility> MonitorableObject::s_default_facility = std::make_shared<NullOpMonFacility>();
 
-void MonitorableObject::register_child( ElementId name, NewChildPtr p ) {
+void MonitorableObject::register_node( ElementId name, NewNodePtr p ) {
 
-  std::lock_guard<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_node_mutex);
 
   // check if the name is already present to ensure uniqueness
-  auto it = m_children.find(name) ;
-  if ( it != m_children.end() ) {
+  auto it = m_nodes.find(name) ;
+  if ( it != m_nodes.end() ) {
     // This not desired because names are suppposed to be unique
     // But if the pointer is expired, there is no harm in override it
     if ( it -> second.expired() ) {
       ers::warning(NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id())));
     }
     else {
-      throw NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id()));
+      throw NonUniqueNodeName(ERS_HERE, name, to_string(get_opmon_id()));
     }
   }
   
-  m_children[name] = p;
+  m_nodes[name] = p;
 
   p -> m_opmon_name = name;
   p -> inherit_parent_properties( *this );
 
-  TLOG() << "Child " << name << " registered to " << to_string(get_opmon_id()) ;
+  TLOG() << "Node " << name << " registered to " << to_string(get_opmon_id()) ;
 }
 
 

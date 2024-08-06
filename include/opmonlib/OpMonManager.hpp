@@ -46,7 +46,7 @@ public:
 
   using MonitorableObject::get_opmon_id;
   using MonitorableObject::get_opmon_level;
-  using MonitorableObject::register_child;
+  using MonitorableObject::register_node;
   using MonitorableObject::set_opmon_level;
   
   // data collecting loop

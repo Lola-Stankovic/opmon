@@ -20,7 +20,7 @@ set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging n
 ##############################################################################
 # Schemas
 
-daq_protobuf_codegen( *.proto info/*.proto )
+daq_protobuf_codegen( *.proto opmon/*.proto )
 #daq_oks_codegen(opmon.schema.xml)
 
 ##############################################################################
