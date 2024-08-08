@@ -120,8 +120,9 @@ but users are welcome to fill the gaps with whatever number they are happy to as
 The usage of a custom origin is designed to provide information that is unrelated to software stack.
 While the software stack might change (e.g, the name of an application or of a module can change because of configuration) some information like a crate number or a channel, are hardware related and they are independent of the software stack that provides this information. 
 Examples of valid tags to be used in the custom origins are: server name, channel, links, etc. 
+The value of a tag should not grow indefinetly, for retrival efficiency in the database. So, things like run number should not become a custom origin. 
 Adding information like application name, or session in the custorm origin is discouraged because it would be redundant. 
-
+In the example above, you see a usage example where `TriggerInfo` contain counters divided per trigger type.
 
 ## Registering sub components for your DAQModule
 
