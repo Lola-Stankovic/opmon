@@ -9,12 +9,45 @@ Documentation and instructions on generating schema data structures and using Pr
 Relevant pages include also the description of the C++ API.
 
 
-% Examples of how to write schemas can be found [here](https://github.com/DUNE-DAQ/timing/tree/feature/op_mon/schema/timing). 
 In general each `.protobuf` file contains definitions of blocks that are published as single units.
 Each `schema` file will generate a C++ header file containing the structures which hold the monitoring data, as defined in the `.proto` file. 
 Typically each module may only need one struct to hold its monitoring information; however it is possible to create multiple nested structs within a schema, which are filled by the same module.
 
-% MR: add some example once listrev is done
+It is preferred to organise the protobuf schemas in the following way:
+
+ * put the opmon related schemas in `schema/opmon` inside your repository
+ * try to group the schemas so that the schema used by the same modules are in the same file; the name of the file should match the name of the module
+ * As protobuf generates a lot of code, there might be conflicts with our code, protect the generated code with an additional `opmon` namespce.
+
+Here is an example, take from the DFOModule.proto, which contains the schemas used by DFOModule plugin in dfmodules. 
+```
+syntax = "proto3";
+
+package dunedaq.dfmodules.opmon;
+
+// regular metric published byt the DFO
+message DFOInfo {
+  // counters 
+  uint64 tokens_received = 1;
+  uint64 decisions_received = 2;
+  uint64 decisions_sent = 3;
+
+  // time management of the decision thread
+  uint64 waiting_for_decision = 10 ; // Time spent waiting on Trigger Decisions, in microseconds
+  uint64 deciding_destination = 11 ; // Time spent making a decision on the receving DF app, in microseconds
+  uint64 forwarding_decision = 12  ; // Time spent sending the Trigger Decision to TRBs, in microseconds
+
+  // time management of the token thread
+  uint64 waiting_for_token = 15 ; // Time spent waiting in token thread for tokens, in microseconds
+  uint64 processing_token = 16 ; // Time spent in token thread updating data structure, in microseconds
+}
+
+// these counters are published separately for each trigger type
+message TriggerInfo {
+  uint64 received = 1;
+  uint64 completed = 2;
+}
+```
 
 ### Valid types
 As a generic schema language, `ProtoBuf` allows you do use simple types, but also lists, maps, etc.
@@ -28,13 +61,40 @@ In particular, a `DAQModule` *is* a `MonitorableObject`.
 Two main functions are relevant for publishing:
 ```C++
 void publish( google::protobuf::Message &&,
-     	      CustomOrigin && co = {},
+     	        CustomOrigin && co = {},
               OpMonLevel l = to_level(EntryOpMonLevel::kDefault) ) const noexcept ;
 virtual void generate_opmon_data(opmon_level) {return;}
 ```
 
 * `publish` takes a ProtoBuf schmea object, it timestamps it with the time of the function call, it serializes it (syncronously) and publishes it (asyncronously) via one of the configured OpMonFacilities. This function can be called at anytime. 
-* `generate_opmon_data` is a function which the monitoring system calls regularly (order of seconds). Its default behavious is null. Every user can freely imoplement this in their DAQModule in order to avoid setting up a thread to generate information regularly. Specific implementations are expected to call the `publish` function to actually create the metric.
+* `generate_opmon_data` is a function which the monitoring system calls regularly (order of seconds). Its default behaviour is null. Every developer can freely implement this in their MonitorableObject in order to avoid setting up a thread to generate information regularly. Specific implementations are expected to call the `publish` function to actually publish the metric.
+
+### Example
+An example of metric publication is
+```C++
+void DFOModule::generate_opmon_data()  {
+
+  opmon::DFOInfo info;
+  info.set_tokens_received( m_received_tokens.exchange(0) );
+  info.set_decisions_sent(m_sent_decisions.exchange(0));
+  info.set_decisions_received(m_received_decisions.exchange(0));
+  info.set_waiting_for_decision(m_waiting_for_decision.exchange(0));
+  info.set_deciding_destination(m_deciding_destination.exchange(0));
+  info.set_forwarding_decision(m_forwarding_decision.exchange(0));
+  info.set_waiting_for_token(m_waiting_for_token.exchange(0));
+  info.set_processing_token(m_processing_token.exchange(0));
+  publish( std::move(info) );
+
+  std::lock_guard<std::mutex>	guard(m_trigger_mutex);
+  for ( auto & [type, counts] : m_trigger_counters ) {
+    opmon::TriggerInfo ti;
+    ti.set_received(counts.received.exchange(0));
+    ti.set_completed(counts.completed.exchange(0));
+    auto name = dunedaq::trgdataformats::get_trigger_candidate_type_names()[type];
+    publish( std::move(ti), {{"type", name}} );
+   }
+}
+```
 
 ### Details and good practices about the optional arguments 
 Optional arguments of the `publish` function, allow you to
@@ -70,14 +130,19 @@ This is done via the method
 ```C++
 void register_node( std::string name, new_node_ptr ) ;
 ```
+If not registered, the metric is not completely lost, an ERS error will be generated reporting the usage of an unconfigured reporting system. 
 
 The metrics generated by the child will have an `opmon_id` in the form `parent_opmon_id.child_name`. 
-The registration does now imply ownership of the child by the parent, as internally only weak pointers are utilised. 
+The registration does not imply ownership of the child by the parent, as internally only weak pointers are utilised. 
 If the child is destroyed, its pointer will evntually be removed from the chain. 
 
 `DAQModule`s will be automatically registered by the application framework and developers have to write their code assuming that the module is registered in the monitoring tree from the moment of its creation. 
 On the other hand, developers have to take care of the registration of subcomonents living inside their modules.
 
+An example of registration is:
+```C++
+
+```
 
 
 ## Testing
