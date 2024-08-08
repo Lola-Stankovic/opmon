@@ -83,7 +83,7 @@ public:
   MonitorableObject( MonitorableObject && ) = delete;
   MonitorableObject & operator = (MonitorableObject &&) = delete;    
   
-  virtual ~MonitorableObject() {;}
+  virtual ~MonitorableObject() = default;
   
   auto get_opmon_id() const noexcept { return m_parent_id + m_opmon_name; }
 
