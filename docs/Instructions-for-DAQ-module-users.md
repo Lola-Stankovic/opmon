@@ -141,9 +141,20 @@ On the other hand, developers have to take care of the registration of subcomone
 
 An example of registration is:
 ```C++
-
+void DFOModule::receive_trigger_complete_token(const dfmessages::TriggerDecisionToken& token) {
+  if (m_dataflow_availability.count(token.decision_destination) == 0) {
+    TLOG_DEBUG(TLVL_CONFIG) << "Creating dataflow availability struct for uid " << token.decision_destination;
+    auto entry = m_dataflow_availability[token.decision_destination] =
+      std::make_shared<TriggerRecordBuilderData>(token.decision_destination, m_busy_threshold, m_free_threshold);
+    register_node(token.decision_destination, entry);
+  } else {
+    TLOG() << TRBModuleAppUpdate(ERS_HERE, token.decision_destination, "Has reconnected");
+    auto app_it = m_dataflow_availability.find(token.decision_destination);
+    app_it->second->set_in_error(false);
+  }
 ```
 
+The registration does not imply ownership, so in order to unregister an object you just need to delete the shared pointer. 
 
 ## Testing
 
