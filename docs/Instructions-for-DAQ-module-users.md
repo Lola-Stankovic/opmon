@@ -147,12 +147,11 @@ void DFOModule::receive_trigger_complete_token(const dfmessages::TriggerDecision
     auto entry = m_dataflow_availability[token.decision_destination] =
       std::make_shared<TriggerRecordBuilderData>(token.decision_destination, m_busy_threshold, m_free_threshold);
     register_node(token.decision_destination, entry);
-  } else {
-    TLOG() << TRBModuleAppUpdate(ERS_HERE, token.decision_destination, "Has reconnected");
-    auto app_it = m_dataflow_availability.find(token.decision_destination);
-    app_it->second->set_in_error(false);
-  }
+  } 
+}
 ```
+Notice that here the registraion is event driven: something triggers the creation of an object and at anytime it's possible to register the object. 
+Of course a more static approach is possible too.
 
 The registration does not imply ownership, so in order to unregister an object you just need to delete the shared pointer. 
 
