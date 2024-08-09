@@ -37,12 +37,15 @@ class OpMonManager : protected MonitorableObject
 public:
 
   /*
-   *
+   * This constructor is for test purpose and initialise the facility to the backend facility
    */
   explicit OpMonManager(nullptr_t) :
-    MonitorableObject( "NULL", "tree") {;}
+    MonitorableObject( "NULL", "tree") { m_facility = std::make_shared<BackendOpMonFacility>();}
 
-  
+  /*
+   * Construtor expected to be used for standard operations, 
+   * yet, general developers should not concern themselves with this as the framework handles this for them
+   */
   explicit OpMonManager(std::string session,
 			std::string name,
 			std::string opmon_facility_uri = "stdout");
@@ -60,6 +63,7 @@ public:
 
   //obtain the opmon facility
   auto get_opmon_facility() { return m_facility; }
+  auto get_backend_facility() { return std::dynamic_pointer_cast<BackendOpMonFacility>(m_facility);  }
   
 protected:
   using MonitorableObject::collect;
