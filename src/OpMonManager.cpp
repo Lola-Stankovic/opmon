@@ -45,10 +45,7 @@ void OpMonManager::start_monitoring(std::chrono::seconds interval) {
   auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1, interval);
   m_thread_p.reset(new dunedaq::utilities::WorkerThread( running_function ) );
 
-  auto name = get_opmon_id();
-  name = name + "opmon";
-
-  m_thread_p->start_working_thread(dunedaq::opmonlib::to_string(name));
+  m_thread_p->start_working_thread("opmon");
 }
 
 
