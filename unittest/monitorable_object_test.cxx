@@ -57,6 +57,18 @@ BOOST_AUTO_TEST_CASE(pointer_casting) {
 }
 
 
+BOOST_AUTO_TEST_CASE(test_manager) {
+
+  OpMonManager mgr(nullptr);
+  auto facility = mgr.get_backend_facility();
+  BOOST_CHECK_EQUAL( bool(facility), true );
+  auto list = facility -> get_entries();
+  BOOST_CHECK_EQUAL( list.size(), 0 );
+
+}
+
+
+
 BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
 
   BOOST_CHECK_EQUAL( to_string(node_p->get_opmon_id()), "" );
