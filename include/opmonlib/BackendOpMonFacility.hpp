@@ -11,12 +11,14 @@ namespace dunedaq::opmonlib {
 
   class BackendOpMonFacility : public OpMonFacility {
 
-    using data_t = std::list<opmon::OpMonEntry>;
+    using entry_t = dunedaq::opmon::OpMonEntry;
+    using data_t = std::list<entry_t>;
+
     
   public:
-    BackendOpMonFacility() : OpMonFacility("Backend://") {;}
+    BackendOpMonFacility() : OpMonFacility("backend://") {;}
     
-    void publish(opmon::OpMonEntry && e) const override ;
+    void publish(entry_t && e) const override ;
     
     data_t get_entries() ;
 

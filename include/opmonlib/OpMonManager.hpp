@@ -13,6 +13,7 @@
 #include "opmonlib/MonitorableObject.hpp"
 #include "utilities/WorkerThread.hpp" 
 
+#include "opmonlib/BackendOpMonFacility.hpp"
 
 namespace dunedaq {
 
@@ -35,8 +36,12 @@ class OpMonManager : protected MonitorableObject
 {
 public:
 
+  /*
+   *
+   */
   explicit OpMonManager(nullptr_t) :
     MonitorableObject( "NULL", "tree") {;}
+
   
   explicit OpMonManager(std::string session,
 			std::string name,
@@ -53,6 +58,9 @@ public:
   void start_monitoring(std::chrono::seconds); 
   void stop_monitoring();
 
+  //obtain the opmon facility
+  auto get_opmon_facility() { return m_facility; }
+  
 protected:
   using MonitorableObject::collect;
   
