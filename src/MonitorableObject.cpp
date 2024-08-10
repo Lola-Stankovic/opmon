@@ -73,7 +73,7 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   // this pointer is always garanteed to be filled, even if with a null Facility.
   // But the facility can fail
   try {
-    m_facility->publish(std::move(e));
+    m_facility.load()->publish(std::move(e));
     ++m_published_counter;
   } catch ( const OpMonPublishFailure & e ) {
     ers::error(e);
@@ -182,7 +182,7 @@ void MonitorableObject::set_opmon_level( OpMonLevel l ) noexcept {
 
 void MonitorableObject::inherit_parent_properties( const MonitorableObject & parent ) {
 
-  m_facility = parent.m_facility;
+  m_facility.store(parent.m_facility);
   m_parent_id = parent.get_opmon_id();
   m_opmon_level = parent.get_opmon_level();
   

@@ -8,7 +8,7 @@
 
 #include "opmonlib/opmon/test.pb.h"
 #include "opmonlib/MonitorableObject.hpp"
-#include "opmonlib/OpMonManager.hpp"
+#include "opmonlib/TestOpMonManager.hpp"
 
 #define BOOST_TEST_MODULE monitorable_object_test // NOLINT
 
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(pointer_casting) {
 
 BOOST_AUTO_TEST_CASE(test_manager) {
 
-  OpMonManager mgr(nullptr);
+  TestOpMonManager mgr;
   auto facility = mgr.get_backend_facility();
   BOOST_CHECK_EQUAL( bool(facility), true );
   auto list = facility -> get_entries();

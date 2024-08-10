@@ -13,8 +13,6 @@
 #include "opmonlib/MonitorableObject.hpp"
 #include "utilities/WorkerThread.hpp" 
 
-#include "opmonlib/BackendOpMonFacility.hpp"
-
 namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
@@ -34,13 +32,10 @@ namespace dunedaq::opmonlib {
 
 class OpMonManager : protected MonitorableObject 
 {
-public:
 
-  /*
-   * This constructor is for test purpose and initialise the facility to the backend facility
-   */
-  explicit OpMonManager(nullptr_t) :
-    MonitorableObject( "NULL", "tree") { m_facility = std::make_shared<BackendOpMonFacility>();}
+  friend class TestOpMonManager;
+  
+public:
 
   /*
    * Construtor expected to be used for standard operations, 
@@ -48,10 +43,11 @@ public:
    */
   explicit OpMonManager(std::string session,
 			std::string name,
-			std::string opmon_facility_uri = "stdout");
+			std::string opmon_facility_uri = "stdout") :
+    OpMonManager( session, name, makeOpMonFacility(opmon_facility_uri) ){;}
   
   virtual ~OpMonManager();
-
+  
   using MonitorableObject::get_opmon_id;
   using MonitorableObject::get_opmon_level;
   using MonitorableObject::register_node;
@@ -61,12 +57,16 @@ public:
   void start_monitoring(std::chrono::seconds); 
   void stop_monitoring();
 
-  //obtain the opmon facility
-  auto get_opmon_facility() { return m_facility; }
-  auto get_backend_facility() { return std::dynamic_pointer_cast<BackendOpMonFacility>(m_facility);  }
   
 protected:
   using MonitorableObject::collect;
+
+  //obtain the opmon facility
+  auto get_opmon_facility() const { return m_facility.load(); }
+
+  OpMonManager(std::string session,
+	       std::string name,
+	       facility_ptr_t );
   
   void run( std::atomic<bool> & running,
 	    std::chrono::seconds ); // function used by thread

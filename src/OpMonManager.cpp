@@ -15,10 +15,10 @@ using namespace dunedaq::opmonlib;
 
 OpMonManager::OpMonManager( std::string session,
 			    std::string name,
-			    std::string opmon_facility_uri)
+			    facility_ptr_t f_ptr)
   : MonitorableObject( name, session) {
 
-  m_facility = makeOpMonFacility(opmon_facility_uri);
+  m_facility.store(f_ptr);
   
 }
 

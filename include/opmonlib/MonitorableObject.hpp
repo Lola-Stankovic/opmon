@@ -162,12 +162,13 @@ private:
   std::map<ElementId, NodePtr> m_nodes ;
   std::mutex m_node_mutex;
 
-  std::shared_ptr<opmonlib::OpMonFacility> m_facility = s_default_facility;
+  using facility_ptr_t = std::shared_ptr<opmonlib::OpMonFacility>;
+  std::atomic<facility_ptr_t> m_facility{s_default_facility};
   dunedaq::opmon::OpMonId m_parent_id;
   std::atomic<OpMonLevel> m_opmon_level = to_level(SystemOpMonLevel::kAll);
   ElementId m_opmon_name;
 
-  static decltype(m_facility) s_default_facility;
+  static facility_ptr_t s_default_facility;
   
   // info for monitoring the monitoring structure
   using const_metric_counter_t = std::invoke_result<decltype(&dunedaq::opmonlib::opmon::MonitoringTreeInfo::n_published_measurements),
