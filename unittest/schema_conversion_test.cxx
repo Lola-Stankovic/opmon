@@ -86,7 +86,18 @@ BOOST_AUTO_TEST_CASE(conversion) {
 
   BOOST_TEST( complex_entry.custom_origin().begin()->first  == tag_name);
   BOOST_TEST( complex_entry.custom_origin().begin()->second == tag_value);
+
+  // inverse
+  auto reco_ti = from_entry<dunedaq::opmon::TestInfo>( test_entry );
+  BOOST_TEST( reco_ti.int_example() == int_value );
+  BOOST_CHECK_THROW( auto failed_reco_ti = from_entry<dunedaq::opmon::TestInfo>(complex_entry),
+		     dunedaq::opmonlib::NameMismatch );
+  
+  
+  
 }
+
+
 
 
 BOOST_AUTO_TEST_SUITE_END()

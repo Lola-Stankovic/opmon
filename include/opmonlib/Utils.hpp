@@ -16,8 +16,29 @@
 
 #include <google/protobuf/message.h>
 #include "opmonlib/opmon_entry.pb.h"
+#include "ers/ers.hpp"
 
 #include <google/protobuf/util/time_util.h>
+
+
+namespace dunedaq {
+  
+  ERS_DECLARE_ISSUE(opmonlib,
+		    FailedInfoReconstruction,
+		    "Failure to create an object of type " << type,
+		    ((std::string)type)
+		    )
+
+  ERS_DECLARE_ISSUE_BASE(opmonlib,
+			 NameMismatch,
+			 FailedInfoReconstruction,
+			 "Message " << type
+			 << " cannot be reconstructed from entry of type " << entry,
+			 ((std::string)type),
+			 ((std::string)entry)
+			 )
+
+}
 
 namespace dunedaq::opmonlib {
 
@@ -31,10 +52,14 @@ namespace dunedaq::opmonlib {
 
   template<class M>
   M from_entry( const dunedaq::opmon::OpMonEntry & );
+
+  void from_entry(google::protobuf::Message & m,
+		  const dunedaq::opmon::OpMonEntry &,
+		  std::string top_block = "");
   
   map_type to_map(const google::protobuf::Message & m,
 		  std::string top_block = "");
-
+  
   std::string to_string( const dunedaq::opmon::OpMonId & );
 
   const dunedaq::opmon::OpMonId & operator += (dunedaq::opmon::OpMonId &,
