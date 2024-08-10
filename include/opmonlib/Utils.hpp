@@ -29,6 +29,9 @@ namespace dunedaq::opmonlib {
   dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m,
 				      const CustomOrigin & co);
 
+  template<class M>
+  M from_entry( const dunedaq::opmon::OpMonEntry & );
+  
   map_type to_map(const google::protobuf::Message & m,
 		  std::string top_block = "");
 
@@ -41,5 +44,7 @@ namespace dunedaq::opmonlib {
 				      const  std::string & element ) ;
 
 }  // namespace dunedaq::opmonlib
+
+#include "details/Utils.hxx"
 
 #endif // OPMONLIB_INCLUDE_OPMONLIB_UTILS_HPP_
