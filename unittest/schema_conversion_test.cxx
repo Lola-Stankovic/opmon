@@ -92,6 +92,7 @@ BOOST_AUTO_TEST_CASE(conversion) {
   BOOST_TEST( reco_ti.int_example() == int_value );
   BOOST_CHECK_THROW( auto failed_reco_ti = from_entry<dunedaq::opmon::TestInfo>(complex_entry),
 		     dunedaq::opmonlib::NameMismatch );
+  BOOST_CHECK_NO_THROW( auto succ_reco_ci = from_entry<dunedaq::opmon::ComplexInfo>(complex_entry) );
   
   
   
