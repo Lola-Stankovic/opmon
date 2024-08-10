@@ -23,14 +23,6 @@ using namespace dunedaq::opmon;
 BOOST_AUTO_TEST_SUITE(Monitorable_Object_Test)
 
 struct my_fixture {
-
-  class TestManager : public OpMonManager {
-  public :
-    using OpMonManager::collect;
-    TestManager( std::string session,
-		 std::string name )
-      : OpMonManager(session, name) {;}
-  };
   
   class TestObject : public MonitorableObject {
 
@@ -44,7 +36,7 @@ struct my_fixture {
     : manager("test", "manager")
     , node_p(new TestObject) {;}  
   
-  TestManager manager;
+  TestOpMonManager manager;
   std::shared_ptr<TestObject> node_p;
    
 };
@@ -57,13 +49,22 @@ BOOST_AUTO_TEST_CASE(pointer_casting) {
 }
 
 
-BOOST_AUTO_TEST_CASE(test_manager) {
+BOOST_FIXTURE_TEST_CASE(test_manager, my_fixture) {
 
-  TestOpMonManager mgr;
-  auto facility = mgr.get_backend_facility();
+  auto facility = manager.get_backend_facility();
   BOOST_CHECK_EQUAL( bool(facility), true );
+
+  std::shared_ptr<TestObject> child(new TestObject);
+  manager.register_node("grand_child", child);
+
+  dunedaq::opmon::TestInfo ct;
+  ct.set_string_example( "child_test" );
+  ct.set_int_example( 10 );
+
+  child->publish(std::move(ct));
+  
   auto list = facility -> get_entries();
-  BOOST_CHECK_EQUAL( list.size(), 0 );
+  BOOST_CHECK_EQUAL( list.size(), 1 );
 
 }
 
