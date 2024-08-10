@@ -6,6 +6,7 @@
 
 #include <list>
 #include <mutex>
+#include <regex>
 
 namespace dunedaq::opmonlib {
 
@@ -20,7 +21,7 @@ namespace dunedaq::opmonlib {
     
     void publish(entry_t && e) const override ;
     
-    data_t get_entries() ;
+    data_t get_entries(std::regex measurement_filter = std::regex(".*")) ;
 
   private:
     mutable data_t m_list;
