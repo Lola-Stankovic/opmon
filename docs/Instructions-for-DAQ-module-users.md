@@ -51,8 +51,8 @@ message TriggerInfo {
 
 ### Valid types
 As a generic schema language, `ProtoBuf` allows you do use simple types, but also lists, maps, etc.
-Be aware that apart from basic types and nested messages, other quantities and are ignored.
-ERS messages are generated whenever a structure with unpublishable entries are defined. 
+Be aware that apart from basic types and nested messages, other quantities are ignored by the monitoring system.
+An `OpMonEntry` message is generated whenever a structure with at least one publishable field is passed to the `publish` method, see next section.
 
 ## Filling and collecting structures
 The `ProtoBuf` C++ API guide describes how to fill the structures you created. 
