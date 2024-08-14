@@ -6,6 +6,7 @@
  * received with this code.
  */
 
+#include <NullOpMonFacility.hpp>
 #include <opmonlib/MonitorableObject.hpp>
 #include <opmonlib/Utils.hpp>
 #include <logging/Logging.hpp>
@@ -16,40 +17,44 @@
 
 using namespace dunedaq::opmonlib;
 
-void MonitorableObject::register_child( std::string name, new_child_ptr p ) {
+std::shared_ptr<OpMonFacility> MonitorableObject::s_default_facility = std::make_shared<NullOpMonFacility>();
 
-  std::lock_guard<std::mutex> lock(m_children_mutex);
+void MonitorableObject::register_node( ElementId name, NewNodePtr p ) {
+
+  std::lock_guard<std::mutex> lock(m_node_mutex);
 
   // check if the name is already present to ensure uniqueness
-  auto it = m_children.find(name) ;
-  if ( it != m_children.end() ) {
+  auto it = m_nodes.find(name) ;
+  if ( it != m_nodes.end() ) {
     // This not desired because names are suppposed to be unique
     // But if the pointer is expired, there is no harm in override it
     if ( it -> second.expired() ) {
-      ers::warning(NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id())));
+      ers::warning(NonUniqueNodeName(ERS_HERE, name, to_string(get_opmon_id())));
     }
     else {
-      throw NonUniqueChildName(ERS_HERE, name, to_string(get_opmon_id()));
+      throw NonUniqueNodeName(ERS_HERE, name, to_string(get_opmon_id()));
     }
   }
   
-  m_children[name] = p;
+  m_nodes[name] = p;
 
   p -> m_opmon_name = name;
   p -> inherit_parent_properties( *this );
 
-  TLOG() << "Child " << name << " registered to " << to_string(get_opmon_id()) ;
+  TLOG() << "Node " << name << " registered to " << to_string(get_opmon_id()) ;
 }
 
 
 void MonitorableObject::publish( google::protobuf::Message && m,
 				 CustomOrigin && co,
-				 OpMonLevel l,
-				 const element_id & element ) const noexcept {
+				 OpMonLevel l ) const noexcept {
 
   auto timestamp = google::protobuf::util::TimeUtil::GetCurrentTime();
 
+  auto start_time = std::chrono::high_resolution_clock::now();
+  
   if ( ! MonitorableObject::publishable_metric( l, get_opmon_level() ) ) {
+    // MR: add a debut statement with trace
     ++m_ignored_counter;
     return;
   }
@@ -62,30 +67,24 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   }
 
   *e.mutable_origin() = get_opmon_id() ;
-  if ( ! element.empty() ) {
-    if ( m_children.count( element ) > 0 ) {
-      ers::error(NonUniqueChildName(ERS_HERE, element,
-				    to_string(get_opmon_id())));
-      ++m_error_counter;
-      return;
-    }
-    else {
-      *e.mutable_origin() += element;
-    }
-  }
   
   *e.mutable_time() = timestamp;
 
   // this pointer is always garanteed to be filled, even if with a null Facility.
   // But the facility can fail
   try {
-    m_facility->publish(std::move(e));
+    m_facility.load()->publish(std::move(e));
     ++m_published_counter;
   } catch ( const OpMonPublishFailure & e ) {
     ers::error(e);
     ++m_error_counter;
   }
- 
+  
+  auto stop_time = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( stop_time - start_time );
+  m_cpu_us_counter += duration.count();
+
 }
 
 
@@ -122,15 +121,17 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
   info.set_n_errors( m_error_counter.exchange(0) );
   if (info.n_published_measurements() > 0) {
     info.set_n_publishing_nodes(1);
-  } 
+  }
+  info.set_cpu_elapsed_time_us( m_cpu_us_counter.exchange(0) ); 
 
-  std::lock_guard<std::mutex> lock(m_children_mutex);
 
-  info.set_n_registered_nodes( m_children.size() );
+  std::lock_guard<std::mutex> lock(m_node_mutex);
+
+  info.set_n_registered_nodes( m_nodes.size() );
 
   unsigned int n_invalid_links = 0;
   
-  for ( auto it = m_children.begin(); it != m_children.end(); ) {
+  for ( auto it = m_nodes.begin(); it != m_nodes.end(); ) {
 
     auto ptr = it->second.lock();
     
@@ -142,11 +143,12 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
       info.set_n_published_measurements( info.n_published_measurements() + child_info.n_published_measurements() );
       info.set_n_ignored_measurements( info.n_ignored_measurements() + child_info.n_ignored_measurements() );
       info.set_n_errors( info.n_errors() + child_info.n_errors() );
+      info.set_cpu_elapsed_time_us( info.cpu_elapsed_time_us() + child_info.cpu_elapsed_time_us() );
     }
 
     // prune the dead links
     if ( it->second.expired() ) {
-      it = m_children.erase(it);
+      it = m_nodes.erase(it);
       ++n_invalid_links;
     } else {
       ++it;
@@ -160,7 +162,6 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>( stop_time - start_time );
   info.set_clockwall_elapsed_time_us( duration.count() );
-  info.set_cpu_elapsed_time_us( duration.count() ); // MR: this is ok for now but needs changing if we use async collection
   
   return info;
 }
@@ -170,8 +171,8 @@ void MonitorableObject::set_opmon_level( OpMonLevel l ) noexcept {
 
   m_opmon_level = l;
 
-  std::lock_guard<std::mutex> lock(m_children_mutex);
-  for ( const auto & [key,wp] : m_children ) {
+  std::lock_guard<std::mutex> lock(m_node_mutex);
+  for ( const auto & [key,wp] : m_nodes ) {
     auto p = wp.lock();
     if (p) {
       p->set_opmon_level(l);
@@ -181,13 +182,13 @@ void MonitorableObject::set_opmon_level( OpMonLevel l ) noexcept {
 
 void MonitorableObject::inherit_parent_properties( const MonitorableObject & parent ) {
 
-  m_facility = parent.m_facility;
+  m_facility.store(parent.m_facility);
   m_parent_id = parent.get_opmon_id();
   m_opmon_level = parent.get_opmon_level();
   
-  std::lock_guard<std::mutex> lock(m_children_mutex);
+  std::lock_guard<std::mutex> lock(m_node_mutex);
 
-  for ( const auto & [key,wp] : m_children ) {
+  for ( const auto & [key,wp] : m_nodes ) {
 
     auto p = wp.lock();
     if ( p ) {

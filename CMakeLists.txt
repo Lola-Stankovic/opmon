@@ -5,6 +5,7 @@ find_package(daq-cmake REQUIRED)
 
 daq_setup_environment()
 
+#find_package(okdalgen REQUIRED)
 find_package(cetlib REQUIRED)
 find_package(ers REQUIRED)
 find_package(logging REQUIRED)
@@ -19,7 +20,8 @@ set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging n
 ##############################################################################
 # Schemas
 
-daq_protobuf_codegen( *.proto info/*.proto )
+daq_protobuf_codegen( *.proto opmon/*.proto )
+#daq_oks_codegen(opmon.schema.xml)
 
 ##############################################################################
 # Main library
@@ -29,20 +31,14 @@ daq_add_library(*.cpp LINK_LIBRARIES ${OPMONLIB_DEPENDENCIES} )
 ##############################################################################
 # Plugins
 
-daq_add_plugin(stdoutOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
-daq_add_plugin(fileOpmonService duneOpmonService LINK_LIBRARIES opmonlib)
-
-daq_add_plugin(nullOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
 daq_add_plugin(stdoutOpMonFacility duneOpMonFacility LINK_LIBRARIES opmonlib)
 daq_add_plugin(fileOpMonFacility   duneOpMonFacility LINK_LIBRARIES opmonlib)
 
 ##############################################################################
 # Integration tests
 
-#daq_add_application(opmonlib_test opmonlib_test.cpp TEST LINK_LIBRARIES opmonlib)
-
 ##############################################################################
-#unit tests
+# unit tests
 daq_add_unit_test( schema_conversion_test   LINK_LIBRARIES opmonlib )
 daq_add_unit_test( opmon_facility_test      LINK_LIBRARIES opmonlib )
 daq_add_unit_test( monitorable_object_test  LINK_LIBRARIES opmonlib )

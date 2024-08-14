@@ -93,6 +93,68 @@ dunedaq::opmonlib::map_type dunedaq::opmonlib::to_map( const google::protobuf::M
   
 }
 
+
+void dunedaq::opmonlib::from_entry( google::protobuf::Message & m,
+				    const dunedaq::opmon::OpMonEntry & e,
+				    std::string top_block) {
+
+  const auto * descriptor_p = m.GetDescriptor();
+  const auto & des = *descriptor_p;
+  
+  const auto * reflection_p = m.GetReflection();
+  const auto & ref = *reflection_p;
+  
+  using namespace google::protobuf;
+
+  auto count = des.field_count();
+  for ( int i = 0; i < count; ++i ) {
+    const auto * field_p = des.field(i);
+    if ( field_p -> is_repeated() ) continue;
+    
+    auto name = top_block.empty() ? field_p -> name() : top_block + '.' + field_p -> name(); 
+
+    auto type = field_p -> cpp_type();
+
+    if ( type == FieldDescriptor::CppType::CPPTYPE_MESSAGE ) {
+      auto message = ref.MutableMessage(&m, field_p);
+      from_entry( *message, e, name );
+    } else {
+
+      auto value = e.data().find(name)->second;
+
+      switch (type) {
+      case FieldDescriptor::CppType::CPPTYPE_INT32:
+	ref.SetInt32(&m, field_p, value.int4_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_INT64:
+	ref.SetInt64(&m, field_p, value.int8_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_UINT32:
+	ref.SetUInt32(&m, field_p, value.uint4_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_UINT64:
+	ref.SetUInt64(&m, field_p, value.uint8_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_DOUBLE:
+	ref.SetDouble(&m, field_p, value.double_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_FLOAT:
+	ref.SetFloat(&m, field_p, value.float_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_BOOL:
+	ref.SetBool(&m, field_p, value.boolean_value());
+	break;
+      case FieldDescriptor::CppType::CPPTYPE_STRING:
+	ref.SetString(&m, field_p, value.string_value());
+	break;
+      default:
+	break;
+      } // switch on the cpp type                                                                         
+    } // else if it's a message
+  } // loop over the fields
+
+}
+
 std::string dunedaq::opmonlib::to_string( const dunedaq::opmon::OpMonId & id ) {
 
   std::string ret(id.session());

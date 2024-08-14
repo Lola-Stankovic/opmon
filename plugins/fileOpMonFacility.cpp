@@ -45,8 +45,8 @@ namespace dunedaq::opmonlib {
 					   max_delay,
 					   [&](){ return m_writing_counter.load() == 0; } ) ;
     if ( ! ret ) {
-      throw FileClosedBeforeWritingComplete(ERS_HERE,
-					    max_delay.count(), m_writing_counter.load());
+      ers::error(FileClosedBeforeWritingComplete(ERS_HERE,
+						 max_delay.count(), m_writing_counter.load()) );
     }
   }
 

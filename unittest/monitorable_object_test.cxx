@@ -6,15 +6,16 @@
  * received with this code.
  */
 
-#include "opmonlib/info/test.pb.h"
+#include "opmonlib/opmon/test.pb.h"
 #include "opmonlib/MonitorableObject.hpp"
-#include "opmonlib/OpMonManager.hpp"
+#include "opmonlib/TestOpMonManager.hpp"
 
 #define BOOST_TEST_MODULE monitorable_object_test // NOLINT
 
 #include "boost/test/unit_test.hpp"
 
 #include <vector>
+#include <type_traits>
 
 using namespace dunedaq::opmonlib;
 using namespace dunedaq::opmon;
@@ -22,19 +23,11 @@ using namespace dunedaq::opmon;
 BOOST_AUTO_TEST_SUITE(Monitorable_Object_Test)
 
 struct my_fixture {
-
-  class TestManager : public OpMonManager {
-  public :
-    using OpMonManager::collect;
-    TestManager( std::string session,
-		 std::string name )
-      : OpMonManager(session, name) {;}
-  };
   
   class TestObject : public MonitorableObject {
 
   public:
-    using MonitorableObject::register_child;
+    using MonitorableObject::register_node;
     using MonitorableObject::publish;
     TestObject() : MonitorableObject() {;}
   };
@@ -43,10 +36,38 @@ struct my_fixture {
     : manager("test", "manager")
     , node_p(new TestObject) {;}  
   
-  TestManager manager;
+  TestOpMonManager manager;
   std::shared_ptr<TestObject> node_p;
    
 };
+
+BOOST_AUTO_TEST_CASE(pointer_casting) {
+
+  static_assert(std::is_convertible_v<std::shared_ptr<OpMonLink>, std::shared_ptr<MonitorableObject>>);
+  static_assert(!std::is_convertible_v<std::shared_ptr<OpMonManager>, std::shared_ptr<MonitorableObject>>);
+
+}
+
+
+BOOST_FIXTURE_TEST_CASE(test_manager, my_fixture) {
+
+  auto facility = manager.get_backend_facility();
+  BOOST_CHECK_EQUAL( bool(facility), true );
+
+  std::shared_ptr<TestObject> child(new TestObject);
+  manager.register_node("grand_child", child);
+
+  dunedaq::opmon::TestInfo ct;
+  ct.set_string_example( "child_test" );
+  ct.set_int_example( 10 );
+
+  child->publish(std::move(ct));
+  
+  auto list = facility -> get_entries();
+  BOOST_CHECK_EQUAL( list.size(), 1 );
+
+}
+
 
 
 BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
@@ -54,14 +75,14 @@ BOOST_FIXTURE_TEST_CASE( opmon_ids, my_fixture ) {
   BOOST_CHECK_EQUAL( to_string(node_p->get_opmon_id()), "" );
   BOOST_CHECK_EQUAL( to_string(manager.get_opmon_id()), "test.manager" );
 
-  manager.register_child("child", node_p);
+  manager.register_node("child", node_p);
   BOOST_CHECK_EQUAL( to_string(node_p->get_opmon_id()), "test.manager.child" );
 }
 
 
 BOOST_FIXTURE_TEST_CASE( opmon_level, my_fixture ) {
 
-  manager.register_child("child", node_p);
+  manager.register_node("child", node_p);
   auto parent_level = manager.get_opmon_level();
   auto child_level  = node_p->get_opmon_level();
 
@@ -80,10 +101,10 @@ BOOST_FIXTURE_TEST_CASE( opmon_level, my_fixture ) {
 
 BOOST_FIXTURE_TEST_CASE( counters, my_fixture ) {
 
-  manager.register_child("child", node_p);
+  manager.register_node("child", node_p);
 
   std::shared_ptr<TestObject> child(new TestObject);
-  node_p->register_child("grand_child", child);
+  node_p->register_node("grand_child", child);
   
   dunedaq::opmon::TestInfo ct;
   ct.set_string_example( "child_test" );

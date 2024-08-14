@@ -13,67 +13,38 @@
 
 using namespace dunedaq::opmonlib;
 
-
 OpMonManager::OpMonManager( std::string session,
 			    std::string name,
-			    std::string opmon_facility_uri)
+			    facility_ptr_t f_ptr)
   : MonitorableObject( name, session) {
 
-  m_facility = makeOpMonFacility(opmon_facility_uri);
+  m_facility.store(f_ptr);
   
 }
 
+void OpMonManager::start_monitoring(std::chrono::seconds interval) {
 
-OpMonManager::~OpMonManager() {
-  try {
-    stop();
-  } catch ( ... ) {;}
-}
+  TLOG() << "Starting a new monitoring thread with interval " << interval.count() << " seconds, at level " << get_opmon_level();
 
-
-void OpMonManager::start(std::chrono::seconds interval) {
-
-  if (m_thread_p) {
-    try {
-      m_thread_p->stop_working_thread();
-    } catch (const utilities::ThreadingIssue & ti){
-      ers::warning( ti );
-    }
+  auto running_function = std::bind( & OpMonManager::run, this,
+				     std::placeholders::_1,  std::placeholders::_2);
+  m_thread = std::jthread( running_function, interval );
+  auto handle = m_thread.native_handle();
+  auto thread_name = "opmon";
+  auto rc =  pthread_setname_np(handle, thread_name);    
+   if (rc != 0) {
+    ers::warning(ThreadNameTooLong(ERS_HERE, thread_name));
   }
-
-  TLOG() << "Starting a new monitoring thread" ;
-
-  auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1, interval);
-  m_thread_p.reset(new dunedaq::utilities::WorkerThread( running_function ) );
-
-  auto name = get_opmon_id();
-  name = name + "opmon";
-
-  m_thread_p->start_working_thread(dunedaq::opmonlib::to_string(name));
-}
-
-
-
-void OpMonManager::stop() {
-
-  if ( m_thread_p ) {
-    m_thread_p->stop_working_thread();
-  } else {
-    throw MonitoringThreadNotSet(ERS_HERE);
-  }
-  
 }
   
-
-
-void OpMonManager::run(std::atomic<bool> & running,
+void OpMonManager::run(std::stop_token stoken,
 		       std::chrono::seconds interval) {
 
   auto sleep_interval = std::chrono::milliseconds(100);
   
   auto last_collection_time = std::chrono::steady_clock::now();
   
-  while( running.load() ) {
+  while( ! stoken.stop_requested() ) {
     
     std::this_thread::sleep_for(sleep_interval);
     auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() - last_collection_time);
@@ -85,4 +56,8 @@ void OpMonManager::run(std::atomic<bool> & running,
       // In this way we should garantee the collection of metrics on the system
     }
   }
+
+  TLOG() << "Exiting the monitoring thread";
 }
+
+

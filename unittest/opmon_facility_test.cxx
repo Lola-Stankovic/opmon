@@ -8,8 +8,9 @@
  */
 
 #include "opmonlib/OpMonFacility.hpp"
+#include "NullOpMonFacility.hpp"
 #include "opmonlib/Utils.hpp"
-#include "opmonlib/info/test.pb.h"
+#include "opmonlib/opmon/test.pb.h"
 
 #define BOOST_TEST_MODULE opmon_facility_test // NOLINT
 
@@ -29,7 +30,6 @@ BOOST_AUTO_TEST_CASE(Invalid_Creation) {
 		     OpMonFacilityCreationFailed );
 
   BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("") );
-  BOOST_CHECK_NO_THROW( auto service = makeOpMonFacility("null://") );
   
 }
 
@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE(STD_Cout_facility) {
 
 
 BOOST_AUTO_TEST_CASE(null_facility) {
-  
-  auto service = makeOpMonFacility("null://"); 
+
+  auto service = std::make_shared<NullOpMonFacility>(); 
 
   dunedaq::opmon::TestInfo ti;
   ti.set_int_example( 42 );
