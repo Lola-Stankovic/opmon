@@ -15,7 +15,7 @@ find_package(Protobuf REQUIRED CONFIG)
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 find_package(utilities)
 
-set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json protobuf::libprotobuf absl::log_internal_check_op utilities::utilities ${PROTOBUF_LIBRARY})
+set(OPMONLIB_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers logging::logging nlohmann_json::nlohmann_json protobuf::libprotobuf absl::log_internal_check_op utilities::utilities )
 
 ##############################################################################
 # Schemas
