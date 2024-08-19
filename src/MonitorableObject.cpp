@@ -15,6 +15,16 @@
 
 #include <chrono>
 
+
+/**
+ * @brief Name used by TRACE TLOG calls from this source file
+ */
+#define TRACE_NAME "MonitorableObject" // NOLINT
+enum {
+  TLVL_MONITORING_STEPS = 10,
+  TLVL_LEVEL_SUPPRESSION = 20,
+};
+
 using namespace dunedaq::opmonlib;
 
 std::shared_ptr<OpMonFacility> MonitorableObject::s_default_facility = std::make_shared<NullOpMonFacility>();
@@ -54,7 +64,7 @@ void MonitorableObject::publish( google::protobuf::Message && m,
   auto start_time = std::chrono::high_resolution_clock::now();
   
   if ( ! MonitorableObject::publishable_metric( l, get_opmon_level() ) ) {
-    // MR: add a debut statement with trace
+    TLOG_DEBUG(TLVL_LEVEL_SUPPRESSION) << "Metric " << m.GetTypeName() << " ignored because of the level";
     ++m_ignored_counter;
     return;
   }
@@ -92,7 +102,7 @@ opmon::MonitoringTreeInfo MonitorableObject::collect() noexcept {
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  TLOG() << "Collecting data from " << to_string(get_opmon_id());
+  TLOG_DEBUG(TLVL_MONITORING_STEPS) << "Collecting data from " << to_string(get_opmon_id());
   
   opmon::MonitoringTreeInfo info;
 
