@@ -2,6 +2,7 @@
 
 import json
 import os
+from re import A, I
 import rich.traceback
 from rich.console import Console
 from os.path import exists, join
@@ -39,16 +40,31 @@ def cli(output_file, json_files):
     # format is session.application.substructure.name: value
 
     for jsonobj in jsons:
-        keybase = jsonobj["origin"]["session"] + "." + jsonobj["origin"]["application"] + "."
+        session = jsonobj["origin"]["session"]
+        application = jsonobj["origin"]["application"]
+        substructure = ""
         if "substructure" in jsonobj["origin"]:
-            keybase += ".".join(jsonobj["origin"]["substructure"]) + "."
+            substructure = ".".join(jsonobj["origin"]["substructure"])
+
+        if session not in data:
+            data[session] = {}
+
+        if application not in data[session]:
+            data[session][application] = {}
+
+        if substructure != "":
+            if substructure not in data[session][application]:
+                data[session][application][substructure] = {}
+            objref = data[session][application][substructure]
+        else:
+            objref = data[session][application]
+
         for datapoint in jsonobj["data"]:
-            key = keybase + datapoint
-            if key not in data:
-                data[key] = {}
+            if datapoint not in objref:
+                objref[datapoint] = {}
 
             for value in jsonobj["data"][datapoint]:
-                data[key][jsonobj["time"]]  = jsonobj["data"][datapoint][value]
+                objref[datapoint][jsonobj["time"]]  = jsonobj["data"][datapoint][value]
 
     json.dump(data, output_file, indent=4, sort_keys=True)
     console.log(f"Operation complete")
