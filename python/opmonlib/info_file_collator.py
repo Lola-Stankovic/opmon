@@ -22,38 +22,33 @@ def cli(output_file, json_files):
     console.log(f"Reading specified JSON files and outputting collated value traces to {output_file.name}")
 
     jsons = []
+    jd = json.JSONDecoder()
     for jf in json_files:
         console.log(f"Reading info JSON file {jf.name}")
-        for line in jf:
-            jsons.append(json.loads(line))
+        text = jf.read()
+        idx=0
+        while idx < len(text):
+            res = jd.raw_decode(text, idx)
+            jsons.append(res[0])
+            idx = res[1] + 2
 
     #console.log(jsons)
 
     data = {}
 
-    # format is partition.objectinstance.key.time: value
-
-    def parse_children(childarr, parentobj):
-        for child in childarr:
-            if child not in parentobj:
-                parentobj[child] = {}
-            childobj = childarr[child]
-
-            if '__children' in childobj:
-                parse_children(childobj['__children'], parentobj[child])
-
-            if '__properties' in childobj:
-                for datatype in childobj['__properties']:
-                    datatypeobj = childobj['__properties'][datatype]
-                    thistime = datatypeobj['__time']
-                    for key in datatypeobj['__data']:
-                        if key not in parentobj[child]:
-                            parentobj[child][key] = {}
-                        thisvalue = datatypeobj['__data'][key]
-                        parentobj[child][key][thistime] = thisvalue
+    # format is session.application.substructure.name: value
 
     for jsonobj in jsons:
-        parse_children(jsonobj['__parent'], data)
+        keybase = jsonobj["origin"]["session"] + "." + jsonobj["origin"]["application"] + "."
+        if "substructure" in jsonobj["origin"]:
+            keybase += ".".join(jsonobj["origin"]["substructure"]) + "."
+        for datapoint in jsonobj["data"]:
+            key = keybase + datapoint
+            if key not in data:
+                data[key] = {}
+
+            for value in jsonobj["data"][datapoint]:
+                data[key][jsonobj["time"]]  = jsonobj["data"][datapoint][value]
 
     json.dump(data, output_file, indent=4, sort_keys=True)
     console.log(f"Operation complete")
