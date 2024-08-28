@@ -54,6 +54,13 @@ def cli(output_file, json_files):
                     customOrigin += "."
                 customOrigin += f"{k}:{v}"
                 first = False
+        if "custom_origin" in jsonobj:
+            first = True
+            for k,v in jsonobj["custom_origin"].items():
+                if not first:
+                    customOrigin += "."
+                customOrigin += f"{k}:{v}"
+                first = False
 
         if session not in data:
             data[session] = {}
