@@ -46,6 +46,15 @@ def cli(output_file, json_files):
         if "substructure" in jsonobj["origin"]:
             substructure = ".".join(jsonobj["origin"]["substructure"])
 
+        customOrigin = ""
+        if "customOrigin" in jsonobj:
+            first = True
+            for k,v in jsonobj["customOrigin"].items():
+                if not first:
+                    customOrigin += "."
+                customOrigin += f"{k}:{v}"
+                first = False
+
         if session not in data:
             data[session] = {}
 
@@ -58,6 +67,11 @@ def cli(output_file, json_files):
             objref = data[session][application][substructure]
         else:
             objref = data[session][application]
+
+        if customOrigin != "":
+            if customOrigin not in objref:
+                objref[customOrigin] = {}
+            objref = objref[customOrigin]
 
         for datapoint in jsonobj["data"]:
             if datapoint not in objref:
