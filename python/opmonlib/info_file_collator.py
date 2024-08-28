@@ -2,6 +2,7 @@
 
 import json
 import os
+from re import A, I
 import rich.traceback
 from rich.console import Console
 from os.path import exists, join
@@ -22,38 +23,62 @@ def cli(output_file, json_files):
     console.log(f"Reading specified JSON files and outputting collated value traces to {output_file.name}")
 
     jsons = []
+    jd = json.JSONDecoder()
     for jf in json_files:
         console.log(f"Reading info JSON file {jf.name}")
-        for line in jf:
-            jsons.append(json.loads(line))
+        text = jf.read()
+        idx=0
+        while idx < len(text):
+            res = jd.raw_decode(text, idx)
+            jsons.append(res[0])
+            idx = res[1] + 2
 
     #console.log(jsons)
 
     data = {}
 
-    # format is partition.objectinstance.key.time: value
-
-    def parse_children(childarr, parentobj):
-        for child in childarr:
-            if child not in parentobj:
-                parentobj[child] = {}
-            childobj = childarr[child]
-
-            if '__children' in childobj:
-                parse_children(childobj['__children'], parentobj[child])
-
-            if '__properties' in childobj:
-                for datatype in childobj['__properties']:
-                    datatypeobj = childobj['__properties'][datatype]
-                    thistime = datatypeobj['__time']
-                    for key in datatypeobj['__data']:
-                        if key not in parentobj[child]:
-                            parentobj[child][key] = {}
-                        thisvalue = datatypeobj['__data'][key]
-                        parentobj[child][key][thistime] = thisvalue
+    # format is session.application.substructure.name: value
 
     for jsonobj in jsons:
-        parse_children(jsonobj['__parent'], data)
+        session = jsonobj["origin"]["session"]
+        application = jsonobj["origin"]["application"]
+        substructure = ""
+        if "substructure" in jsonobj["origin"]:
+            substructure = ".".join(jsonobj["origin"]["substructure"])
+
+        customOrigin = ""
+        if "customOrigin" in jsonobj:
+            first = True
+            for k,v in jsonobj["customOrigin"].items():
+                if not first:
+                    customOrigin += "."
+                customOrigin += f"{k}:{v}"
+                first = False
+
+        if session not in data:
+            data[session] = {}
+
+        if application not in data[session]:
+            data[session][application] = {}
+
+        if substructure != "":
+            if substructure not in data[session][application]:
+                data[session][application][substructure] = {}
+            objref = data[session][application][substructure]
+        else:
+            objref = data[session][application]
+
+        if customOrigin != "":
+            if customOrigin not in objref:
+                objref[customOrigin] = {}
+            objref = objref[customOrigin]
+
+        for datapoint in jsonobj["data"]:
+            if datapoint not in objref:
+                objref[datapoint] = {}
+
+            for value in jsonobj["data"][datapoint]:
+                objref[datapoint][jsonobj["time"]]  = jsonobj["data"][datapoint][value]
 
     json.dump(data, output_file, indent=4, sort_keys=True)
     console.log(f"Operation complete")
