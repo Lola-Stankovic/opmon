@@ -38,6 +38,12 @@ namespace dunedaq {
 			 ((std::string)entry)
 			 )
 
+  ERS_DECLARE_ISSUE(opmonlib,
+		    MissingField,
+		    "Field " << field << " not present in message " << message,
+		    ((std::string)field)((std::string)message)
+		    )
+
 }
 
 namespace dunedaq::opmonlib {
@@ -46,7 +52,20 @@ namespace dunedaq::opmonlib {
   using cr_map_type = std::invoke_result<decltype(&dunedaq::opmon::OpMonEntry::data),
 					 dunedaq::opmon::OpMonEntry>::type;
   using map_type = std::remove_const<std::remove_reference<cr_map_type>::type>::type;
-  
+
+
+  /**
+   * sets the field called "name" in the message m to the value of "value"
+   * This is essentially allows us to use any schema generated message as if it was dynamic object
+   */
+  template<class T>
+  void set_value(google::protobuf::Message & m, const std::string & name, T value);
+
+  template<class T>
+  void set_value( const google::protobuf::Reflection & r,
+		  google::protobuf::Message & m,
+		  const google::protobuf::FieldDescriptor* f_p, T value);
+		 
   dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m,
 				      const CustomOrigin & co);
 
