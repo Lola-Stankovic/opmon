@@ -201,3 +201,11 @@ dunedaq::opmon::OpMonId dunedaq::opmonlib::operator + (const dunedaq::opmon::OpM
   return ret;
 }
 
+
+template<>
+void dunedaq::opmonlib::set_value<uint64_t>( const google::protobuf::Reflection & r,
+					    google::protobuf::Message & m,
+					    const google::protobuf::FieldDescriptor* f_p, uint64_t value) {
+  
+  r.SetUInt64(&m, f_p, value);
+}

@@ -44,6 +44,7 @@ namespace dunedaq {
 		    ((std::string)field)((std::string)message)
 		    )
 
+  
 }
 
 namespace dunedaq::opmonlib {
@@ -62,10 +63,10 @@ namespace dunedaq::opmonlib {
   void set_value(google::protobuf::Message & m, const std::string & name, T value);
 
   template<class T>
-  void set_value( const google::protobuf::Reflection & r,
-		  google::protobuf::Message & m,
-		  const google::protobuf::FieldDescriptor* f_p, T value);
-		 
+  void set_value( const google::protobuf::Reflection & ,
+		  google::protobuf::Message & ,
+		  const google::protobuf::FieldDescriptor* , T ) { ; }
+  
   dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m,
 				      const CustomOrigin & co);
 
