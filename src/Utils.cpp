@@ -201,3 +201,71 @@ dunedaq::opmon::OpMonId dunedaq::opmonlib::operator + (const dunedaq::opmon::OpM
   return ret;
 }
 
+
+
+//---------------------------------------------------
+// template specifications for setters by name
+//---------------------------------------------------
+template<>
+void dunedaq::opmonlib::set_value<int32_t>( const google::protobuf::Reflection & r,
+					    google::protobuf::Message & m,
+					    const google::protobuf::FieldDescriptor* f_p, int32_t value) {
+  
+  r.SetInt32(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<int64_t>( const google::protobuf::Reflection & r,
+					    google::protobuf::Message & m,
+					    const google::protobuf::FieldDescriptor* f_p, int64_t value) {
+  
+  r.SetInt64(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<uint32_t>( const google::protobuf::Reflection & r,
+					     google::protobuf::Message & m,
+					     const google::protobuf::FieldDescriptor* f_p, uint32_t value) {
+  
+  r.SetUInt32(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<uint64_t>( const google::protobuf::Reflection & r,
+					    google::protobuf::Message & m,
+					    const google::protobuf::FieldDescriptor* f_p, uint64_t value) {
+  
+  r.SetUInt64(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<double>( const google::protobuf::Reflection & r,
+					   google::protobuf::Message & m,
+					   const google::protobuf::FieldDescriptor* f_p, double value) {
+  
+  r.SetDouble(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<float>( const google::protobuf::Reflection & r,
+					  google::protobuf::Message & m,
+					  const google::protobuf::FieldDescriptor* f_p, float value) {
+  
+  r.SetFloat(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<bool>( const google::protobuf::Reflection & r,
+					 google::protobuf::Message & m,
+					 const google::protobuf::FieldDescriptor* f_p, bool value) {
+  
+  r.SetBool(&m, f_p, value);
+}
+
+template<>
+void dunedaq::opmonlib::set_value<std::string>( const google::protobuf::Reflection & r,
+						google::protobuf::Message & m,
+						const google::protobuf::FieldDescriptor* f_p, std::string value) {
+  
+  r.SetString(&m, f_p, value);
+}
