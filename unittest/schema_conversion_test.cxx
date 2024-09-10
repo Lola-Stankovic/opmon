@@ -94,10 +94,33 @@ BOOST_AUTO_TEST_CASE(conversion) {
 		     dunedaq::opmonlib::NameMismatch );
   BOOST_CHECK_NO_THROW( auto succ_reco_ci = from_entry<dunedaq::opmon::ComplexInfo>(complex_entry) );
   
-  
-  
+ 
 }
 
+
+BOOST_AUTO_TEST_CASE(name_setters) {
+
+  const int64_t int_value = 394;
+  const float float_value = 3.14;
+  const double double_value = 6.28;
+  const std::string string_value = "my_test" ;
+  const bool bool_value = true;
+
+  dunedaq::opmon::TestInfo ti;
+
+  BOOST_CHECK_THROW( set_value( ti, "non_existing_field", double_value ), 
+                     dunedaq::opmonlib::MissingField );
+
+  set_value( ti, "string_example", string_value );
+  BOOST_TEST( string_value == ti.string_example() );
+
+  set_value( ti, "float_example", double_value );
+  BOOST_TEST( double_value == ti.float_example() );
+  
+  set_value( ti, "int_example", int_value );
+  BOOST_TEST( int_value == ti.int_example() );
+  
+}
 
 
 
