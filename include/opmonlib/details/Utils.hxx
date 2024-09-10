@@ -24,8 +24,6 @@ void dunedaq::opmonlib::set_value(google::protobuf::Message & m, const std::stri
     throw MissingField(ERS_HERE, name, m.GetTypeName());
   }
 
-  auto type = field_p -> cpp_type();
-  
   const auto * reflection_p = m.GetReflection();
   const auto & ref = *reflection_p;
 
