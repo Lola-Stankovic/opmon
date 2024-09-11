@@ -8,6 +8,15 @@
 
 #include "opmonlib/Utils.hpp"
 
+
+dunedaq::opmon::OpMonId dunedaq::opmonlib::make_origin( const std::string & session, const std::string & app ) {
+  opmon::OpMonId origin;
+  origin.set_session( session );
+  origin.set_application( app );
+  return origin;
+}
+
+
 dunedaq::opmon::OpMonEntry dunedaq::opmonlib::to_entry(const google::protobuf::Message & m,
 						       const CustomOrigin & co) {
 

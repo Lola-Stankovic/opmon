@@ -34,9 +34,9 @@ namespace dunedaq::opmonlib {
 
       auto origin = to_string( o.value() );
       if (dot_pos == std::string::npos) {
-	fname += origin + ".json";
+	fname += '.' + origin + ".json";
       } else {
-	fname.insert(dot_pos, '_' + origin );
+	fname.insert(dot_pos, '.' + origin );
       }
 
     }

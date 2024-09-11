@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(File_facility) {
   BOOST_CHECK_THROW( auto service = makeOpMonFacility("file:///impossible_file.txt"),
 		     OpMonFacilityCreationFailed);
 
-  auto service = makeOpMonFacility("file://./test_file.txt");
+  auto service = makeOpMonFacility("file://./test_file", make_origin("test", "app") );
 
   auto pub_func = [&](int i){
     dunedaq::opmon::OpMonId id;

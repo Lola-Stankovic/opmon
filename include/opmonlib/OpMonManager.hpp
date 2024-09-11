@@ -13,6 +13,7 @@
 #include <thread>
 
 #include "opmonlib/MonitorableObject.hpp"
+#include "opmonlib/Utils.hpp"
 
 namespace dunedaq {
 
@@ -51,7 +52,7 @@ public:
   explicit OpMonManager(std::string session,
 			std::string name,
 			std::string opmon_facility_uri = "stdout") :
-    OpMonManager( session, name, makeOpMonFacility(opmon_facility_uri) ){;}
+    OpMonManager( session, name, makeOpMonFacility(opmon_facility_uri, make_origin(session, name)) ){;}
   
   virtual ~OpMonManager() = default;
   
