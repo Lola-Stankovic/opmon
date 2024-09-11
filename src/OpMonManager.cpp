@@ -27,7 +27,7 @@ void OpMonManager::start_monitoring() {
   if ( ! m_cfg ) 
     throw MissingConfiguration(ERS_HERE);
 
-  TLOG() << "Starting a new monitoring thread with interval " << m_cfg->get_interval().count() << " seconds, at level " << get_opmon_level();
+  TLOG() << "Starting a new monitoring thread with interval " << m_cfg.load()->get_interval().count() << " seconds, at level " << get_opmon_level();
 
   auto running_function = std::bind( & OpMonManager::run, this, std::placeholders::_1);
   m_thread = std::jthread( running_function );
@@ -50,7 +50,7 @@ void OpMonManager::run(std::stop_token stoken ) {
     std::this_thread::sleep_for(sleep_interval);
     auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() - last_collection_time);
     
-    if ( time_span >= m_cfg->get_interval() ) {
+    if ( time_span >= m_cfg.load()->get_interval() ) {
       last_collection_time = std::chrono::steady_clock::now();
       publish( collect() );
       // there is no catch here because collect is supposed to catch all possible exceptions

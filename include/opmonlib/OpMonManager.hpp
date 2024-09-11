@@ -74,8 +74,8 @@ public:
   // the method requires a valid configuration because the time period is taken from there
 
   void set_opmon_conf( const confmodel::OpMonConf* c ) {
-    m_cfg = c;
-    set_opmon_level( m_cfg->get_level() );
+    m_cfg.store(c);
+    set_opmon_level( m_cfg.load()->get_level() );
   }
   
 protected:
@@ -93,7 +93,7 @@ protected:
 private:
 
   std::jthread m_thread;
-  const confmodel::OpMonConf* m_cfg = nullptr; 
+  std::atomic<const confmodel::OpMonConf*> m_cfg{nullptr}; 
 
 };
 
