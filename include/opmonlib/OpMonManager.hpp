@@ -93,7 +93,7 @@ protected:
 private:
 
   std::jthread m_thread;
-  confmodel::OpMonConf* m_cfg = nullptr; 
+  const confmodel::OpMonConf* m_cfg = nullptr; 
 
 };
 
