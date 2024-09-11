@@ -73,7 +73,7 @@ public:
   // The stop is invoked during the destruction of the thread
   // the method requires a valid configuration because the time period is taken from there
 
-  void set_configuration( const confmodel::OpMonConf* c ) {
+  void set_opmon_conf( const confmodel::OpMonConf* c ) {
     m_cfg = c;
     set_opmon_level( m_cfg->get_level() );
   }
