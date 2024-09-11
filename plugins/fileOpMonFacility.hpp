@@ -50,7 +50,7 @@ class fileOpMonFacility
   : public JSonOpMonFacility {
 
 public:
-  explicit fileOpMonFacility(std::string uri);
+  explicit fileOpMonFacility(std::string uri, OptionalOrigin);
   ~fileOpMonFacility();
 
   void publish(opmon::OpMonEntry && e) const override;

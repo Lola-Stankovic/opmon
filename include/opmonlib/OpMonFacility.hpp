@@ -18,6 +18,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <optional>
 
 #ifndef EXTERN_C_FUNC_DECLARE_START
 // NOLINTNEXTLINE(build/define_used)
@@ -32,12 +33,12 @@
  */
 
 // NOLINTNEXTLINE(build/define_used)
-#define DEFINE_DUNE_OPMON_FACILITY(klass)                                                                               \
-  EXTERN_C_FUNC_DECLARE_START                                                                                          \
-  std::shared_ptr<dunedaq::opmonlib::OpMonFacility> make(std::string facility)                                           \
-  {                                                                                                                    \
-    return std::shared_ptr<dunedaq::opmonlib::OpMonFacility>(new klass(facility));                                       \
-  }                                                                                                                    \
+#define DEFINE_DUNE_OPMON_FACILITY(klass)                                                                                       \
+  EXTERN_C_FUNC_DECLARE_START                                                                                                   \
+  std::shared_ptr<dunedaq::opmonlib::OpMonFacility> make(std::string facility, std::optional<dunedaq::opmon::OpMonId> o )	\
+  {                                                                                                                             \
+    return std::shared_ptr<dunedaq::opmonlib::OpMonFacility>(new klass(facility, o));                                           \
+  }                                                                                                                             \
   }
 
 namespace dunedaq {
@@ -57,7 +58,7 @@ namespace dunedaq::opmonlib {
 class OpMonFacility
 {
 public:
-  explicit OpMonFacility(std::string uri) : m_uri(uri) {;}
+  explicit OpMonFacility(std::string uri ) : m_uri(uri) {;}
   
   virtual ~OpMonFacility() = default;
   OpMonFacility(const OpMonFacility&) = delete;            ///< OpMonFacility is not copy-constructible
@@ -79,7 +80,8 @@ private:
   std::string m_uri;
 };
 
-std::shared_ptr<OpMonFacility> makeOpMonFacility(std::string const& facility) ;
+  using OptionalOrigin = std::optional<dunedaq::opmon::OpMonId>;
+  std::shared_ptr<OpMonFacility> makeOpMonFacility(std::string const& facility, OptionalOrigin = OptionalOrigin() ) ;
 
 } // namespace dunedaq::opmonlib
 

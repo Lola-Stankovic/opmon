@@ -11,7 +11,7 @@
 
 using namespace dunedaq::opmonlib;
 
-std::shared_ptr<OpMonFacility> dunedaq::opmonlib::makeOpMonFacility(std::string const& facility) {
+std::shared_ptr<OpMonFacility> dunedaq::opmonlib::makeOpMonFacility(std::string const& facility, OptionalOrigin o) {
 
   TLOG() << "FACILITY = " << facility;
 
@@ -30,7 +30,7 @@ std::shared_ptr<OpMonFacility> dunedaq::opmonlib::makeOpMonFacility(std::string 
   std::shared_ptr<OpMonFacility> os_ptr;
   
   try {
-    os_ptr = bpf.makePlugin<std::shared_ptr<OpMonFacility>>(plugin_name, facility);
+    os_ptr = bpf.makePlugin<std::shared_ptr<OpMonFacility>>(plugin_name, facility, o);
   } catch (const ers::Issue& iexpt) {
     throw OpMonFacilityCreationFailed(ERS_HERE, plugin_name, iexpt);
   } catch (const cet::exception& cexpt) {

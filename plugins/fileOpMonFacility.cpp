@@ -16,7 +16,7 @@
 
 namespace dunedaq::opmonlib {
 
-  fileOpMonFacility::fileOpMonFacility(std::string uri) :
+  fileOpMonFacility::fileOpMonFacility(std::string uri, OptionalOrigin o) :
     JSonOpMonFacility(uri) {
 
     std::string hook = "://";
@@ -26,6 +26,19 @@ namespace dunedaq::opmonlib {
       fname = uri;
     } else {
       fname = uri.substr(sep + hook.size());
+    }
+
+    if (o) {
+      auto slash_pos = fname.find_last_of('/');
+      auto dot_pos = slash_pos == std::string::npos ? fname.find_first_of('.') : fname.find_first_of('.', slash_pos);
+
+      auto origin = to_string( o.value() );
+      if (dot_pos == std::string::npos) {
+	fname += origin + ".json";
+      } else {
+	fname.insert(dot_pos, '_' + origin );
+      }
+
     }
     
     m_ofs.open(fname, std::ios::out | std::ios::app);
