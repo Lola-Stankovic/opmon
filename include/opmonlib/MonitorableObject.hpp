@@ -11,8 +11,11 @@
 
 #include "opmonlib/Utils.hpp"
 #include "opmonlib/OpMonFacility.hpp"
-#include <google/protobuf/message.h>
 #include <opmonlib/opmon/monitoring_tree.pb.h>
+
+#include "confmodel/OpMonConf.hpp"
+
+#include <google/protobuf/message.h>
 
 #include <limits>
 #include <type_traits>
@@ -45,7 +48,8 @@ namespace dunedaq {
 
 namespace dunedaq::opmonlib {
 
-  using OpMonLevel = unsigned int;
+  using OpMonLevel = std::invoke_result<decltype(&dunedaq::confmodel::OpMonConf::get_level),
+					dunedaq::confmodel::OpMonConf>::type;
   
   enum class SystemOpMonLevel : OpMonLevel {
     kDisabled = std::numeric_limits<OpMonLevel>::min(),
@@ -60,7 +64,7 @@ namespace dunedaq::opmonlib {
   };
 
   template <class T>
-  auto to_level( T v ) {
+  constexpr auto to_level( T v ) {
     return static_cast<typename std::underlying_type<T>::type>(v);
   }
   

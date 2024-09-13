@@ -66,6 +66,8 @@ namespace dunedaq::opmonlib {
   void set_value( const google::protobuf::Reflection & ,
 		  google::protobuf::Message & ,
 		  const google::protobuf::FieldDescriptor* , T );
+
+  opmon::OpMonId make_origin( const std::string & session, const std::string & app ) ;
   
   dunedaq::opmon::OpMonEntry to_entry(const google::protobuf::Message & m,
 				      const CustomOrigin & co);

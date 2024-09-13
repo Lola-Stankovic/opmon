@@ -13,7 +13,9 @@
 #include <thread>
 
 #include "opmonlib/MonitorableObject.hpp"
+#include "opmonlib/Utils.hpp"
 
+#include "confmodel/OpMonConf.hpp"
 namespace dunedaq {
 
   ERS_DECLARE_ISSUE( opmonlib,
@@ -30,6 +32,11 @@ namespace dunedaq {
   ERS_DECLARE_ISSUE( opmonlib,
 		     FailedMonitoringThread,
 		     "Monitoring thread failed to start",
+		     ERS_EMPTY )
+
+  ERS_DECLARE_ISSUE( opmonlib,
+		     MissingConfiguration,
+		     "Confiration is not set",
 		     ERS_EMPTY )
 }
 
@@ -51,7 +58,7 @@ public:
   explicit OpMonManager(std::string session,
 			std::string name,
 			std::string opmon_facility_uri = "stdout") :
-    OpMonManager( session, name, makeOpMonFacility(opmon_facility_uri) ){;}
+    OpMonManager( session, name, makeOpMonFacility(opmon_facility_uri, make_origin(session, name)) ){;}
   
   virtual ~OpMonManager() = default;
   
@@ -61,10 +68,15 @@ public:
   using MonitorableObject::set_opmon_level;
   
   // data collecting loop
-  void start_monitoring(std::chrono::seconds); 
+  void start_monitoring(); 
   // The stop command is not necessary.
-  // The stop is invoked during the destruction of the thread or at the start of a new one
+  // The stop is invoked during the destruction of the thread
+  // the method requires a valid configuration because the time period is taken from there
 
+  void set_opmon_conf( const confmodel::OpMonConf* c ) {
+    m_cfg.store(c);
+    set_opmon_level( m_cfg.load()->get_level() );
+  }
   
 protected:
   using MonitorableObject::collect;
@@ -76,11 +88,12 @@ protected:
 	       std::string name,
 	       facility_ptr_t );
   
-  void run( std::stop_token, std::chrono::seconds ); // function used by the jthread
+  void run( std::stop_token ); // function used by the jthread
 
 private:
 
   std::jthread m_thread;
+  std::atomic<const confmodel::OpMonConf*> m_cfg{nullptr}; 
 
 };
 

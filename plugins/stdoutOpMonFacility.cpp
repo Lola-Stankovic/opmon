@@ -20,7 +20,7 @@ namespace dunedaq::opmonlib {
 class stdoutOpMonFacility : public JSonOpMonFacility
 {
 public:
-  explicit stdoutOpMonFacility(std::string uri)
+  explicit stdoutOpMonFacility(std::string uri, OptionalOrigin )
     : JSonOpMonFacility(uri) { ; }
   
   void publish(opmon::OpMonEntry && e) const override {
