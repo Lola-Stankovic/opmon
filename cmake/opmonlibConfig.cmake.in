@@ -10,6 +10,8 @@ find_dependency(logging)
 find_dependency(absl)
 find_dependency(Protobuf REQUIRED CONFIG)
 find_dependency(utilities)
+find_dependency(confmodel)
+
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/@PROJECT_NAME@)
 
