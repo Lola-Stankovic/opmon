@@ -42,7 +42,7 @@ void OpMonManager::start_monitoring() {
 void OpMonManager::run(std::stop_token stoken ) {
 
   auto sleep_interval = std::chrono::milliseconds(100);
-  
+  auto reporting_interval = m_cfg.load()->get_interval();  
   auto last_collection_time = std::chrono::steady_clock::now();
   
   while( ! stoken.stop_requested() ) {
@@ -50,7 +50,7 @@ void OpMonManager::run(std::stop_token stoken ) {
     std::this_thread::sleep_for(sleep_interval);
     auto time_span = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() - last_collection_time);
     
-    if ( time_span >= m_cfg.load()->get_interval() ) {
+    if ( time_span >= reporting_interval ) {
       last_collection_time = std::chrono::steady_clock::now();
       publish( collect() );
       // there is no catch here because collect is supposed to catch all possible exceptions
